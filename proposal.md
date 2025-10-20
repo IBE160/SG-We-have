@@ -63,15 +63,42 @@ Motivated students who want to take notes and practice for exams, without using 
 
 - Lecture with timestamp 
 
- 
 
-### User Stories 
+### User Flows 
 
-When a user accesses the website, they are greeted by a homepage displaying an overview of their existing courses, along with an option to create a new one. Upon selecting “Create a New Course,” the user is presented with an interface that includes a button to add new lectures. Each lecture allows the user to input their notes into a text box, where they can paste or write content from their lectures. Once the notes are complete, the user can save them and use an integrated AI feature to automatically generate a quiz based on the lecture content. 
+#### Flow 1: Student taking notes
+  Entry point: Create user/login page
 
-Additionally, from the course overview page, users can choose to generate a comprehensive quiz that combines questions from all lectures or chosen lectures within a course, or alternatively, create individual quizzes for each lecture. 
-
- 
+  1. Create user/login page
+     - Student views fist page with login and create user options
+     - Clicks "Create a user"
+  2. Create user
+     - If not registered already: Student creates a username and sets a password
+     - Clicks "Confirm"
+  3. Home page
+      - Student sees the home page
+      - Clicks "create course" button
+      - Student types in course name
+      - Clicks "Confirm"
+  4. Course overview page
+      - Student enters the course page
+      - Clicks "Take notes" button
+  5. Taking notes
+      - Student sees a text box
+      - Types in notes during lecture
+      - When finished: Clicks "Save" 
+      - Student sees a time-stamp appears from when the file was saved.
+  6. Return to course overview
+      -  Student arrives back on course overview page
+      -  Student sees a overview with the lecture they just took notes from
+      -  Clicks "Generate quiz" button
+      -  Student chooses which lectures to be included in the quiz
+      -  Student chooses how many questions they want to have in the quiz from options 10, 15, 20, 25 or 30.
+      -  Clicks "Go to quiz"
+  7. Multiple-choice quiz
+      -  Student starts the generated quiz and is represented with one question at the time with four buttons with an option for answer each.
+      -  Student clicks one of the four options, the correct answer is highlighted in green and the wrong answers are highlighted in red
+      -  When quiz is finished: Student gets a score of how many correct answers they had out of total questions. 
 
 ### Technical Constraints 
 
