@@ -11,19 +11,19 @@ WORKFLOW_PATH: greenfield-level-3.yaml
 
 ## Current State
 
-CURRENT_PHASE: 3
-CURRENT_WORKFLOW: create-architecture
-CURRENT_AGENT: architect
+CURRENT_PHASE: 4
+CURRENT_WORKFLOW: sprint-planning
+CURRENT_AGENT: sm
 PHASE_1_COMPLETE: true
 PHASE_2_COMPLETE: true
-PHASE_3_COMPLETE: false
+PHASE_3_COMPLETE: true
 PHASE_4_COMPLETE: false
 
 ## Next Action
 
-NEXT_ACTION: Create Architecture
-NEXT_COMMAND: create-architecture
-NEXT_AGENT: architect
+NEXT_ACTION: Sprint Planning
+NEXT_COMMAND: sprint-planning
+NEXT_AGENT: sm
 
 ## Story Backlog
 
