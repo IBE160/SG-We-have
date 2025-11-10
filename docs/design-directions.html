@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Design Direction Showcase - ibe160</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap');
+
+        :root {
+            --primary: #3C6E71;
+            --secondary: #F5DEB3;
+            --text-dark: #212529;
+            --text-light: #FFFFFF;
+            --neutral-100: #F8F9FA;
+            --neutral-200: #E9ECEF;
+            --neutral-300: #DEE2E6;
+            --neutral-900: #212529;
+            --spacing-unit: 4px;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            background-color: var(--neutral-200);
+        }
+
+        .showcase-nav {
+            background-color: var(--neutral-900);
+            padding: calc(var(--spacing-unit) * 4);
+            display: flex;
+            justify-content: center;
+            gap: calc(var(--spacing-unit) * 4);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .showcase-nav button {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--neutral-600);
+            color: var(--text-light);
+            border: none;
+            padding: calc(var(--spacing-unit) * 2) calc(var(--spacing-unit) * 4);
+            border-radius: calc(var(--spacing-unit) * 1);
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.2s ease;
+        }
+
+        .showcase-nav button:hover {
+            background-color: var(--neutral-500);
+        }
+        
+        .showcase-nav button.active {
+            background-color: var(--primary);
+            font-weight: 700;
+        }
+
+        .direction-container {
+            display: none;
+        }
+
+        .direction-container.active {
+            display: block;
+        }
+
+        .mockup-body {
+            background-color: var(--neutral-100);
+            color: var(--text-dark);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        /* Common Styles */
+        .mockup-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: calc(var(--spacing-unit) * 4) calc(var(--spacing-unit) * 8);
+            background-color: var(--text-light);
+            border-bottom: 1px solid var(--neutral-200);
+        }
+        .mockup-logo {
+            font-weight: 700;
+            font-size: 24px;
+            color: var(--primary);
+        }
+        .mockup-user-profile {
+            display: flex;
+            align-items: center;
+            gap: calc(var(--spacing-unit) * 2);
+        }
+        .mockup-user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+        .mockup-button {
+            padding: calc(var(--spacing-unit) * 2) calc(var(--spacing-unit) * 4);
+            border-radius: calc(var(--spacing-unit) * 1);
+            font-size: 14px;
+            cursor: pointer;
+            border: none;
+            transition: background-color 0.2s ease;
+            font-weight: 500;
+        }
+        .mockup-button-primary {
+            background-color: var(--primary);
+            color: var(--text-light);
+        }
+        .mockup-button-primary:hover { background-color: #345E61; }
+
+        /* --- Direction 1: Minimalist Focus --- */
+        #direction-1 .mockup-main {
+            max-width: 900px;
+            margin: calc(var(--spacing-unit) * 8) auto;
+            padding: 0 calc(var(--spacing-unit) * 8);
+        }
+        #direction-1 .mockup-page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: calc(var(--spacing-unit) * 8);
+        }
+        #direction-1 h1 { font-size: 32px; margin: 0; }
+        #direction-1 .course-list-item {
+            background-color: var(--text-light);
+            border: 1px solid var(--neutral-200);
+            border-radius: calc(var(--spacing-unit) * 2);
+            padding: calc(var(--spacing-unit) * 6);
+            margin-bottom: calc(var(--spacing-unit) * 4);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: box-shadow 0.2s ease;
+        }
+        #direction-1 .course-list-item:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+        #direction-1 .course-info h2 { font-size: 20px; margin: 0 0 4px 0; color: var(--primary); }
+        #direction-1 .course-info p { margin: 0; color: var(--neutral-600); font-size: 14px; }
+
+        /* --- Direction 2: Academic Dashboard --- */
+        #direction-2 .mockup-body {
+            display: flex;
+        }
+        #direction-2 .mockup-sidebar {
+            width: 260px;
+            background-color: var(--text-light);
+            border-right: 1px solid var(--neutral-200);
+            padding: calc(var(--spacing-unit) * 6);
+            display: flex;
+            flex-direction: column;
+        }
+        #direction-2 .mockup-sidebar h2 { font-size: 16px; color: var(--neutral-500); text-transform: uppercase; letter-spacing: 1px; margin-top: 0; }
+        #direction-2 .mockup-sidebar nav a {
+            display: block;
+            color: var(--text-dark);
+            text-decoration: none;
+            padding: calc(var(--spacing-unit) * 2.5) calc(var(--spacing-unit) * 4);
+            border-radius: calc(var(--spacing-unit) * 1);
+            margin-bottom: calc(var(--spacing-unit) * 1);
+            font-weight: 500;
+        }
+        #direction-2 .mockup-sidebar nav a:hover { background-color: var(--neutral-100); }
+        #direction-2 .mockup-sidebar nav a.active { background-color: var(--secondary); color: var(--text-dark); }
+        #direction-2 .mockup-main-content {
+            flex: 1;
+            padding: calc(var(--spacing-unit) * 8);
+        }
+        #direction-2 .mockup-page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: calc(var(--spacing-unit) * 8);
+        }
+        #direction-2 h1 { font-size: 32px; margin: 0; }
+        #direction-2 .course-table { width: 100%; border-collapse: collapse; }
+        #direction-2 .course-table th, #direction-2 .course-table td {
+            padding: calc(var(--spacing-unit) * 4);
+            text-align: left;
+            border-bottom: 1px solid var(--neutral-200);
+        }
+        #direction-2 .course-table th { font-size: 14px; color: var(--neutral-600); }
+        #direction-2 .course-table td h3 { font-size: 18px; margin: 0; color: var(--primary); }
+
+        /* --- Direction 3: Visual Grid --- */
+        #direction-3 .mockup-main {
+            max-width: 1400px;
+            margin: calc(var(--spacing-unit) * 8) auto;
+            padding: 0 calc(var(--spacing-unit) * 8);
+        }
+        #direction-3 .mockup-page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: calc(var(--spacing-unit) * 8);
+        }
+        #direction-3 h1 { font-size: 32px; margin: 0; }
+        #direction-3 .course-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: calc(var(--spacing-unit) * 6);
+        }
+        #direction-3 .course-card {
+            background-color: var(--text-light);
+            border: 1px solid var(--neutral-200);
+            border-radius: calc(var(--spacing-unit) * 2);
+            padding: calc(var(--spacing-unit) * 6);
+            transition: box-shadow 0.2s ease, transform 0.2s ease;
+            display: flex;
+            flex-direction: column;
+        }
+        #direction-3 .course-card:hover {
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+            transform: translateY(-4px);
+        }
+        #direction-3 .course-card h2 { font-size: 20px; margin: 0 0 4px 0; color: var(--primary); }
+        #direction-3 .course-card p { margin: 0 0 16px 0; color: var(--neutral-600); font-size: 14px; flex-grow: 1; }
+
+    </style>
+</head>
+<body>
+
+    <div class="showcase-nav">
+        <button onclick="showDirection('direction-1')" class="active">Direction 1: Minimalist Focus</button>
+        <button onclick="showDirection('direction-2')">Direction 2: Academic Dashboard</button>
+        <button onclick="showDirection('direction-3')">Direction 3: Visual Grid</button>
+    </div>
+
+    <!-- Direction 1: Minimalist Focus -->
+    <div id="direction-1" class="direction-container active">
+        <div class="mockup-body">
+            <header class="mockup-header">
+                <div class="mockup-logo">ibe160</div>
+                <div class="mockup-user-profile">
+                    <span>Focused Fiona</span>
+                    <div class="mockup-user-avatar">FF</div>
+                </div>
+            </header>
+            <main class="mockup-main">
+                <div class="mockup-page-header">
+                    <h1>My Courses</h1>
+                    <button class="mockup-button mockup-button-primary">+ New Course</button>
+                </div>
+                <div class="course-list">
+                    <div class="course-list-item">
+                        <div class="course-info">
+                            <h2>Distributed Systems</h2>
+                            <p>12 Lectures • Last updated: 2 days ago</p>
+                        </div>
+                        <button class="mockup-button mockup-button-outline">View Course</button>
+                    </div>
+                    <div class="course-list-item">
+                        <div class="course-info">
+                            <h2>Advanced Algorithms</h2>
+                            <p>8 Lectures • Last updated: 5 days ago</p>
+                        </div>
+                        <button class="mockup-button mockup-button-outline">View Course</button>
+                    </div>
+                    <div class="course-list-item">
+                        <div class="course-info">
+                            <h2>Machine Learning</h2>
+                            <p>15 Lectures • Last updated: yesterday</p>
+                        </div>
+                        <button class="mockup-button mockup-button-outline">View Course</button>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Direction 2: Academic Dashboard -->
+    <div id="direction-2" class="direction-container">
+        <div class="mockup-body">
+            <aside class="mockup-sidebar">
+                <div class="mockup-logo" style="margin-bottom: 32px;">ibe160</div>
+                <nav>
+                    <h2>Menu</h2>
+                    <a href="#" class="active">My Courses</a>
+                    <a href="#">Recent Quizzes</a>
+                    <a href="#">Settings</a>
+                </nav>
+                <div style="margin-top: auto;">
+                    <button class="mockup-button mockup-button-primary" style="width: 100%;">+ New Course</button>
+                </div>
+            </aside>
+            <div style="width: 100%;">
+                <header class="mockup-header" style="background-color: var(--neutral-100);">
+                    <div style="visibility: hidden;" class="mockup-logo">ibe160</div> <!-- Placeholder for alignment -->
+                    <div class="mockup-user-profile">
+                        <span>Focused Fiona</span>
+                        <div class="mockup-user-avatar">FF</div>
+                    </div>
+                </header>
+                <main class="mockup-main-content">
+                    <div class="mockup-page-header">
+                        <h1>My Courses</h1>
+                    </div>
+                    <table class="course-table">
+                        <thead>
+                            <tr>
+                                <th>Course Title</th>
+                                <th>Lectures</th>
+                                <th>Last Updated</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><h3>Distributed Systems</h3></td>
+                                <td>12</td>
+                                <td>2 days ago</td>
+                                <td><button class="mockup-button mockup-button-outline">View</button></td>
+                            </tr>
+                            <tr>
+                                <td><h3>Advanced Algorithms</h3></td>
+                                <td>8</td>
+                                <td>5 days ago</td>
+                                <td><button class="mockup-button mockup-button-outline">View</button></td>
+                            </tr>
+                            <tr>
+                                <td><h3>Machine Learning</h3></td>
+                                <td>15</td>
+                                <td>yesterday</td>
+                                <td><button class="mockup-button mockup-button-outline">View</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </main>
+            </div>
+        </div>
+    </div>
+
+    <!-- Direction 3: Visual Grid -->
+    <div id="direction-3" class="direction-container">
+        <div class="mockup-body">
+            <header class="mockup-header">
+                <div class="mockup-logo">ibe160</div>
+                <div class="mockup-user-profile">
+                    <span>Focused Fiona</span>
+                    <div class="mockup-user-avatar">FF</div>
+                </div>
+            </header>
+            <main class="mockup-main">
+                <div class="mockup-page-header">
+                    <h1>My Courses</h1>
+                    <button class="mockup-button mockup-button-primary">+ New Course</button>
+                </div>
+                <div class="course-grid">
+                    <div class="course-card">
+                        <h2>Distributed Systems</h2>
+                        <p>12 Lectures • Last updated: 2 days ago</p>
+                        <button class="mockup-button mockup-button-primary" style="width: 100%;">View Course</button>
+                    </div>
+                    <div class="course-card">
+                        <h2>Advanced Algorithms</h2>
+                        <p>8 Lectures • Last updated: 5 days ago</p>
+                        <button class="mockup-button mockup-button-primary" style="width: 100%;">View Course</button>
+                    </div>
+                    <div class="course-card">
+                        <h2>Machine Learning</h2>
+                        <p>15 Lectures • Last updated: yesterday</p>
+                        <button class="mockup-button mockup-button-primary" style="width: 100%;">View Course</button>
+                    </div>
+                    <div class="course-card" style="justify-content: center; align-items: center; border-style: dashed; background-color: var(--neutral-100);">
+                        <button class="mockup-button mockup-button-ghost" style="font-size: 18px;">+ Add New Course</button>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script>
+        let currentDirection = 'direction-1';
+        const buttons = document.querySelectorAll('.showcase-nav button');
+
+        function showDirection(id) {
+            document.getElementById(currentDirection).classList.remove('active');
+            document.getElementById(id).classList.add('active');
+            currentDirection = id;
+            
+            buttons.forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.getAttribute('onclick').includes(id)) {
+                    btn.classList.add('active');
+                }
+            });
+        }
+    </script>
+
+</body>
+</html>

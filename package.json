@@ -1,0 +1,7 @@
+{
+  "dependencies": {
+    "@tiptap/extension-strike": "^3.10.5",
+    "@tiptap/extension-subscript": "^3.10.5",
+    "@tiptap/extension-superscript": "^3.10.5"
+  }
+}

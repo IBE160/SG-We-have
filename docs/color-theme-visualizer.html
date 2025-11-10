@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Color Theme Visualizer - ibe160</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap');
+
+        :root {
+            --primary: #3C6E71;
+            --secondary: #F5DEB3;
+            --text-dark: #212529;
+            --text-light: #FFFFFF;
+            --success: #28A745;
+            --warning: #FFC107;
+            --error: #DC3545;
+            --neutral-100: #F8F9FA; /* Lightest gray */
+            --neutral-200: #E9ECEF;
+            --neutral-300: #DEE2E6;
+            --neutral-400: #CED4DA;
+            --neutral-500: #ADB5BD; /* Mid gray */
+            --neutral-600: #6C757D;
+            --neutral-700: #495057;
+            --neutral-800: #343A40;
+            --neutral-900: #212529; /* Darkest gray, same as text-dark */
+
+            --spacing-unit: 4px;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+            color: var(--text-dark);
+            background-color: var(--neutral-100);
+            margin: 0;
+            padding: calc(var(--spacing-unit) * 8); /* 32px */
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: var(--text-light);
+            padding: calc(var(--spacing-unit) * 8);
+            border-radius: calc(var(--spacing-unit) * 2);
+            box-shadow: 0 calc(var(--spacing-unit) * 2) calc(var(--spacing-unit) * 4) rgba(0, 0, 0, 0.05);
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            color: var(--text-dark);
+            margin-top: calc(var(--spacing-unit) * 8);
+            margin-bottom: calc(var(--spacing-unit) * 4);
+            font-weight: 700;
+        }
+        h1 { font-size: calc(var(--spacing-unit) * 12); } /* 48px */
+        h2 { font-size: calc(var(--spacing-unit) * 8); }  /* 32px */
+        h3 { font-size: calc(var(--spacing-unit) * 6); }  /* 24px */
+        h4 { font-size: calc(var(--spacing-unit) * 5); }  /* 20px */
+
+        .section {
+            margin-bottom: calc(var(--spacing-unit) * 12);
+            padding-bottom: calc(var(--spacing-unit) * 8);
+            border-bottom: 1px solid var(--neutral-200);
+        }
+
+        .color-palette {
+            display: flex;
+            flex-wrap: wrap;
+            gap: calc(var(--spacing-unit) * 4);
+            margin-bottom: calc(var(--spacing-unit) * 8);
+        }
+
+        .color-swatch {
+            width: calc(var(--spacing-unit) * 25); /* 100px */
+            height: calc(var(--spacing-unit) * 25); /* 100px */
+            border-radius: calc(var(--spacing-unit) * 1);
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: calc(var(--spacing-unit) * 2);
+            font-size: calc(var(--spacing-unit) * 3); /* 12px */
+            font-weight: 500;
+            color: var(--text-light);
+            box-shadow: 0 calc(var(--spacing-unit) * 1) calc(var(--spacing-unit) * 2) rgba(0, 0, 0, 0.1);
+        }
+        .color-swatch.light-text { color: var(--text-dark); }
+
+        .color-swatch span {
+            display: block;
+            font-size: calc(var(--spacing-unit) * 2.5); /* 10px */
+            opacity: 0.8;
+        }
+
+        .bg-primary { background-color: var(--primary); }
+        .bg-secondary { background-color: var(--secondary); }
+        .bg-text-dark { background-color: var(--text-dark); }
+        .bg-text-light { background-color: var(--text-light); border: 1px solid var(--neutral-300); }
+        .bg-success { background-color: var(--success); }
+        .bg-warning { background-color: var(--warning); }
+        .bg-error { background-color: var(--error); }
+        .bg-neutral-100 { background-color: var(--neutral-100); border: 1px solid var(--neutral-300); }
+        .bg-neutral-500 { background-color: var(--neutral-500); }
+        .bg-neutral-900 { background-color: var(--neutral-900); }
+
+        .button {
+            padding: calc(var(--spacing-unit) * 2) calc(var(--spacing-unit) * 4);
+            border-radius: calc(var(--spacing-unit) * 1);
+            font-size: calc(var(--spacing-unit) * 4); /* 16px */
+            cursor: pointer;
+            border: none;
+            transition: background-color 0.2s ease;
+            font-weight: 500;
+        }
+
+        .button-primary {
+            background-color: var(--primary);
+            color: var(--text-light);
+        }
+        .button-primary:hover { background-color: #345E61; } /* Slightly darker primary */
+
+        .button-secondary {
+            background-color: var(--secondary);
+            color: var(--text-dark);
+            border: 1px solid var(--neutral-400);
+        }
+        .button-secondary:hover { background-color: #E0C9A0; } /* Slightly darker secondary */
+
+        .button-outline {
+            background-color: transparent;
+            color: var(--primary);
+            border: 1px solid var(--primary);
+        }
+        .button-outline:hover { background-color: rgba(60, 110, 113, 0.1); }
+
+        .button-ghost {
+            background-color: transparent;
+            color: var(--text-dark);
+        }
+        .button-ghost:hover { background-color: var(--neutral-200); }
+
+        .button-destructive {
+            background-color: var(--error);
+            color: var(--text-light);
+        }
+        .button-destructive:hover { background-color: #B02A37; }
+
+        .button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .input-group {
+            margin-bottom: calc(var(--spacing-unit) * 4);
+        }
+
+        label {
+            display: block;
+            margin-bottom: calc(var(--spacing-unit) * 1);
+            font-size: calc(var(--spacing-unit) * 3.5); /* 14px */
+            color: var(--neutral-700);
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="password"],
+        textarea {
+            width: 100%;
+            padding: calc(var(--spacing-unit) * 2.5) calc(var(--spacing-unit) * 3);
+            border: 1px solid var(--neutral-400);
+            border-radius: calc(var(--spacing-unit) * 1);
+            font-family: 'Inter', sans-serif;
+            font-size: calc(var(--spacing-unit) * 4);
+            color: var(--text-dark);
+            background-color: var(--text-light);
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+            box-sizing: border-box; /* Ensure padding doesn't increase width */
+        }
+
+        input[type="text"]:focus,
+        input[type="email"]:focus,
+        input[type="password"]:focus,
+        textarea:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 calc(var(--spacing-unit) * 0.5) rgba(60, 110, 113, 0.25);
+        }
+
+        .input-error {
+            border-color: var(--error);
+        }
+        .input-error:focus {
+            box-shadow: 0 0 0 calc(var(--spacing-unit) * 0.5) rgba(220, 53, 69, 0.25);
+        }
+        .error-message {
+            color: var(--error);
+            font-size: calc(var(--spacing-unit) * 3);
+            margin-top: calc(var(--spacing-unit) * 1);
+        }
+
+        .card {
+            background-color: var(--text-light);
+            border-radius: calc(var(--spacing-unit) * 2);
+            box-shadow: 0 calc(var(--spacing-unit) * 1) calc(var(--spacing-unit) * 3) rgba(0, 0, 0, 0.08);
+            padding: calc(var(--spacing-unit) * 6);
+            margin-bottom: calc(var(--spacing-unit) * 8);
+            border: 1px solid var(--neutral-200);
+        }
+
+        .card-header {
+            font-size: calc(var(--spacing-unit) * 5);
+            font-weight: 700;
+            margin-bottom: calc(var(--spacing-unit) * 4);
+            color: var(--primary);
+        }
+
+        .alert {
+            padding: calc(var(--spacing-unit) * 4);
+            border-radius: calc(var(--spacing-unit) * 1);
+            margin-bottom: calc(var(--spacing-unit) * 4);
+            font-size: calc(var(--spacing-unit) * 3.5);
+            display: flex;
+            align-items: center;
+            gap: calc(var(--spacing-unit) * 2);
+        }
+        .alert-success { background-color: rgba(40, 167, 69, 0.1); color: var(--success); border: 1px solid var(--success); }
+        .alert-warning { background-color: rgba(255, 193, 7, 0.1); color: var(--warning); border: 1px solid var(--warning); }
+        .alert-error { background-color: rgba(220, 53, 69, 0.1); color: var(--error); border: 1px solid var(--error); }
+        .alert-info { background-color: rgba(60, 110, 113, 0.1); color: var(--primary); border: 1px solid var(--primary); }
+
+        .alert-icon {
+            font-size: calc(var(--spacing-unit) * 5);
+            line-height: 1;
+        }
+
+        .flex-row {
+            display: flex;
+            gap: calc(var(--spacing-unit) * 4);
+            margin-top: calc(var(--spacing-unit) * 4);
+            flex-wrap: wrap;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>ibe160 Visual Theme Showcase</h1>
+        <p>This document visualizes the chosen color palette, typography, and component styling for the ibe160 application, based on your "minimal academic" brand guidelines and the `shadcn/ui` approach.</p>
+
+        <div class="section">
+            <h2>Color Palette</h2>
+            <p>The core colors and their semantic usage.</p>
+            <div class="color-palette">
+                <div class="color-swatch bg-primary">Primary<br><span>#3C6E71</span></div>
+                <div class="color-swatch bg-secondary light-text">Secondary<br><span>#F5DEB3</span></div>
+                <div class="color-swatch bg-text-dark">Text Dark<br><span>#212529</span></div>
+                <div class="color-swatch bg-text-light light-text">Text Light<br><span>#FFFFFF</span></div>
+                <div class="color-swatch bg-success">Success<br><span>#28A745</span></div>
+                <div class="color-swatch bg-warning">Warning<br><span>#FFC107</span></div>
+                <div class="color-swatch bg-error">Error<br><span>#DC3545</span></div>
+                <div class="color-swatch bg-neutral-100 light-text">Neutral 100<br><span>#F8F9FA</span></div>
+                <div class="color-swatch bg-neutral-500">Neutral 500<br><span>#ADB5BD</span></div>
+                <div class="color-swatch bg-neutral-900">Neutral 900<br><span>#212529</span></div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>Typography</h2>
+            <p>Using 'Inter' for a clean, academic, and readable aesthetic.</p>
+            <h1>Heading 1 - The quick brown fox jumps over the lazy dog</h1>
+            <h2>Heading 2 - The quick brown fox jumps over the lazy dog</h2>
+            <h3>Heading 3 - The quick brown fox jumps over the lazy dog</h3>
+            <h4>Heading 4 - The quick brown fox jumps over the lazy dog</h4>
+            <p>This is a paragraph of body text. It uses the Inter font family with a regular weight. The line height is optimized for readability. The quick brown fox jumps over the lazy dog. This text should feel efficient and productive to read.</p>
+            <p style="font-weight: 500;">This is a paragraph with medium font weight.</p>
+            <p style="font-weight: 700;">This is a paragraph with bold font weight.</p>
+            <small>This is smaller text, often used for captions or secondary information.</small>
+        </div>
+
+        <div class="section">
+            <h2>Buttons</h2>
+            <p>Examples of primary, secondary, outline, ghost, and destructive buttons.</p>
+            <div class="flex-row">
+                <button class="button button-primary">Primary Button</button>
+                <button class="button button-secondary">Secondary Button</button>
+                <button class="button button-outline">Outline Button</button>
+                <button class="button button-ghost">Ghost Button</button>
+                <button class="button button-destructive">Destructive Button</button>
+            </div>
+            <div class="flex-row">
+                <button class="button button-primary" disabled>Primary Disabled</button>
+                <button class="button button-secondary" disabled>Secondary Disabled</button>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>Form Elements</h2>
+            <p>Standard input fields and their states.</p>
+            <div class="input-group">
+                <label for="text-input">Text Input</label>
+                <input type="text" id="text-input" placeholder="Enter your name">
+            </div>
+            <div class="input-group">
+                <label for="email-input">Email Input</label>
+                <input type="email" id="email-input" placeholder="Enter your email">
+            </div>
+            <div class="input-group">
+                <label for="password-input">Password</label>
+                <input type="password" id="password-input" placeholder="Enter your password">
+            </div>
+            <div class="input-group">
+                <label for="error-input">Input with Error</label>
+                <input type="text" id="error-input" class="input-error" value="Invalid entry">
+                <div class="error-message">This field has an error.</div>
+            </div>
+            <div class="input-group">
+                <label for="textarea-input">Textarea</label>
+                <textarea id="textarea-input" rows="4" placeholder="Enter your notes here..."></textarea>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>Cards</h2>
+            <p>A typical card component for displaying grouped information.</p>
+            <div class="card">
+                <div class="card-header">Course Overview</div>
+                <p>This card displays a summary of your course. You can click here to view more details or manage lectures.</p>
+                <div class="flex-row" style="margin-top: calc(var(--spacing-unit) * 6);">
+                    <button class="button button-primary">View Course</button>
+                    <button class="button button-ghost">Edit</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>Alerts & Feedback</h2>
+            <p>Different types of alerts for user feedback.</p>
+            <div class="alert alert-success">
+                <span class="alert-icon">✔</span>
+                <span>Your notes have been saved successfully!</span>
+            </div>
+            <div class="alert alert-info">
+                <span class="alert-icon">ℹ</span>
+                <span>You have 3 new quizzes available.</span>
+            </div>
+            <div class="alert alert-warning">
+                <span class="alert-icon">⚠</span>
+                <span>Your session is about to expire.</span>
+            </div>
+            <div class="alert alert-error">
+                <span class="alert-icon">✖</span>
+                <span>Failed to generate quiz. Please try again.</span>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
