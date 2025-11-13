@@ -13,6 +13,9 @@ export const Toolbar = ({ editor }: Props) => {
   const [isHighlightPopoverOpen, setIsHighlightPopoverOpen] = useState(false);
 
   const setLink = useCallback(() => {
+    if (!editor) {
+      return;
+    }
     const previousUrl = editor.getAttributes('link').href;
     const url = window.prompt('URL', previousUrl);
 

@@ -1,8 +1,23 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap');
 @import "tailwindcss";
 
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --primary: #3C6E71;
+  --secondary: #F5DEB3;
+  --text-dark: #212529;
+  --text-light: #FFFFFF;
+  --neutral-100: #F8F9FA;
+  --neutral-200: #E9ECEF;
+  --neutral-300: #DEE2E6;
+  --neutral-600: #6c757d;
+  --neutral-900: #212529;
+  --spacing-unit: 4px;
+
+  /* Adaptive text colors */
+  --text-on-primary: var(--text-light);
+  --text-on-secondary: var(--text-dark);
 }
 
 @theme inline {
@@ -16,11 +31,120 @@
   :root {
     --background: #0a0a0a;
     --foreground: #ededed;
+    --text-on-primary: var(--text-dark); /* On dark primary, text should be dark */
+    --text-on-secondary: var(--text-light); /* On dark secondary, text should be light */
+  }
+
+  body {
+    color: var(--text-light);
+  }
+
+  .mockup-header {
+    background-color: var(--primary);
+  }
+  .mockup-logo {
+    color: var(--text-on-primary);
+  }
+  .mockup-user-profile span {
+    color: var(--text-on-primary);
+  }
+  .mockup-user-avatar {
+    background-color: var(--secondary);
+    color: var(--text-on-secondary);
+  }
+  .mockup-button-primary {
+    color: var(--text-on-primary);
+  }
+  .course-info h2 {
+    color: var(--primary);
   }
 }
 
 body {
   background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  color: var(--text-dark);
+  font-family: 'Inter', sans-serif;
+  margin: 0;
+  background-color: var(--neutral-100);
+}
+
+.mockup-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: calc(var(--spacing-unit) * 4) calc(var(--spacing-unit) * 8);
+    background-color: var(--primary);
+    border-bottom: 1px solid var(--neutral-200);
+}
+.mockup-logo {
+    font-weight: 700;
+    font-size: 24px;
+    color: var(--text-light);
+}
+.mockup-user-profile {
+    display: flex;
+    align-items: center;
+    gap: calc(var(--spacing-unit) * 2);
+}
+.mockup-user-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: var(--secondary);
+    display: flex;
+align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    color: var(--text-on-secondary);
+}
+.mockup-user-profile span {
+    color: var(--text-light);
+}
+.mockup-button {
+    padding: calc(var(--spacing-unit) * 2) calc(var(--spacing-unit) * 4);
+    border-radius: calc(var(--spacing-unit) * 1);
+    font-size: 14px;
+    cursor: pointer;
+    border: none;
+    transition: background-color 0.2s ease;
+    font-weight: 500;
+}
+.mockup-button-primary {
+    background-color: var(--primary);
+    color: var(--text-light);
+}
+.mockup-button-primary:hover { background-color: #345E61; }
+
+.mockup-main {
+    max-width: 900px;
+    margin: calc(var(--spacing-unit) * 8) auto;
+    padding: 0 calc(var(--spacing-unit) * 8);
+}
+.mockup-page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: calc(var(--spacing-unit) * 8);
+}
+.mockup-main h1 { font-size: 32px; margin: 0; }
+.course-list-item {
+    background-color: var(--text-light);
+    border: 1px solid var(--neutral-200);
+    border-radius: calc(var(--spacing-unit) * 2);
+    padding: calc(var(--spacing-unit) * 6);
+    margin-bottom: calc(var(--spacing-unit) * 4);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: box-shadow 0.2s ease;
+}
+.course-list-item:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+.course-info h2 { font-size: 20px; margin: 0 0 4px 0; color: var(--primary); }
+.course-info p { margin: 0; color: var(--text-dark); font-size: 14px; }
+.mockup-button-outline {
+    background-color: transparent;
+    border: 1px solid var(--neutral-300);
+    color: var(--text-dark);
 }

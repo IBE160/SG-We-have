@@ -3,9 +3,13 @@ import { NodeViewWrapper, NodeViewContent } from '@tiptap/react';
 import { Node } from '@tiptap/pm/model';
 import './editor.css';
 
+interface AnswerBlockAttributes {
+  visible: boolean;
+}
+
 interface AnswerBlockComponentProps {
   node: Node;
-  updateAttributes: (attrs: Record<string, any>) => void;
+  updateAttributes: (attrs: AnswerBlockAttributes) => void;
 }
 
 const AnswerBlockComponent: React.FC<AnswerBlockComponentProps> = ({ node, updateAttributes }) => {

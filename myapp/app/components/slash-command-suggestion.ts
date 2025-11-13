@@ -1,8 +1,12 @@
 import { ReactRenderer } from "@tiptap/react";
-import { Suggestion, SuggestionOptions } from "@tiptap/suggestion";
-import tippy from "tippy.js";
-import { slashCommandItems } from "./slash-command-items.tsx";
-import { SlashCommandsList } from "./SlashCommandsList";
+import { SuggestionOptions } from "@tiptap/suggestion";
+import tippy, { Instance } from "tippy.js";
+import { slashCommandItems } from "./slash-command-items";
+import { SlashCommandsList, SlashCommandsListProps } from "./SlashCommandsList";
+
+interface SlashCommandsListRef {
+  onKeyDown: (event: React.KeyboardEvent) => boolean;
+}
 
 const suggestion: Omit<SuggestionOptions, "editor"> = {
   items: ({ query }) => {
@@ -12,8 +16,8 @@ const suggestion: Omit<SuggestionOptions, "editor"> = {
   },
 
   render: () => {
-    let component: ReactRenderer;
-    let popup: any;
+    let component: ReactRenderer<SlashCommandsListRef, SlashCommandsListProps>;
+    let popup: Instance;
 
     return {
       onStart: (props) => {
@@ -23,34 +27,35 @@ const suggestion: Omit<SuggestionOptions, "editor"> = {
         });
 
         popup = tippy("body", {
-          getReferenceClientRect: props.clientRect,
+          getReferenceClientRect: () => props.clientRect?.() || new DOMRect(),
           appendTo: () => document.body,
           content: component.element,
           showOnCreate: true,
           interactive: true,
           trigger: "manual",
           placement: "bottom-start",
-        });
+        })[0];
+
       },
 
       onUpdate(props) {
         component.updateProps(props);
 
-        popup[0].setProps({
-          getReferenceClientRect: props.clientRect,
+        (popup as Instance).setProps({
+          getReferenceClientRect: () => props.clientRect?.() || new DOMRect(),
         });
       },
 
       onKeyDown(props) {
         if (props.event.key === "Escape") {
-          popup[0].hide();
+          (popup as Instance).hide();
           return true;
         }
-        return component.ref?.onKeyDown(props);
+        return component.ref?.onKeyDown(props.event as any) || false;
       },
 
       onExit() {
-        popup[0].destroy();
+        (popup as Instance).destroy();
         component.destroy();
       },
     };

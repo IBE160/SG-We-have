@@ -4,6 +4,11 @@ import suggestion from "./slash-command-suggestion";
 
 export const SlashCommand = Paragraph.extend({
   addProseMirrorPlugins() {
-    return [Suggestion(suggestion)];
+    return [
+      Suggestion({
+        editor: this.editor,
+        ...suggestion,
+      }),
+    ];
   },
 });

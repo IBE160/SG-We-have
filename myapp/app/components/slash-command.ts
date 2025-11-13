@@ -2,6 +2,10 @@ import { ReactRenderer, Editor } from '@tiptap/react';
 import tippy, { Instance } from 'tippy.js';
 import CommandList, { CommandListRef } from './CommandList';
 
+interface CommandFunction {
+  (props: { editor: Editor; range: { from: number; to: number } }): void;
+}
+
 const commandSuggestion = {
   items: ({ query }: { query: string }) => {
     return [
@@ -79,7 +83,7 @@ const commandSuggestion = {
     let popup: Instance[];
 
     return {
-      onStart: (props: { editor: Editor; clientRect: () => ClientRect | DOMRect; command: Function }) => {
+      onStart: (props: { editor: Editor; clientRect: () => ClientRect | DOMRect; command: CommandFunction }) => {
         component = new ReactRenderer(CommandList, {
           props,
           editor: props.editor,
@@ -100,7 +104,7 @@ const commandSuggestion = {
         });
       },
 
-      onUpdate(props: { editor: Editor; clientRect: () => ClientRect | DOMRect; command: Function }) {
+      onUpdate(props: { editor: Editor; clientRect: () => ClientRect | DOMRect; command: CommandFunction }) {
         component.updateProps(props);
 
         if (!props.clientRect) {

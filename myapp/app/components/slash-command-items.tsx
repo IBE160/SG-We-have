@@ -7,7 +7,6 @@ import {
   MessageSquareQuote,
   Text,
   CheckSquare,
-  Code,
   HelpCircle,
   MessageSquare,
 } from "lucide-react";

@@ -38,7 +38,9 @@ const CommandList = forwardRef<CommandListRef, CommandListProps>((props, ref) =>
     selectItem(selectedIndex);
   };
 
-  useEffect(() => setSelectedIndex(0), [props.items]);
+  useEffect(() => {
+    setTimeout(() => setSelectedIndex(0), 0);
+  }, [props.items]);
 
   useImperativeHandle(ref, () => ({
     onKeyDown: ({ event }: { event: KeyboardEvent }) => {

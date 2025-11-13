@@ -4,17 +4,31 @@ import React, {
   forwardRef,
   useImperativeHandle,
 } from "react";
+import { Editor } from "@tiptap/react";
 
-interface SlashCommandsListProps {
+interface CommandRange {
+  from: number;
+  to: number;
+}
+
+export interface SlashCommandsListProps {
   items: {
     title: string;
     icon: React.ReactNode;
-    command: (props: { editor: any; range: any }) => void;
+    command: (props: { editor: Editor; range: CommandRange }) => void;
   }[];
-  command: (item: any) => void;
+  command: (item: {
+    title: string;
+    icon: React.ReactNode;
+    command: (props: { editor: Editor; range: CommandRange }) => void;
+  }) => void;
 }
 
-export const SlashCommandsList = forwardRef((props: SlashCommandsListProps, ref) => {
+export interface SlashCommandsListRef {
+  onKeyDown: (event: React.KeyboardEvent) => boolean;
+}
+
+export const SlashCommandsList = forwardRef((props: SlashCommandsListProps, ref: React.Ref<SlashCommandsListRef>) => {
   const [selectedIndex, setSelectedIndex] = useState(0);
 
   const selectItem = (index: number) => {
@@ -38,10 +52,12 @@ export const SlashCommandsList = forwardRef((props: SlashCommandsListProps, ref)
     selectItem(selectedIndex);
   };
 
-  useEffect(() => setSelectedIndex(0), [props.items]);
+  useEffect(() => {
+    setTimeout(() => setSelectedIndex(0), 0);
+  }, [props.items]);
 
   useImperativeHandle(ref, () => ({
-    onKeyDown: ({ event }: { event: React.KeyboardEvent }) => {
+    onKeyDown: (event: React.KeyboardEvent) => {
       if (event.key === "ArrowUp") {
         upHandler();
         return true;

@@ -1,12 +1,35 @@
-import DynamicTiptap from "./components/DynamicTiptap";
+import Link from 'next/link';
+import { courses } from '../lib/courses';
 
 export default function Home() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-start p-24 bg-gray-100">
-      <div className="w-full max-w-4xl bg-white rounded-lg shadow-md p-8">
-        <h1 className="text-3xl font-bold mb-6 text-gray-800">Tiptap Editor</h1>
-        <DynamicTiptap />
-      </div>
-    </main>
+    <div className="mockup-body">
+      <header className="mockup-header">
+        <div className="mockup-logo">ibe160</div>
+        <div className="mockup-user-profile">
+          <span>Focused Fiona</span>
+          <div className="mockup-user-avatar">FF</div>
+        </div>
+      </header>
+      <main className="mockup-main">
+        <div className="mockup-page-header">
+          <h1>My Courses</h1>
+          <button className="mockup-button mockup-button-primary">+ New Course</button>
+        </div>
+        <div className="course-list">
+          {courses.map((course) => (
+            <div className="course-list-item" key={course.id}>
+              <div className="course-info">
+                <h2>{course.title}</h2>
+                <p>{course.lectures} Lectures • Last updated: {course.lastUpdated}</p>
+              </div>
+              <Link href={`/course/${course.id}`}>
+                <button className="mockup-button mockup-button-outline">View Course</button>
+              </Link>
+            </div>
+          ))}
+        </div>
+      </main>
+    </div>
   );
 }
