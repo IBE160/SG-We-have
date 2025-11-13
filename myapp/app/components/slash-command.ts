@@ -1,73 +1,73 @@
-import { ReactRenderer } from '@tiptap/react';
-import tippy from 'tippy.js';
-import CommandList from './CommandList';
+import { ReactRenderer, Editor } from '@tiptap/react';
+import tippy, { Instance } from 'tippy.js';
+import CommandList, { CommandListRef } from './CommandList';
 
 const commandSuggestion = {
-  items: ({ query }) => {
+  items: ({ query }: { query: string }) => {
     return [
       {
         title: 'Heading 1',
-        command: ({ editor, range }) => {
+        command: ({ editor, range }: { editor: Editor; range: { from: number; to: number } }) => {
           editor.chain().focus().deleteRange(range).setNode('heading', { level: 1 }).run();
         },
       },
       {
         title: 'Bullet List',
-        command: ({ editor, range }) => {
+        command: ({ editor, range }: { editor: Editor; range: { from: number; to: number } }) => {
           editor.chain().focus().deleteRange(range).toggleBulletList().run();
         },
       },
       {
         title: 'Ordered List',
-        command: ({ editor, range }) => {
+        command: ({ editor, range }: { editor: Editor; range: { from: number; to: number } }) => {
           editor.chain().focus().deleteRange(range).toggleOrderedList().run();
         },
       },
       {
         title: 'Blockquote',
-        command: ({ editor, range }) => {
+        command: ({ editor, range }: { editor: Editor; range: { from: number; to: number } }) => {
           editor.chain().focus().deleteRange(range).toggleBlockquote().run();
         },
       },
       {
         title: 'Code Block',
-        command: ({ editor, range }) => {
+        command: ({ editor, range }: { editor: Editor; range: { from: number; to: number } }) => {
           editor.chain().focus().deleteRange(range).toggleCodeBlock().run();
         },
       },
       {
         title: 'Callout',
-        command: ({ editor, range }) => {
+        command: ({ editor, range }: { editor: Editor; range: { from: number; to: number } }) => {
           editor.chain().focus().deleteRange(range).setNode('calloutBlock').run();
         },
       },
       {
         title: 'Checklist',
-        command: ({ editor, range }) => {
+        command: ({ editor, range }: { editor: Editor; range: { from: number; to: number } }) => {
           editor.chain().focus().deleteRange(range).toggleTaskList().run();
         },
       },
       {
         title: 'Table',
-        command: ({ editor, range }) => {
+        command: ({ editor, range }: { editor: Editor; range: { from: number; to: number } }) => {
           editor.chain().focus().deleteRange(range).insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run();
         },
       },
       {
         title: 'Divider',
-        command: ({ editor, range }) => {
+        command: ({ editor, range }: { editor: Editor; range: { from: number; to: number } }) => {
           editor.chain().focus().deleteRange(range).setHorizontalRule().run();
         },
       },
       {
         title: 'Question',
-        command: ({ editor, range }) => {
+        command: ({ editor, range }: { editor: Editor; range: { from: number; to: number } }) => {
           editor.chain().focus().deleteRange(range).setNode('questionBlock').run();
         },
       },
       {
         title: 'Answer',
-        command: ({ editor, range }) => {
+        command: ({ editor, range }: { editor: Editor; range: { from: number; to: number } }) => {
           editor.chain().focus().deleteRange(range).setNode('answerBlock').run();
         },
       },
@@ -75,11 +75,11 @@ const commandSuggestion = {
   },
 
   render: () => {
-    let component;
-    let popup;
+    let component: ReactRenderer<CommandListRef>;
+    let popup: Instance[];
 
     return {
-      onStart: props => {
+      onStart: (props: { editor: Editor; clientRect: () => ClientRect | DOMRect; command: Function }) => {
         component = new ReactRenderer(CommandList, {
           props,
           editor: props.editor,
@@ -100,7 +100,7 @@ const commandSuggestion = {
         });
       },
 
-      onUpdate(props) {
+      onUpdate(props: { editor: Editor; clientRect: () => ClientRect | DOMRect; command: Function }) {
         component.updateProps(props);
 
         if (!props.clientRect) {
@@ -112,7 +112,7 @@ const commandSuggestion = {
         });
       },
 
-      onKeyDown(props) {
+      onKeyDown(props: { event: KeyboardEvent }) {
         if (props.event.key === 'Escape') {
           popup[0].hide();
           return true;

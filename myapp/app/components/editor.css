@@ -1,13 +1,12 @@
 /* Basic styles for the Tiptap editor */
 .tiptap {
   padding: 1rem;
-  border: 1px solid #ccc;
-  border-radius: 0.5rem;
   min-height: 200px;
+  color: #000000; /* Ensure text is black */
 }
 
 .tiptap:focus {
-  outline: 2px solid #3C6E71;
+  outline: none;
 }
 
 .tiptap > p:first-child {
@@ -65,7 +64,7 @@
 }
 
 .item.is-selected {
-  background: #3C6E71;
+  background: #0056b3;
   color: #fff;
 }
 
@@ -73,8 +72,8 @@
 .question-block {
   display: flex;
   align-items: flex-start;
-  background-color: rgba(60, 110, 113, 0.1);
-  border-left: 4px solid #3C6E71;
+  background-color: rgba(0, 86, 179, 0.1);
+  border-left: 4px solid #0056b3;
   padding: 0.5rem;
   margin: 1rem 0;
   border-radius: 0.25rem;
@@ -93,32 +92,10 @@
 
 /* Styles for the Cloze Mark */
 span[data-type="cloze"] {
-  background-color: rgba(255, 193, 7, 0.2);
-  border-bottom: 2px solid #FFC107;
+  background-color: rgba(212, 160, 23, 0.1);
+  border-bottom: 2px solid #D4A017;
   padding: 0.1rem 0.2rem;
   border-radius: 0.2rem;
-}
-
-/* Styles for Drag and Drop */
-.tiptap .draggable-item {
-  position: relative;
-}
-
-.tiptap .drag-handle {
-  position: absolute;
-  left: -1.5rem;
-  top: 0.2rem;
-  cursor: grab;
-  opacity: 0;
-  transition: opacity 0.2s;
-}
-
-.tiptap .draggable-item:hover .drag-handle {
-  opacity: 0.5;
-}
-
-.tiptap .ProseMirror-gapcursor {
-  border-top: 2px solid #3C6E71;
 }
 
 /* Styles for the Answer Block */
@@ -155,8 +132,8 @@ span[data-type="cloze"] {
 .callout-block {
   display: flex;
   align-items: flex-start;
-  background-color: rgba(255, 193, 7, 0.1); /* Light warning color */
-  border-left: 4px solid #FFC107; /* Warning color */
+  background-color: rgba(212, 160, 23, 0.1); /* Light warning color */
+  border-left: 4px solid #D4A017; /* Warning color */
   padding: 0.5rem;
   margin: 1rem 0;
   border-radius: 0.25rem;

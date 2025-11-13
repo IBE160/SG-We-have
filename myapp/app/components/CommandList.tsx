@@ -1,10 +1,24 @@
 import React, { useState, useEffect, forwardRef, useImperativeHandle } from 'react';
 import './editor.css'; // We'll add styles here later
 
-const CommandList = forwardRef((props, ref) => {
+interface CommandListItem {
+  title: string;
+  // Add other properties if they exist in your items
+}
+
+interface CommandListProps {
+  items: CommandListItem[];
+  command: (item: CommandListItem) => void;
+}
+
+export interface CommandListRef {
+  onKeyDown: (props: { event: KeyboardEvent }) => boolean;
+}
+
+const CommandList = forwardRef<CommandListRef, CommandListProps>((props, ref) => {
   const [selectedIndex, setSelectedIndex] = useState(0);
 
-  const selectItem = index => {
+  const selectItem = (index: number) => {
     const item = props.items[index];
 
     if (item) {
@@ -27,7 +41,7 @@ const CommandList = forwardRef((props, ref) => {
   useEffect(() => setSelectedIndex(0), [props.items]);
 
   useImperativeHandle(ref, () => ({
-    onKeyDown: ({ event }) => {
+    onKeyDown: ({ event }: { event: KeyboardEvent }) => {
       if (event.key === 'ArrowUp') {
         upHandler();
         return true;

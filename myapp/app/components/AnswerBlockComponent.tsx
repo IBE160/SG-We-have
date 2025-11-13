@@ -1,8 +1,14 @@
 import React from 'react';
 import { NodeViewWrapper, NodeViewContent } from '@tiptap/react';
+import { Node } from '@tiptap/pm/model';
 import './editor.css';
 
-const AnswerBlockComponent = ({ node, updateAttributes }) => {
+interface AnswerBlockComponentProps {
+  node: Node;
+  updateAttributes: (attrs: Record<string, any>) => void;
+}
+
+const AnswerBlockComponent: React.FC<AnswerBlockComponentProps> = ({ node, updateAttributes }) => {
   const isVisible = node.attrs.visible;
 
   const toggleVisibility = () => {
