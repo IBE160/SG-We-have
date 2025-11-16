@@ -15,6 +15,11 @@ export default function Home() {
         <div className="mockup-page-header">
           <h1>My Courses</h1>
           <button className="mockup-button mockup-button-primary">+ New Course</button>
+          {courses.length > 0 && (
+            <Link href="/quiz">
+              <button className="mockup-button mockup-button-secondary ml-2">Go to Quizzes</button>
+            </Link>
+          )}
         </div>
         <div className="course-list">
           {courses.map((course) => (

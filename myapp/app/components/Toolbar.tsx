@@ -5,11 +5,12 @@ import { useState, useCallback } from "react";
 
 type Props = {
   editor: Editor | null;
+  onSave?: () => void;
 };
 
 const HIGHLIGHT_COLORS = ['#FFFF00', '#ADFF2F', '#ADD8E6']; // Yellow, GreenYellow, LightBlue
 
-export const Toolbar = ({ editor }: Props) => {
+export const Toolbar = ({ editor, onSave }: Props) => {
   const [isHighlightPopoverOpen, setIsHighlightPopoverOpen] = useState(false);
 
   const setLink = useCallback(() => {
@@ -57,6 +58,15 @@ export const Toolbar = ({ editor }: Props) => {
         >
           <span>↪️</span>
         </button>
+        {onSave && (
+          <button
+            onClick={onSave}
+            className="p-2 rounded-md hover:bg-gray-200"
+            title="Save Note"
+          >
+            <span>💾</span>
+          </button>
+        )}
         <div className="w-px h-6 bg-gray-300" />
         <button
           onClick={() => editor.chain().focus().toggleBold().run()}
@@ -246,6 +256,28 @@ export const Toolbar = ({ editor }: Props) => {
           title="Delete Table"
         >
           <span>❌T</span>
+        </button>
+        <div className="w-px h-6 bg-gray-300" />
+        <button
+          onClick={() => editor.chain().focus().insertContent('<question-block></question-block>').run()}
+          className="p-2 rounded-md hover:bg-gray-200"
+          title="Add Question"
+        >
+          <span>❓</span>
+        </button>
+        <button
+          onClick={() => editor.chain().focus().insertContent('<answer-block></answer-block>').run()}
+          className="p-2 rounded-md hover:bg-gray-200"
+          title="Add Answer"
+        >
+          <span>💡</span>
+        </button>
+        <button
+          onClick={() => editor.chain().focus().toggleCloze().run()}
+          className={`p-2 rounded-md ${editor.isActive("cloze") ? "bg-gray-300" : "hover:bg-gray-200"}`}
+          title="Toggle Cloze"
+        >
+          <span>C</span>
         </button>
       </div>
     </div>

@@ -51,7 +51,7 @@ const suggestion: Omit<SuggestionOptions, "editor"> = {
           (popup as Instance).hide();
           return true;
         }
-        return component.ref?.onKeyDown(props.event as any) || false;
+        return component.ref?.onKeyDown(props.event) || false;
       },
 
       onExit() {

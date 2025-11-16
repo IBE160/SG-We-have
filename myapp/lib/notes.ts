@@ -5,7 +5,7 @@ export type Note = {
   content: string;
 };
 
-export const notes: Note[] = [
+export let notes: Note[] = [
   {
     id: "distributed-systems-note-1",
     courseId: "distributed-systems",

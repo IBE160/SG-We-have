@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Tiptap from "./Editor"; // Import the component directly
 
-export default function DynamicTiptap() {
+export default function DynamicTiptap({ courseId }: { courseId: string }) {
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
@@ -12,7 +12,7 @@ export default function DynamicTiptap() {
 
   return (
     <>
-      {isClient ? <Tiptap /> : <p>Loading editor...</p>}
+      {isClient ? <Tiptap courseId={courseId} /> : <p>Loading editor...</p>}
     </>
   );
 }

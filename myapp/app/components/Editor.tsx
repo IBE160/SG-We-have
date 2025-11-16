@@ -7,6 +7,10 @@ import Cloze from './ClozeMark';
 import AnswerBlock from './AnswerBlock';
 import { Toolbar } from "./Toolbar";
 import { SlashCommand } from "./slash-command-extension";
+import { useSearchParams } from 'next/navigation';
+import { notes } from '@/lib/notes'; // Import notes directly
+import { useEffect } from "react";
+
 
 // Import individual extensions
 import TaskList from '@tiptap/extension-task-list';
@@ -27,13 +31,21 @@ import Strike from '@tiptap/extension-strike';
 
 import "./editor.css";
 
-const Tiptap = () => {
+type TiptapProps = {
+  courseId: string;
+};
+
+const Tiptap = ({ courseId }: TiptapProps) => {
+  const searchParams = useSearchParams();
+  const noteId = searchParams.get('noteId');
+
   const editor = useEditor({
     immediatelyRender: false,
     extensions: [
       StarterKit.configure({
         strike: false, // Keep this false as Strike is added separately
         paragraph: false, // Disable default paragraph to use custom one
+        link: false, // Disable default link to use custom one
       }),
       SlashCommand, // Use custom slash command extension
       QuestionBlock,
@@ -81,9 +93,47 @@ const Tiptap = () => {
     },
   });
 
+  useEffect(() => {
+    if (editor && noteId) {
+      const existingNote = notes.find(note => note.id === noteId);
+      if (existingNote) {
+        editor.commands.setContent(existingNote.content);
+      }
+    }
+  }, [editor, noteId]);
+
+  const saveNote = async () => {
+    if (!editor) {
+      return;
+    }
+
+    const title = editor.getText().split('\n')[0] || 'New Note'; // Get first line as title
+    const content = editor.getHTML();
+    
+    if (noteId) {
+      // Update existing note
+      const noteIndex = notes.findIndex(note => note.id === noteId);
+      if (noteIndex > -1) {
+        notes[noteIndex] = { ...notes[noteIndex], title, content };
+      }
+      alert('Note updated successfully!');
+    } else {
+      // Create new note
+      const id = `${courseId}-${Date.now()}`; // Simple unique ID
+      const newNote = {
+        id,
+        courseId,
+        title,
+        content,
+      };
+      notes.push(newNote);
+      alert('Note saved successfully!');
+    }
+  };
+
   return (
     <div className="border border-gray-300 rounded-md">
-      <Toolbar editor={editor} />
+      <Toolbar editor={editor} onSave={saveNote} />
       <EditorContent editor={editor} />
     </div>
   );
