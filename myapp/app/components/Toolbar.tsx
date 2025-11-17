@@ -2,6 +2,7 @@
 
 import { type Editor } from "@tiptap/react";
 import { useState, useCallback } from "react";
+import { LinkEditPopover } from "./LinkEditPopover"; // Import the new component
 
 type Props = {
   editor: Editor | null;
@@ -12,27 +13,13 @@ const HIGHLIGHT_COLORS = ['#FFFF00', '#ADFF2F', '#ADD8E6']; // Yellow, GreenYell
 
 export const Toolbar = ({ editor, onSave }: Props) => {
   const [isHighlightPopoverOpen, setIsHighlightPopoverOpen] = useState(false);
+  const [isLinkPopoverOpen, setIsLinkPopoverOpen] = useState(false); // State for link popover
 
   const setLink = useCallback(() => {
     if (!editor) {
       return;
     }
-    const previousUrl = editor.getAttributes('link').href;
-    const url = window.prompt('URL', previousUrl);
-
-    // cancelled
-    if (url === null) {
-      return;
-    }
-
-    // empty
-    if (url === '') {
-      editor.chain().focus().extendMarkRange('link').unsetLink().run();
-      return;
-    }
-
-    // update link
-    editor.chain().focus().extendMarkRange('link').setLink({ href: url }).run();
+    setIsLinkPopoverOpen(true); // Open the link popover
   }, [editor]);
 
   if (!editor) {
@@ -178,13 +165,18 @@ export const Toolbar = ({ editor, onSave }: Props) => {
             </div>
           )}
         </div>
-        <button
-          onClick={setLink}
-          className={`p-2 rounded-md ${editor.isActive('link') ? 'bg-gray-300' : 'hover:bg-gray-200'}`}
-          title="Add Link"
-        >
-          <span>🔗</span>
-        </button>
+        <div className="relative">
+          <button
+            onClick={setLink}
+            className={`p-2 rounded-md ${editor.isActive('link') ? 'bg-gray-300' : 'hover:bg-gray-200'}`}
+            title="Add Link"
+          >
+            <span>🔗</span>
+          </button>
+          {isLinkPopoverOpen && (
+            <LinkEditPopover editor={editor} onClose={() => setIsLinkPopoverOpen(false)} />
+          )}
+        </div>
         <button
           onClick={() => editor.chain().focus().unsetLink().run()}
           disabled={!editor.isActive('link')}
@@ -192,70 +184,6 @@ export const Toolbar = ({ editor, onSave }: Props) => {
           title="Remove Link"
         >
           <span>🚫</span>
-        </button>
-        <div className="w-px h-6 bg-gray-300" />
-        <button
-          onClick={() => editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run()}
-          className="p-2 rounded-md hover:bg-gray-200"
-          title="Insert Table"
-        >
-          <span>🗄️</span>
-        </button>
-        <button
-          onClick={() => editor.chain().focus().addColumnBefore().run()}
-          disabled={!editor.can().addColumnBefore()}
-          className="p-2 rounded-md hover:bg-gray-200 disabled:opacity-50"
-          title="Add Column Before"
-        >
-          <span>⬅️</span>
-        </button>
-        <button
-          onClick={() => editor.chain().focus().addColumnAfter().run()}
-          disabled={!editor.can().addColumnAfter()}
-          className="p-2 rounded-md hover:bg-gray-200 disabled:opacity-50"
-          title="Add Column After"
-        >
-          <span>➡️</span>
-        </button>
-        <button
-          onClick={() => editor.chain().focus().addRowBefore().run()}
-          disabled={!editor.can().addRowBefore()}
-          className="p-2 rounded-md hover:bg-gray-200 disabled:opacity-50"
-          title="Add Row Before"
-        >
-          <span>⬆️</span>
-        </button>
-        <button
-          onClick={() => editor.chain().focus().addRowAfter().run()}
-          disabled={!editor.can().addRowAfter()}
-          className="p-2 rounded-md hover:bg-gray-200 disabled:opacity-50"
-          title="Add Row After"
-        >
-          <span>⬇️</span>
-        </button>
-        <button
-          onClick={() => editor.chain().focus().deleteColumn().run()}
-          disabled={!editor.can().deleteColumn()}
-          className="p-2 rounded-md hover:bg-gray-200 disabled:opacity-50"
-          title="Delete Column"
-        >
-          <span>❌C</span>
-        </button>
-        <button
-          onClick={() => editor.chain().focus().deleteRow().run()}
-          disabled={!editor.can().deleteRow()}
-          className="p-2 rounded-md hover:bg-gray-200 disabled:opacity-50"
-          title="Delete Row"
-        >
-          <span>❌R</span>
-        </button>
-        <button
-          onClick={() => editor.chain().focus().deleteTable().run()}
-          disabled={!editor.can().deleteTable()}
-          className="p-2 rounded-md hover:bg-gray-200 disabled:opacity-50"
-          title="Delete Table"
-        >
-          <span>❌T</span>
         </button>
         <div className="w-px h-6 bg-gray-300" />
         <button

@@ -5,7 +5,7 @@ import { slashCommandItems } from "./slash-command-items";
 import { SlashCommandsList, SlashCommandsListProps } from "./SlashCommandsList";
 
 interface SlashCommandsListRef {
-  onKeyDown: (event: React.KeyboardEvent) => boolean;
+  onKeyDown: (event: KeyboardEvent) => boolean;
 }
 
 const suggestion: Omit<SuggestionOptions, "editor"> = {

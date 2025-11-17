@@ -25,7 +25,7 @@ export interface SlashCommandsListProps {
 }
 
 export interface SlashCommandsListRef {
-  onKeyDown: (event: React.KeyboardEvent) => boolean;
+  onKeyDown: (event: KeyboardEvent) => boolean;
 }
 
 export const SlashCommandsList = forwardRef((props: SlashCommandsListProps, ref: React.Ref<SlashCommandsListRef>) => {
@@ -57,7 +57,7 @@ export const SlashCommandsList = forwardRef((props: SlashCommandsListProps, ref:
   }, [props.items]);
 
   useImperativeHandle(ref, () => ({
-    onKeyDown: (event: React.KeyboardEvent) => {
+    onKeyDown: (event: KeyboardEvent) => {
       if (event.key === "ArrowUp") {
         upHandler();
         return true;

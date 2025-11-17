@@ -7,9 +7,9 @@ import Cloze from './ClozeMark';
 import AnswerBlock from './AnswerBlock';
 import { Toolbar } from "./Toolbar";
 import { SlashCommand } from "./slash-command-extension";
-import { useSearchParams } from 'next/navigation';
-import { notes } from '@/lib/notes'; // Import notes directly
 import { useEffect } from "react";
+import { Note } from '@/lib/types';
+import { BubbleMenu as BubbleMenuExtension } from '@tiptap/extension-bubble-menu'; // Import the BubbleMenu extension
 
 
 // Import individual extensions
@@ -18,7 +18,7 @@ import TaskItem from '@tiptap/extension-task-item';
 import { Table } from '@tiptap/extension-table';
 import TableRow from '@tiptap/extension-table-row';
 import TableHeader from '@tiptap/extension-table-header';
-import TableCell from '@tiptap/extension-table-cell';
+import TableCell from '@tiptap/extension-table-cell'; // Corrected import for TableCell
 import { TextStyle } from '@tiptap/extension-text-style';
 import { Color } from '@tiptap/extension-color';
 import Highlight from '@tiptap/extension-highlight';
@@ -33,12 +33,10 @@ import "./editor.css";
 
 type TiptapProps = {
   courseId: string;
+  noteId?: string;
 };
 
-const Tiptap = ({ courseId }: TiptapProps) => {
-  const searchParams = useSearchParams();
-  const noteId = searchParams.get('noteId');
-
+const Tiptap = ({ courseId, noteId }: TiptapProps) => {
   const editor = useEditor({
     immediatelyRender: false,
     extensions: [
@@ -68,9 +66,10 @@ const Tiptap = ({ courseId }: TiptapProps) => {
       Link.configure({
         openOnClick: false,
       }),
-      Superscript,
-      Subscript,
+      Superscript.configure(),
+      Subscript.configure(),
       Strike,
+      BubbleMenuExtension, // Add the BubbleMenu extension
     ],
     content: `
       <h2>
@@ -95,10 +94,14 @@ const Tiptap = ({ courseId }: TiptapProps) => {
 
   useEffect(() => {
     if (editor && noteId) {
-      const existingNote = notes.find(note => note.id === noteId);
-      if (existingNote) {
-        editor.commands.setContent(existingNote.content);
-      }
+      const fetchNote = async () => {
+        const res = await fetch(`/api/notes/${noteId}`);
+        const data: Note = await res.json();
+        if (data) {
+          editor.commands.setContent(data.content);
+        }
+      };
+      fetchNote();
     }
   }, [editor, noteId]);
 
@@ -112,28 +115,39 @@ const Tiptap = ({ courseId }: TiptapProps) => {
     
     if (noteId) {
       // Update existing note
-      const noteIndex = notes.findIndex(note => note.id === noteId);
-      if (noteIndex > -1) {
-        notes[noteIndex] = { ...notes[noteIndex], title, content };
+      const res = await fetch(`/api/notes/${noteId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ title, content }),
+      });
+      if (res.ok) {
+        console.log('Note updated successfully!');
+      } else {
+        console.error('Error updating note!');
       }
-      alert('Note updated successfully!');
     } else {
       // Create new note
-      const id = `${courseId}-${Date.now()}`; // Simple unique ID
-      const newNote = {
-        id,
-        courseId,
-        title,
-        content,
-      };
-      notes.push(newNote);
-      alert('Note saved successfully!');
+      const res = await fetch('/api/notes', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ title, content, courseId }),
+      });
+      if (res.ok) {
+        console.log('Note saved successfully!');
+      } else {
+        console.error('Error saving note!');
+      }
     }
   };
 
   return (
     <div className="border border-gray-300 rounded-md">
       <Toolbar editor={editor} onSave={saveNote} />
+
       <EditorContent editor={editor} />
     </div>
   );

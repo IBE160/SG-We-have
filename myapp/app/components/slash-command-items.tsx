@@ -89,4 +89,11 @@ export const slashCommandItems: Command[] = [
       editor.chain().focus().deleteRange(range).setNode("answerBlock").run();
     },
   },
+  {
+    title: "Cloze",
+    icon: <CheckSquare size={18} />, // Using CheckSquare as a placeholder icon
+    command: ({ editor, range }) => {
+      editor.chain().focus().deleteRange(range).toggleCloze().run();
+    },
+  },
 ];
