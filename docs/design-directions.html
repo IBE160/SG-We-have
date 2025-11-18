@@ -1,277 +1,111 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Design Direction Showcase - ibe160</title>
+    <title>Design Direction Showcase - StudyTool</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+    <script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              primary: "#D0BB95",
+              "background-light": "#f7f7f6",
+              "background-dark": "#1d1a15",
+              "accent-blue": "#007AFF",
+              "accent-green": "#30D158",
+              "accent-purple": "#AF52DE",
+              "text-primary": "#1D1D1F",
+              "text-secondary": "#6E6E73",
+              "border-light": "#E5E5EA"
+            },
+            fontFamily: {
+              display: ["Inter", "sans-serif"]
+            },
+            borderRadius: {
+              DEFAULT: "0.25rem",
+              lg: "0.5rem",
+              xl: "0.75rem",
+              full: "9999px"
+            },
+            boxShadow: {
+              soft: "0 4px 12px 0 rgba(0, 0, 0, 0.05)",
+              "soft-hover": "0 8px 20px 0 rgba(0, 0, 0, 0.07)"
+            }
+          }
+        }
+      };
+    </script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap');
-
-        :root {
-            --primary: #3C6E71;
-            --secondary: #F5DEB3;
-            --text-dark: #212529;
-            --text-light: #FFFFFF;
-            --neutral-100: #F8F9FA;
-            --neutral-200: #E9ECEF;
-            --neutral-300: #DEE2E6;
-            --neutral-900: #212529;
-            --spacing-unit: 4px;
-        }
-
         body {
-            font-family: 'Inter', sans-serif;
-            margin: 0;
-            background-color: var(--neutral-200);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
-
-        .showcase-nav {
-            background-color: var(--neutral-900);
-            padding: calc(var(--spacing-unit) * 4);
-            display: flex;
-            justify-content: center;
-            gap: calc(var(--spacing-unit) * 4);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-        }
-
-        .showcase-nav button {
-            font-family: 'Inter', sans-serif;
-            background-color: var(--neutral-600);
-            color: var(--text-light);
-            border: none;
-            padding: calc(var(--spacing-unit) * 2) calc(var(--spacing-unit) * 4);
-            border-radius: calc(var(--spacing-unit) * 1);
-            cursor: pointer;
-            font-size: 14px;
-            transition: background-color 0.2s ease;
-        }
-
-        .showcase-nav button:hover {
-            background-color: var(--neutral-500);
-        }
-        
+        .direction-container { display: none; }
+        .direction-container.active { display: block; }
         .showcase-nav button.active {
-            background-color: var(--primary);
-            font-weight: 700;
+            background-color: #D0BB95; /* primary */
+            color: white;
         }
-
-        .direction-container {
-            display: none;
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
         }
-
-        .direction-container.active {
-            display: block;
-        }
-
-        .mockup-body {
-            background-color: var(--neutral-100);
-            color: var(--text-dark);
-            line-height: 1.6;
-            min-height: 100vh;
-        }
-
-        /* Common Styles */
-        .mockup-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: calc(var(--spacing-unit) * 4) calc(var(--spacing-unit) * 8);
-            background-color: var(--text-light);
-            border-bottom: 1px solid var(--neutral-200);
-        }
-        .mockup-logo {
-            font-weight: 700;
-            font-size: 24px;
-            color: var(--primary);
-        }
-        .mockup-user-profile {
-            display: flex;
-            align-items: center;
-            gap: calc(var(--spacing-unit) * 2);
-        }
-        .mockup-user-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background-color: var(--secondary);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 700;
-            color: var(--text-dark);
-        }
-        .mockup-button {
-            padding: calc(var(--spacing-unit) * 2) calc(var(--spacing-unit) * 4);
-            border-radius: calc(var(--spacing-unit) * 1);
-            font-size: 14px;
-            cursor: pointer;
-            border: none;
-            transition: background-color 0.2s ease;
-            font-weight: 500;
-        }
-        .mockup-button-primary {
-            background-color: var(--primary);
-            color: var(--text-light);
-        }
-        .mockup-button-primary:hover { background-color: #345E61; }
-
-        /* --- Direction 1: Minimalist Focus --- */
-        #direction-1 .mockup-main {
-            max-width: 900px;
-            margin: calc(var(--spacing-unit) * 8) auto;
-            padding: 0 calc(var(--spacing-unit) * 8);
-        }
-        #direction-1 .mockup-page-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: calc(var(--spacing-unit) * 8);
-        }
-        #direction-1 h1 { font-size: 32px; margin: 0; }
-        #direction-1 .course-list-item {
-            background-color: var(--text-light);
-            border: 1px solid var(--neutral-200);
-            border-radius: calc(var(--spacing-unit) * 2);
-            padding: calc(var(--spacing-unit) * 6);
-            margin-bottom: calc(var(--spacing-unit) * 4);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            transition: box-shadow 0.2s ease;
-        }
-        #direction-1 .course-list-item:hover {
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-        }
-        #direction-1 .course-info h2 { font-size: 20px; margin: 0 0 4px 0; color: var(--primary); }
-        #direction-1 .course-info p { margin: 0; color: var(--neutral-600); font-size: 14px; }
-
-        /* --- Direction 2: Academic Dashboard --- */
-        #direction-2 .mockup-body {
-            display: flex;
-        }
-        #direction-2 .mockup-sidebar {
-            width: 260px;
-            background-color: var(--text-light);
-            border-right: 1px solid var(--neutral-200);
-            padding: calc(var(--spacing-unit) * 6);
-            display: flex;
-            flex-direction: column;
-        }
-        #direction-2 .mockup-sidebar h2 { font-size: 16px; color: var(--neutral-500); text-transform: uppercase; letter-spacing: 1px; margin-top: 0; }
-        #direction-2 .mockup-sidebar nav a {
-            display: block;
-            color: var(--text-dark);
-            text-decoration: none;
-            padding: calc(var(--spacing-unit) * 2.5) calc(var(--spacing-unit) * 4);
-            border-radius: calc(var(--spacing-unit) * 1);
-            margin-bottom: calc(var(--spacing-unit) * 1);
-            font-weight: 500;
-        }
-        #direction-2 .mockup-sidebar nav a:hover { background-color: var(--neutral-100); }
-        #direction-2 .mockup-sidebar nav a.active { background-color: var(--secondary); color: var(--text-dark); }
-        #direction-2 .mockup-main-content {
-            flex: 1;
-            padding: calc(var(--spacing-unit) * 8);
-        }
-        #direction-2 .mockup-page-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: calc(var(--spacing-unit) * 8);
-        }
-        #direction-2 h1 { font-size: 32px; margin: 0; }
-        #direction-2 .course-table { width: 100%; border-collapse: collapse; }
-        #direction-2 .course-table th, #direction-2 .course-table td {
-            padding: calc(var(--spacing-unit) * 4);
-            text-align: left;
-            border-bottom: 1px solid var(--neutral-200);
-        }
-        #direction-2 .course-table th { font-size: 14px; color: var(--neutral-600); }
-        #direction-2 .course-table td h3 { font-size: 18px; margin: 0; color: var(--primary); }
-
-        /* --- Direction 3: Visual Grid --- */
-        #direction-3 .mockup-main {
-            max-width: 1400px;
-            margin: calc(var(--spacing-unit) * 8) auto;
-            padding: 0 calc(var(--spacing-unit) * 8);
-        }
-        #direction-3 .mockup-page-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: calc(var(--spacing-unit) * 8);
-        }
-        #direction-3 h1 { font-size: 32px; margin: 0; }
-        #direction-3 .course-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: calc(var(--spacing-unit) * 6);
-        }
-        #direction-3 .course-card {
-            background-color: var(--text-light);
-            border: 1px solid var(--neutral-200);
-            border-radius: calc(var(--spacing-unit) * 2);
-            padding: calc(var(--spacing-unit) * 6);
-            transition: box-shadow 0.2s ease, transform 0.2s ease;
-            display: flex;
-            flex-direction: column;
-        }
-        #direction-3 .course-card:hover {
-            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-            transform: translateY(-4px);
-        }
-        #direction-3 .course-card h2 { font-size: 20px; margin: 0 0 4px 0; color: var(--primary); }
-        #direction-3 .course-card p { margin: 0 0 16px 0; color: var(--neutral-600); font-size: 14px; flex-grow: 1; }
-
     </style>
 </head>
-<body>
+<body class="bg-background-dark font-display">
 
-    <div class="showcase-nav">
-        <button onclick="showDirection('direction-1')" class="active">Direction 1: Minimalist Focus</button>
-        <button onclick="showDirection('direction-2')">Direction 2: Academic Dashboard</button>
-        <button onclick="showDirection('direction-3')">Direction 3: Visual Grid</button>
+    <div class="showcase-nav sticky top-0 z-50 flex justify-center gap-4 p-4 bg-background-dark shadow-lg">
+        <button onclick="showDirection('direction-1')" class="active px-4 py-2 rounded-lg font-semibold text-white/70 hover:bg-white/10 transition-colors">Direction 1: Minimalist Focus</button>
+        <button onclick="showDirection('direction-2')" class="px-4 py-2 rounded-lg font-semibold text-white/70 hover:bg-white/10 transition-colors">Direction 2: Academic Dashboard</button>
+        <button onclick="showDirection('direction-3')" class="px-4 py-2 rounded-lg font-semibold text-white/70 hover:bg-white/10 transition-colors">Direction 3: Visual Grid</button>
     </div>
 
     <!-- Direction 1: Minimalist Focus -->
     <div id="direction-1" class="direction-container active">
-        <div class="mockup-body">
-            <header class="mockup-header">
-                <div class="mockup-logo">ibe160</div>
-                <div class="mockup-user-profile">
-                    <span>Focused Fiona</span>
-                    <div class="mockup-user-avatar">FF</div>
+        <div class="bg-background-light text-text-primary min-h-screen">
+            <header class="flex items-center justify-between px-10 py-4 border-b border-border-light bg-white/80 backdrop-blur-sm sticky top-0">
+                <div class="flex items-center gap-3">
+                    <div class="flex items-center justify-center rounded-lg bg-accent-blue size-10"><span class="material-symbols-outlined text-white" style="font-size: 24px;">school</span></div>
+                    <h2 class="text-text-primary text-xl font-bold">StudyTool</h2>
+                </div>
+                <div class="flex items-center gap-4">
+                    <span class="text-sm font-semibold">Alex Johnson</span>
+                    <div class="size-10 rounded-full bg-cover" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuC7qwWHeQRYf37PkmlYyuasfDpzJL2OxB_5MIFxwAUlDhpP_ZniaOUPCsmsOXI_YtRjOlicz27Q9ko87mNt_QJnQEMuqmBj3yC9J65UHlTcoWpnwpsgUwiqrPRV6ykB8PCUfXoNGJb5whgJGjNqDktoK2d22eQNOFkTzMcHOVNYwt13rkCtjvcG-putMwAj4KOlcvbkVkllruK5dZPDGh08YKv1liIUjFR0hCs9TG5dTU3Fw3LmyO7UekpDvE3i991jy2G0u7r3L9Rs');"></div>
                 </div>
             </header>
-            <main class="mockup-main">
-                <div class="mockup-page-header">
-                    <h1>My Courses</h1>
-                    <button class="mockup-button mockup-button-primary">+ New Course</button>
+            <main class="max-w-4xl mx-auto p-10">
+                <div class="flex justify-between items-center mb-8">
+                    <h1 class="text-4xl font-black tracking-tight">My Courses</h1>
+                    <button class="px-5 py-2.5 rounded-lg bg-primary text-white font-semibold transition hover:opacity-90 flex items-center gap-2">
+                        <span class="material-symbols-outlined" style="font-size: 20px;">add_circle</span>
+                        New Course
+                    </button>
                 </div>
-                <div class="course-list">
-                    <div class="course-list-item">
-                        <div class="course-info">
-                            <h2>Distributed Systems</h2>
-                            <p>12 Lectures • Last updated: 2 days ago</p>
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between p-6 bg-white rounded-xl border border-border-light shadow-soft hover:shadow-soft-hover transition-shadow cursor-pointer">
+                        <div>
+                            <h2 class="text-xl font-bold text-text-primary">Distributed Systems</h2>
+                            <p class="text-sm text-text-secondary">12 Lectures • Last updated: 2 days ago</p>
                         </div>
-                        <button class="mockup-button mockup-button-outline">View Course</button>
+                        <button class="px-5 py-2 rounded-lg bg-white border border-border-light text-text-primary font-semibold transition hover:bg-gray-50">View Course</button>
                     </div>
-                    <div class="course-list-item">
-                        <div class="course-info">
-                            <h2>Advanced Algorithms</h2>
-                            <p>8 Lectures • Last updated: 5 days ago</p>
+                    <div class="flex items-center justify-between p-6 bg-white rounded-xl border border-border-light shadow-soft hover:shadow-soft-hover transition-shadow cursor-pointer">
+                        <div>
+                            <h2 class="text-xl font-bold text-text-primary">Advanced Algorithms</h2>
+                            <p class="text-sm text-text-secondary">8 Lectures • Last updated: 5 days ago</p>
                         </div>
-                        <button class="mockup-button mockup-button-outline">View Course</button>
+                        <button class="px-5 py-2 rounded-lg bg-white border border-border-light text-text-primary font-semibold transition hover:bg-gray-50">View Course</button>
                     </div>
-                    <div class="course-list-item">
-                        <div class="course-info">
-                            <h2>Machine Learning</h2>
-                            <p>15 Lectures • Last updated: yesterday</p>
+                    <div class="flex items-center justify-between p-6 bg-white rounded-xl border border-border-light shadow-soft hover:shadow-soft-hover transition-shadow cursor-pointer">
+                        <div>
+                            <h2 class="text-xl font-bold text-text-primary">Machine Learning</h2>
+                            <p class="text-sm text-text-secondary">15 Lectures • Last updated: yesterday</p>
                         </div>
-                        <button class="mockup-button mockup-button-outline">View Course</button>
+                        <button class="px-5 py-2 rounded-lg bg-white border border-border-light text-text-primary font-semibold transition hover:bg-gray-50">View Course</button>
                     </div>
                 </div>
             </main>
@@ -280,99 +114,121 @@
 
     <!-- Direction 2: Academic Dashboard -->
     <div id="direction-2" class="direction-container">
-        <div class="mockup-body">
-            <aside class="mockup-sidebar">
-                <div class="mockup-logo" style="margin-bottom: 32px;">ibe160</div>
-                <nav>
-                    <h2>Menu</h2>
-                    <a href="#" class="active">My Courses</a>
-                    <a href="#">Recent Quizzes</a>
-                    <a href="#">Settings</a>
-                </nav>
-                <div style="margin-top: auto;">
-                    <button class="mockup-button mockup-button-primary" style="width: 100%;">+ New Course</button>
+        <div class="relative flex h-auto min-h-screen w-full flex-row">
+            <aside class="flex h-screen w-64 flex-col border-r border-border-light bg-white p-4 sticky top-0">
+                <div class="flex h-full flex-col justify-between">
+                    <div class="flex flex-col gap-8">
+                        <div class="flex items-center gap-3 px-3">
+                            <div class="flex items-center justify-center rounded-lg bg-accent-blue size-10"><span class="material-symbols-outlined text-white" style="font-size: 24px;">school</span></div>
+                            <h1 class="text-text-primary text-xl font-bold">StudyTool</h1>
+                        </div>
+                        <nav class="flex flex-col gap-2">
+                            <a class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-text-secondary transition-colors hover:bg-background-light hover:text-text-primary" href="#"><span class="material-symbols-outlined" style="font-size: 24px;">add_circle</span><p class="text-sm font-medium">New Course</p></a>
+                            <a class="flex items-center gap-3 rounded-lg bg-background-light px-3 py-2.5 text-text-primary transition-colors" href="#"><span class="material-symbols-outlined" style="font-size: 24px; font-variation-settings: 'FILL' 1;">collections_bookmark</span><p class="text-sm font-medium">My Courses</p></a>
+                            <a class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-text-secondary transition-colors hover:bg-background-light hover:text-text-primary" href="#"><span class="material-symbols-outlined" style="font-size: 24px;">quiz</span><p class="text-sm font-medium">New Quiz</p></a>
+                        </nav>
+                    </div>
+                    <div class="flex flex-col gap-2">
+                        <div class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-text-secondary transition-colors hover:bg-background-light hover:text-text-primary cursor-pointer"><span class="material-symbols-outlined" style="font-size: 24px;">settings</span><p class="text-sm font-medium">Settings</p></div>
+                        <div class="flex items-center gap-4 rounded-lg p-2">
+                            <div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuC7qwWHeQRYf37PkmlYyuasfDpzJL2OxB_5MIFxwAUlDhpP_ZniaOUPCsmsOXI_YtRjOlicz27Q9ko87mNt_QJnQEMuqmBj3yC9J65UHlTcoWpnwpsgUwiqrPRV6ykB8PCUfXoNGJb5whgJGjNqDktoK2d22eQNOFkTzMcHOVNYwt13rkCtjvcG-putMwAj4KOlcvbkVkllruK5dZPDGh08YKv1liIUjFR0hCs9TG5dTU3Fw3LmyO7UekpDvE3i991jy2G0u7r3L9Rs");'></div>
+                            <div class="flex flex-col"><p class="text-text-primary text-sm font-semibold leading-normal">Alex Johnson</p><p class="text-text-secondary text-xs font-normal leading-normal">alex.j@email.com</p></div>
+                            <span class="material-symbols-outlined text-text-secondary ml-auto" style="font-size: 20px;">logout</span>
+                        </div>
+                    </div>
                 </div>
             </aside>
-            <div style="width: 100%;">
-                <header class="mockup-header" style="background-color: var(--neutral-100);">
-                    <div style="visibility: hidden;" class="mockup-logo">ibe160</div> <!-- Placeholder for alignment -->
-                    <div class="mockup-user-profile">
-                        <span>Focused Fiona</span>
-                        <div class="mockup-user-avatar">FF</div>
+            <main class="flex-1 p-10 bg-background-light">
+                <div class="mx-auto max-w-5xl">
+                    <div class="flex flex-wrap justify-between gap-3 pb-8">
+                        <div class="flex min-w-72 flex-col gap-2">
+                            <h1 class="text-text-primary text-4xl font-black leading-tight tracking-[-0.033em]">My Courses</h1>
+                            <p class="text-text-secondary text-lg font-normal leading-normal">An overview of your current subjects.</p>
+                        </div>
                     </div>
-                </header>
-                <main class="mockup-main-content">
-                    <div class="mockup-page-header">
-                        <h1>My Courses</h1>
+                    <div class="bg-white rounded-xl border border-border-light shadow-soft overflow-hidden">
+                        <table class="w-full text-left">
+                            <thead class="border-b border-border-light">
+                                <tr>
+                                    <th class="p-4 px-6 text-sm font-semibold text-text-secondary">Course Title</th>
+                                    <th class="p-4 px-6 text-sm font-semibold text-text-secondary">Lectures</th>
+                                    <th class="p-4 px-6 text-sm font-semibold text-text-secondary">Last Updated</th>
+                                    <th class="p-4 px-6 text-sm font-semibold text-text-secondary">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="border-b border-border-light">
+                                    <td class="p-4 px-6 font-bold text-text-primary">Distributed Systems</td>
+                                    <td class="p-4 px-6 text-text-secondary">12</td>
+                                    <td class="p-4 px-6 text-text-secondary">2 days ago</td>
+                                    <td class="p-4 px-6"><button class="px-4 py-1.5 rounded-lg bg-white border border-border-light text-text-primary font-semibold text-sm transition hover:bg-gray-50">View</button></td>
+                                </tr>
+                                <tr class="border-b border-border-light">
+                                    <td class="p-4 px-6 font-bold text-text-primary">Advanced Algorithms</td>
+                                    <td class="p-4 px-6 text-text-secondary">8</td>
+                                    <td class="p-4 px-6 text-text-secondary">5 days ago</td>
+                                    <td class="p-4 px-6"><button class="px-4 py-1.5 rounded-lg bg-white border border-border-light text-text-primary font-semibold text-sm transition hover:bg-gray-50">View</button></td>
+                                </tr>
+                                <tr>
+                                    <td class="p-4 px-6 font-bold text-text-primary">Machine Learning</td>
+                                    <td class="p-4 px-6 text-text-secondary">15</td>
+                                    <td class="p-4 px-6 text-text-secondary">yesterday</td>
+                                    <td class="p-4 px-6"><button class="px-4 py-1.5 rounded-lg bg-white border border-border-light text-text-primary font-semibold text-sm transition hover:bg-gray-50">View</button></td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
-                    <table class="course-table">
-                        <thead>
-                            <tr>
-                                <th>Course Title</th>
-                                <th>Lectures</th>
-                                <th>Last Updated</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td><h3>Distributed Systems</h3></td>
-                                <td>12</td>
-                                <td>2 days ago</td>
-                                <td><button class="mockup-button mockup-button-outline">View</button></td>
-                            </tr>
-                            <tr>
-                                <td><h3>Advanced Algorithms</h3></td>
-                                <td>8</td>
-                                <td>5 days ago</td>
-                                <td><button class="mockup-button mockup-button-outline">View</button></td>
-                            </tr>
-                            <tr>
-                                <td><h3>Machine Learning</h3></td>
-                                <td>15</td>
-                                <td>yesterday</td>
-                                <td><button class="mockup-button mockup-button-outline">View</button></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </main>
-            </div>
+                </div>
+            </main>
         </div>
     </div>
 
     <!-- Direction 3: Visual Grid -->
     <div id="direction-3" class="direction-container">
-        <div class="mockup-body">
-            <header class="mockup-header">
-                <div class="mockup-logo">ibe160</div>
-                <div class="mockup-user-profile">
-                    <span>Focused Fiona</span>
-                    <div class="mockup-user-avatar">FF</div>
+        <div class="bg-background-light text-text-primary min-h-screen">
+            <header class="flex items-center justify-between px-10 py-4 border-b border-border-light bg-white/80 backdrop-blur-sm sticky top-0">
+                <div class="flex items-center gap-3">
+                    <div class="flex items-center justify-center rounded-lg bg-accent-blue size-10"><span class="material-symbols-outlined text-white" style="font-size: 24px;">school</span></div>
+                    <h2 class="text-text-primary text-xl font-bold">StudyTool</h2>
+                </div>
+                <div class="flex items-center gap-4">
+                    <span class="text-sm font-semibold">Alex Johnson</span>
+                    <div class="size-10 rounded-full bg-cover" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuC7qwWHeQRYf37PkmlYyuasfDpzJL2OxB_5MIFxwAUlDhpP_ZniaOUPCsmsOXI_YtRjOlicz27Q9ko87mNt_QJnQEMuqmBj3yC9J65UHlTcoWpnwpsgUwiqrPRV6ykB8PCUfXoNGJb5whgJGjNqDktoK2d22eQNOFkTzMcHOVNYwt13rkCtjvcG-putMwAj4KOlcvbkVkllruK5dZPDGh08YKv1liIUjFR0hCs9TG5dTU3Fw3LmyO7UekpDvE3i991jy2G0u7r3L9Rs');"></div>
                 </div>
             </header>
-            <main class="mockup-main">
-                <div class="mockup-page-header">
-                    <h1>My Courses</h1>
-                    <button class="mockup-button mockup-button-primary">+ New Course</button>
+            <main class="max-w-6xl mx-auto p-10">
+                <div class="flex justify-between items-center mb-8">
+                    <h1 class="text-4xl font-black tracking-tight">My Courses</h1>
+                    <button class="px-5 py-2.5 rounded-lg bg-primary text-white font-semibold transition hover:opacity-90 flex items-center gap-2">
+                        <span class="material-symbols-outlined" style="font-size: 20px;">add_circle</span>
+                        New Course
+                    </button>
                 </div>
-                <div class="course-grid">
-                    <div class="course-card">
-                        <h2>Distributed Systems</h2>
-                        <p>12 Lectures • Last updated: 2 days ago</p>
-                        <button class="mockup-button mockup-button-primary" style="width: 100%;">View Course</button>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <div class="flex flex-col justify-between gap-6 rounded-xl border border-border-light bg-white p-6 shadow-soft transition-shadow hover:shadow-soft-hover">
+                        <div class="flex flex-col gap-2">
+                            <h2 class="text-xl font-bold text-text-primary">Distributed Systems</h2>
+                            <p class="text-sm text-text-secondary">12 Lectures • Last updated: 2 days ago</p>
+                        </div>
+                        <button class="w-full py-2.5 rounded-lg bg-primary text-white font-semibold transition-opacity hover:opacity-90">View Course</button>
                     </div>
-                    <div class="course-card">
-                        <h2>Advanced Algorithms</h2>
-                        <p>8 Lectures • Last updated: 5 days ago</p>
-                        <button class="mockup-button mockup-button-primary" style="width: 100%;">View Course</button>
+                    <div class="flex flex-col justify-between gap-6 rounded-xl border border-border-light bg-white p-6 shadow-soft transition-shadow hover:shadow-soft-hover">
+                        <div class="flex flex-col gap-2">
+                            <h2 class="text-xl font-bold text-text-primary">Advanced Algorithms</h2>
+                            <p class="text-sm text-text-secondary">8 Lectures • Last updated: 5 days ago</p>
+                        </div>
+                        <button class="w-full py-2.5 rounded-lg bg-primary text-white font-semibold transition-opacity hover:opacity-90">View Course</button>
                     </div>
-                    <div class="course-card">
-                        <h2>Machine Learning</h2>
-                        <p>15 Lectures • Last updated: yesterday</p>
-                        <button class="mockup-button mockup-button-primary" style="width: 100%;">View Course</button>
+                    <div class="flex flex-col justify-between gap-6 rounded-xl border border-border-light bg-white p-6 shadow-soft transition-shadow hover:shadow-soft-hover">
+                        <div class="flex flex-col gap-2">
+                            <h2 class="text-xl font-bold text-text-primary">Machine Learning</h2>
+                            <p class="text-sm text-text-secondary">15 Lectures • Last updated: yesterday</p>
+                        </div>
+                        <button class="w-full py-2.5 rounded-lg bg-primary text-white font-semibold transition-opacity hover:opacity-90">View Course</button>
                     </div>
-                    <div class="course-card" style="justify-content: center; align-items: center; border-style: dashed; background-color: var(--neutral-100);">
-                        <button class="mockup-button mockup-button-ghost" style="font-size: 18px;">+ Add New Course</button>
+                    <div class="flex flex-col items-center justify-center gap-4 rounded-xl border-2 border-dashed border-border-light bg-white/50 p-6 transition hover:bg-background-light cursor-pointer">
+                         <span class="material-symbols-outlined text-text-secondary" style="font-size: 36px;">add_circle</span>
+                         <span class="font-semibold text-text-primary">Add New Course</span>
                     </div>
                 </div>
             </main>

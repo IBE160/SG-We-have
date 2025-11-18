@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Note Taking App</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+<script>tailwind.config = {darkMode: "class", theme: {extend: {colors: {primary: "#D0BB95", "background-light": "#f7f7f6", "background-dark": "#1d1a15", "primary-text": "#222222", "secondary-text": "#8A8A8E", "border-color": "#EAEAEA", success: "#34C759"}, fontFamily: {display: "Inter"}, borderRadius: {DEFAULT: "0.25rem", lg: "0.5rem", xl: "0.75rem", full: "9999px"}}}};</script>
+<style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-background-light font-display">
+<div class="flex h-screen w-full text-primary-text">
+<!-- SideNavBar -->
+<aside class="flex h-full w-72 flex-col justify-between border-r border-border-color bg-background-light p-4">
+<div class="flex flex-col gap-6">
+<div class="flex items-center gap-3 px-3 py-2">
+<span class="material-symbols-outlined text-secondary-text">
+                        chevron_left
+                    </span>
+<a class="text-sm font-medium leading-normal text-primary" href="#">All Courses</a>
+</div>
+<div class="flex flex-col gap-2">
+<h2 class="px-3 text-base font-semibold text-primary-text">Introduction to Psychology</h2>
+<div class="flex items-center gap-3 px-3 py-2">
+<p class="text-sm font-medium leading-normal text-secondary-text">Lecture 1: The Human Brain</p>
+</div>
+<div class="flex items-center gap-3 rounded-lg bg-primary/10 px-3 py-2">
+<p class="text-sm font-medium leading-normal text-primary">Lecture 2: Cognitive Biases</p>
+</div>
+<div class="flex items-center gap-3 px-3 py-2">
+<p class="text-sm font-medium leading-normal text-secondary-text">Lecture 3: Social Dynamics</p>
+</div>
+</div>
+</div>
+<button class="flex min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-primary text-white text-sm font-bold leading-normal tracking-[0.015em] w-full">
+<span class="truncate">+ New Note</span>
+</button>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 overflow-y-auto">
+<div class="mx-auto flex h-full max-w-4xl flex-col px-8 py-6">
+<!-- Header Section -->
+<div class="flex items-center justify-between border-b border-border-color pb-4">
+<!-- Breadcrumbs/Meta -->
+<div>
+<input class="form-input w-full min-w-0 flex-1 resize-none overflow-hidden border-none bg-transparent p-0 text-3xl font-bold text-primary-text placeholder:text-secondary-text/50 focus:outline-0 focus:ring-0" placeholder="Lecture Title" value="Lecture 2: Cognitive Biases"/>
+<p class="mt-2 text-sm font-normal leading-normal text-secondary-text">October 26, 2023</p>
+</div>
+<!-- ToolBar -->
+<div class="flex items-center gap-2">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-sm text-success">
+                                check_circle
+                            </span>
+<span class="text-sm text-secondary-text">All changes saved</span>
+</div>
+<button class="p-2 text-secondary-text hover:text-primary-text">
+<span class="material-symbols-outlined">
+                                auto_awesome
+                            </span>
+</button>
+<button class="p-2 text-secondary-text hover:text-primary-text">
+<span class="material-symbols-outlined">
+                                check_circle
+                            </span>
+</button>
+<button class="p-2 text-secondary-text hover:text-primary-text">
+<span class="material-symbols-outlined">
+                                more_horiz
+                            </span>
+</button>
+</div>
+</div>
+<!-- Rich Text Editor -->
+<div class="relative flex-1 pt-8">
+<!-- Floating Toolbar -->
+<div class="absolute -top-2 left-1/2 -translate-x-1/2 z-10">
+<div class="flex items-center gap-1 rounded-lg border border-border-color bg-background-light p-1 shadow-sm">
+<button class="flex items-center justify-center rounded p-2 text-primary-text hover:bg-gray-100"><span class="material-symbols-outlined text-base">format_bold</span></button>
+<button class="flex items-center justify-center rounded p-2 text-primary-text hover:bg-gray-100"><span class="material-symbols-outlined text-base">format_italic</span></button>
+<button class="flex items-center justify-center rounded p-2 text-primary-text hover:bg-gray-100"><span class="material-symbols-outlined text-base">format_underlined</span></button>
+<div class="mx-1 h-4 w-px bg-border-color"></div>
+<button class="flex items-center justify-center rounded p-2 text-primary-text hover:bg-gray-100"><span class="material-symbols-outlined text-base">format_list_bulleted</span></button>
+<button class="flex items-center justify-center rounded p-2 text-primary-text hover:bg-gray-100"><span class="material-symbols-outlined text-base">format_list_numbered</span></button>
+<div class="mx-1 h-4 w-px bg-border-color"></div>
+<button class="flex items-center justify-center rounded p-2 text-primary-text hover:bg-gray-100"><span class="material-symbols-outlined text-base">title</span></button>
+</div>
+</div>
+<textarea class="h-full w-full resize-none border-none bg-transparent text-base font-normal leading-relaxed text-primary-text placeholder:text-secondary-text/50 focus:outline-none focus:ring-0">Start typing your notes here...</textarea>
+</div>
+</div>
+</main>
+</div>
+</body></html>

@@ -1,355 +1,255 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Color Theme Visualizer - ibe160</title>
+    <title>Design System - StudyTool</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+    <script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              primary: "#D0BB95",
+              "background-light": "#f7f7f6",
+              "background-dark": "#1d1a15",
+              "accent-blue": "#007AFF",
+              "accent-green": "#30D158",
+              "accent-purple": "#AF52DE",
+              "text-primary": "#1D1D1F",
+              "text-secondary": "#6E6E73",
+              "border-light": "#E5E5EA"
+            },
+            fontFamily: {
+              display: ["Inter", "sans-serif"]
+            },
+            borderRadius: {
+              DEFAULT: "0.25rem",
+              lg: "0.5rem",
+              xl: "0.75rem",
+              full: "9999px"
+            },
+            boxShadow: {
+              soft: "0 4px 12px 0 rgba(0, 0, 0, 0.05)",
+              "soft-hover": "0 8px 20px 0 rgba(0, 0, 0, 0.07)"
+            }
+          }
+        }
+      };
+    </script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap');
-
-        :root {
-            --primary: #3C6E71;
-            --secondary: #F5DEB3;
-            --text-dark: #212529;
-            --text-light: #FFFFFF;
-            --success: #28A745;
-            --warning: #FFC107;
-            --error: #DC3545;
-            --neutral-100: #F8F9FA; /* Lightest gray */
-            --neutral-200: #E9ECEF;
-            --neutral-300: #DEE2E6;
-            --neutral-400: #CED4DA;
-            --neutral-500: #ADB5BD; /* Mid gray */
-            --neutral-600: #6C757D;
-            --neutral-700: #495057;
-            --neutral-800: #343A40;
-            --neutral-900: #212529; /* Darkest gray, same as text-dark */
-
-            --spacing-unit: 4px;
-        }
-
-        body {
-            font-family: 'Inter', sans-serif;
-            line-height: 1.6;
-            color: var(--text-dark);
-            background-color: var(--neutral-100);
-            margin: 0;
-            padding: calc(var(--spacing-unit) * 8); /* 32px */
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            background-color: var(--text-light);
-            padding: calc(var(--spacing-unit) * 8);
-            border-radius: calc(var(--spacing-unit) * 2);
-            box-shadow: 0 calc(var(--spacing-unit) * 2) calc(var(--spacing-unit) * 4) rgba(0, 0, 0, 0.05);
-        }
-
-        h1, h2, h3, h4, h5, h6 {
-            color: var(--text-dark);
-            margin-top: calc(var(--spacing-unit) * 8);
-            margin-bottom: calc(var(--spacing-unit) * 4);
-            font-weight: 700;
-        }
-        h1 { font-size: calc(var(--spacing-unit) * 12); } /* 48px */
-        h2 { font-size: calc(var(--spacing-unit) * 8); }  /* 32px */
-        h3 { font-size: calc(var(--spacing-unit) * 6); }  /* 24px */
-        h4 { font-size: calc(var(--spacing-unit) * 5); }  /* 20px */
-
-        .section {
-            margin-bottom: calc(var(--spacing-unit) * 12);
-            padding-bottom: calc(var(--spacing-unit) * 8);
-            border-bottom: 1px solid var(--neutral-200);
-        }
-
-        .color-palette {
-            display: flex;
-            flex-wrap: wrap;
-            gap: calc(var(--spacing-unit) * 4);
-            margin-bottom: calc(var(--spacing-unit) * 8);
-        }
-
-        .color-swatch {
-            width: calc(var(--spacing-unit) * 25); /* 100px */
-            height: calc(var(--spacing-unit) * 25); /* 100px */
-            border-radius: calc(var(--spacing-unit) * 1);
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-end;
-            padding: calc(var(--spacing-unit) * 2);
-            font-size: calc(var(--spacing-unit) * 3); /* 12px */
-            font-weight: 500;
-            color: var(--text-light);
-            box-shadow: 0 calc(var(--spacing-unit) * 1) calc(var(--spacing-unit) * 2) rgba(0, 0, 0, 0.1);
-        }
-        .color-swatch.light-text { color: var(--text-dark); }
-
-        .color-swatch span {
-            display: block;
-            font-size: calc(var(--spacing-unit) * 2.5); /* 10px */
-            opacity: 0.8;
-        }
-
-        .bg-primary { background-color: var(--primary); }
-        .bg-secondary { background-color: var(--secondary); }
-        .bg-text-dark { background-color: var(--text-dark); }
-        .bg-text-light { background-color: var(--text-light); border: 1px solid var(--neutral-300); }
-        .bg-success { background-color: var(--success); }
-        .bg-warning { background-color: var(--warning); }
-        .bg-error { background-color: var(--error); }
-        .bg-neutral-100 { background-color: var(--neutral-100); border: 1px solid var(--neutral-300); }
-        .bg-neutral-500 { background-color: var(--neutral-500); }
-        .bg-neutral-900 { background-color: var(--neutral-900); }
-
-        .button {
-            padding: calc(var(--spacing-unit) * 2) calc(var(--spacing-unit) * 4);
-            border-radius: calc(var(--spacing-unit) * 1);
-            font-size: calc(var(--spacing-unit) * 4); /* 16px */
-            cursor: pointer;
-            border: none;
-            transition: background-color 0.2s ease;
-            font-weight: 500;
-        }
-
-        .button-primary {
-            background-color: var(--primary);
-            color: var(--text-light);
-        }
-        .button-primary:hover { background-color: #345E61; } /* Slightly darker primary */
-
-        .button-secondary {
-            background-color: var(--secondary);
-            color: var(--text-dark);
-            border: 1px solid var(--neutral-400);
-        }
-        .button-secondary:hover { background-color: #E0C9A0; } /* Slightly darker secondary */
-
-        .button-outline {
-            background-color: transparent;
-            color: var(--primary);
-            border: 1px solid var(--primary);
-        }
-        .button-outline:hover { background-color: rgba(60, 110, 113, 0.1); }
-
-        .button-ghost {
-            background-color: transparent;
-            color: var(--text-dark);
-        }
-        .button-ghost:hover { background-color: var(--neutral-200); }
-
-        .button-destructive {
-            background-color: var(--error);
-            color: var(--text-light);
-        }
-        .button-destructive:hover { background-color: #B02A37; }
-
-        .button:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-
-        .input-group {
-            margin-bottom: calc(var(--spacing-unit) * 4);
-        }
-
-        label {
-            display: block;
-            margin-bottom: calc(var(--spacing-unit) * 1);
-            font-size: calc(var(--spacing-unit) * 3.5); /* 14px */
-            color: var(--neutral-700);
-        }
-
-        input[type="text"],
-        input[type="email"],
-        input[type="password"],
-        textarea {
-            width: 100%;
-            padding: calc(var(--spacing-unit) * 2.5) calc(var(--spacing-unit) * 3);
-            border: 1px solid var(--neutral-400);
-            border-radius: calc(var(--spacing-unit) * 1);
-            font-family: 'Inter', sans-serif;
-            font-size: calc(var(--spacing-unit) * 4);
-            color: var(--text-dark);
-            background-color: var(--text-light);
-            transition: border-color 0.2s ease, box-shadow 0.2s ease;
-            box-sizing: border-box; /* Ensure padding doesn't increase width */
-        }
-
-        input[type="text"]:focus,
-        input[type="email"]:focus,
-        input[type="password"]:focus,
-        textarea:focus {
-            border-color: var(--primary);
-            outline: none;
-            box-shadow: 0 0 0 calc(var(--spacing-unit) * 0.5) rgba(60, 110, 113, 0.25);
-        }
-
-        .input-error {
-            border-color: var(--error);
-        }
-        .input-error:focus {
-            box-shadow: 0 0 0 calc(var(--spacing-unit) * 0.5) rgba(220, 53, 69, 0.25);
-        }
-        .error-message {
-            color: var(--error);
-            font-size: calc(var(--spacing-unit) * 3);
-            margin-top: calc(var(--spacing-unit) * 1);
-        }
-
-        .card {
-            background-color: var(--text-light);
-            border-radius: calc(var(--spacing-unit) * 2);
-            box-shadow: 0 calc(var(--spacing-unit) * 1) calc(var(--spacing-unit) * 3) rgba(0, 0, 0, 0.08);
-            padding: calc(var(--spacing-unit) * 6);
-            margin-bottom: calc(var(--spacing-unit) * 8);
-            border: 1px solid var(--neutral-200);
-        }
-
-        .card-header {
-            font-size: calc(var(--spacing-unit) * 5);
-            font-weight: 700;
-            margin-bottom: calc(var(--spacing-unit) * 4);
-            color: var(--primary);
-        }
-
-        .alert {
-            padding: calc(var(--spacing-unit) * 4);
-            border-radius: calc(var(--spacing-unit) * 1);
-            margin-bottom: calc(var(--spacing-unit) * 4);
-            font-size: calc(var(--spacing-unit) * 3.5);
-            display: flex;
-            align-items: center;
-            gap: calc(var(--spacing-unit) * 2);
-        }
-        .alert-success { background-color: rgba(40, 167, 69, 0.1); color: var(--success); border: 1px solid var(--success); }
-        .alert-warning { background-color: rgba(255, 193, 7, 0.1); color: var(--warning); border: 1px solid var(--warning); }
-        .alert-error { background-color: rgba(220, 53, 69, 0.1); color: var(--error); border: 1px solid var(--error); }
-        .alert-info { background-color: rgba(60, 110, 113, 0.1); color: var(--primary); border: 1px solid var(--primary); }
-
-        .alert-icon {
-            font-size: calc(var(--spacing-unit) * 5);
-            line-height: 1;
-        }
-
-        .flex-row {
-            display: flex;
-            gap: calc(var(--spacing-unit) * 4);
-            margin-top: calc(var(--spacing-unit) * 4);
-            flex-wrap: wrap;
-        }
+      .material-symbols-outlined {
+        font-variation-settings:
+        'FILL' 0,
+        'wght' 300,
+        'GRAD' 0,
+        'opsz' 24
+      }
     </style>
 </head>
-<body>
-    <div class="container">
-        <h1>ibe160 Visual Theme Showcase</h1>
-        <p>This document visualizes the chosen color palette, typography, and component styling for the ibe160 application, based on your "minimal academic" brand guidelines and the `shadcn/ui` approach.</p>
+<body class="bg-background-light font-display text-text-primary">
 
-        <div class="section">
-            <h2>Color Palette</h2>
-            <p>The core colors and their semantic usage.</p>
-            <div class="color-palette">
-                <div class="color-swatch bg-primary">Primary<br><span>#3C6E71</span></div>
-                <div class="color-swatch bg-secondary light-text">Secondary<br><span>#F5DEB3</span></div>
-                <div class="color-swatch bg-text-dark">Text Dark<br><span>#212529</span></div>
-                <div class="color-swatch bg-text-light light-text">Text Light<br><span>#FFFFFF</span></div>
-                <div class="color-swatch bg-success">Success<br><span>#28A745</span></div>
-                <div class="color-swatch bg-warning">Warning<br><span>#FFC107</span></div>
-                <div class="color-swatch bg-error">Error<br><span>#DC3545</span></div>
-                <div class="color-swatch bg-neutral-100 light-text">Neutral 100<br><span>#F8F9FA</span></div>
-                <div class="color-swatch bg-neutral-500">Neutral 500<br><span>#ADB5BD</span></div>
-                <div class="color-swatch bg-neutral-900">Neutral 900<br><span>#212529</span></div>
+<div class="relative flex h-auto min-h-screen w-full flex-row">
+    <!-- SideNavBar -->
+    <aside class="flex h-screen w-64 flex-col border-r border-border-light bg-white p-4 sticky top-0">
+        <div class="flex h-full flex-col justify-between">
+            <div class="flex flex-col gap-8">
+                <div class="flex items-center gap-3 px-3">
+                    <div class="flex items-center justify-center rounded-lg bg-accent-blue size-10">
+                        <span class="material-symbols-outlined text-white" style="font-size: 24px;">school</span>
+                    </div>
+                    <h1 class="text-text-primary text-xl font-bold">StudyTool</h1>
+                </div>
+                <nav class="flex flex-col gap-2">
+                    <a class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-text-secondary transition-colors hover:bg-background-light hover:text-text-primary" href="#">
+                        <span class="material-symbols-outlined" style="font-size: 24px;">dashboard</span>
+                        <p class="text-sm font-medium">Dashboard</p>
+                    </a>
+                    <a class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-text-secondary transition-colors hover:bg-background-light hover:text-text-primary" href="#">
+                        <span class="material-symbols-outlined" style="font-size: 24px;">collections_bookmark</span>
+                        <p class="text-sm font-medium">My Courses</p>
+                    </a>
+                    <a class="flex items-center gap-3 rounded-lg bg-background-light px-3 py-2.5 text-text-primary transition-colors" href="#">
+                        <span class="material-symbols-outlined" style="font-size: 24px; font-variation-settings: 'FILL' 1;">palette</span>
+                        <p class="text-sm font-medium">Design System</p>
+                    </a>
+                </nav>
             </div>
-        </div>
-
-        <div class="section">
-            <h2>Typography</h2>
-            <p>Using 'Inter' for a clean, academic, and readable aesthetic.</p>
-            <h1>Heading 1 - The quick brown fox jumps over the lazy dog</h1>
-            <h2>Heading 2 - The quick brown fox jumps over the lazy dog</h2>
-            <h3>Heading 3 - The quick brown fox jumps over the lazy dog</h3>
-            <h4>Heading 4 - The quick brown fox jumps over the lazy dog</h4>
-            <p>This is a paragraph of body text. It uses the Inter font family with a regular weight. The line height is optimized for readability. The quick brown fox jumps over the lazy dog. This text should feel efficient and productive to read.</p>
-            <p style="font-weight: 500;">This is a paragraph with medium font weight.</p>
-            <p style="font-weight: 700;">This is a paragraph with bold font weight.</p>
-            <small>This is smaller text, often used for captions or secondary information.</small>
-        </div>
-
-        <div class="section">
-            <h2>Buttons</h2>
-            <p>Examples of primary, secondary, outline, ghost, and destructive buttons.</p>
-            <div class="flex-row">
-                <button class="button button-primary">Primary Button</button>
-                <button class="button button-secondary">Secondary Button</button>
-                <button class="button button-outline">Outline Button</button>
-                <button class="button button-ghost">Ghost Button</button>
-                <button class="button button-destructive">Destructive Button</button>
-            </div>
-            <div class="flex-row">
-                <button class="button button-primary" disabled>Primary Disabled</button>
-                <button class="button button-secondary" disabled>Secondary Disabled</button>
-            </div>
-        </div>
-
-        <div class="section">
-            <h2>Form Elements</h2>
-            <p>Standard input fields and their states.</p>
-            <div class="input-group">
-                <label for="text-input">Text Input</label>
-                <input type="text" id="text-input" placeholder="Enter your name">
-            </div>
-            <div class="input-group">
-                <label for="email-input">Email Input</label>
-                <input type="email" id="email-input" placeholder="Enter your email">
-            </div>
-            <div class="input-group">
-                <label for="password-input">Password</label>
-                <input type="password" id="password-input" placeholder="Enter your password">
-            </div>
-            <div class="input-group">
-                <label for="error-input">Input with Error</label>
-                <input type="text" id="error-input" class="input-error" value="Invalid entry">
-                <div class="error-message">This field has an error.</div>
-            </div>
-            <div class="input-group">
-                <label for="textarea-input">Textarea</label>
-                <textarea id="textarea-input" rows="4" placeholder="Enter your notes here..."></textarea>
-            </div>
-        </div>
-
-        <div class="section">
-            <h2>Cards</h2>
-            <p>A typical card component for displaying grouped information.</p>
-            <div class="card">
-                <div class="card-header">Course Overview</div>
-                <p>This card displays a summary of your course. You can click here to view more details or manage lectures.</p>
-                <div class="flex-row" style="margin-top: calc(var(--spacing-unit) * 6);">
-                    <button class="button button-primary">View Course</button>
-                    <button class="button button-ghost">Edit</button>
+            <div class="flex flex-col gap-2">
+                <div class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-text-secondary transition-colors hover:bg-background-light hover:text-text-primary cursor-pointer">
+                    <span class="material-symbols-outlined" style="font-size: 24px;">settings</span>
+                    <p class="text-sm font-medium">Settings</p>
+                </div>
+                <div class="flex items-center gap-4 rounded-lg p-2">
+                    <div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10" data-alt="User avatar image" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuC7qwWHeQRYf37PkmlYyuasfDpzJL2OxB_5MIFxwAUlDhpP_ZniaOUPCsmsOXI_YtRjOlicz27Q9ko87mNt_QJnQEMuqmBj3yC9J65UHlTcoWpnwpsgUwiqrPRV6ykB8PCUfXoNGJb5whgJGjNqDktoK2d22eQNOFkTzMcHOVNYwt13rkCtjvcG-putMwAj4KOlcvbkVkllruK5dZPDGh08YKv1liIUjFR0hCs9TG5dTU3Fw3LmyO7UekpDvE3i991jy2G0u7r3L9Rs");'></div>
+                    <div class="flex flex-col">
+                        <p class="text-text-primary text-sm font-semibold leading-normal">Alex Johnson</p>
+                        <p class="text-text-secondary text-xs font-normal leading-normal">alex.j@email.com</p>
+                    </div>
+                    <span class="material-symbols-outlined text-text-secondary ml-auto" style="font-size: 20px;">logout</span>
                 </div>
             </div>
         </div>
+    </aside>
 
-        <div class="section">
-            <h2>Alerts & Feedback</h2>
-            <p>Different types of alerts for user feedback.</p>
-            <div class="alert alert-success">
-                <span class="alert-icon">✔</span>
-                <span>Your notes have been saved successfully!</span>
-            </div>
-            <div class="alert alert-info">
-                <span class="alert-icon">ℹ</span>
-                <span>You have 3 new quizzes available.</span>
-            </div>
-            <div class="alert alert-warning">
-                <span class="alert-icon">⚠</span>
-                <span>Your session is about to expire.</span>
-            </div>
-            <div class="alert alert-error">
-                <span class="alert-icon">✖</span>
-                <span>Failed to generate quiz. Please try again.</span>
-            </div>
+    <!-- Main Content -->
+    <main class="flex-1 p-10 overflow-y-auto">
+        <div class="mx-auto max-w-5xl">
+            <header class="mb-12">
+                <h1 class="text-4xl font-black tracking-tight text-text-primary">Design System</h1>
+                <p class="mt-2 text-lg text-text-secondary">A showcase of the new design system's colors, typography, and components.</p>
+            </header>
+
+            <!-- Color Palette -->
+            <section class="mb-16">
+                <h2 class="text-2xl font-bold border-b border-border-light pb-2 mb-6">Color Palette</h2>
+                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
+                    <div class="text-center">
+                        <div class="w-full h-24 rounded-lg bg-primary shadow-soft"></div>
+                        <h3 class="mt-2 font-semibold">Primary</h3>
+                        <p class="text-sm text-text-secondary">#D0BB95</p>
+                    </div>
+                    <div class="text-center">
+                        <div class="w-full h-24 rounded-lg bg-accent-blue shadow-soft"></div>
+                        <h3 class="mt-2 font-semibold">Accent Blue</h3>
+                        <p class="text-sm text-text-secondary">#007AFF</p>
+                    </div>
+                    <div class="text-center">
+                        <div class="w-full h-24 rounded-lg bg-accent-green shadow-soft"></div>
+                        <h3 class="mt-2 font-semibold">Accent Green</h3>
+                        <p class="text-sm text-text-secondary">#30D158</p>
+                    </div>
+                    <div class="text-center">
+                        <div class="w-full h-24 rounded-lg bg-accent-purple shadow-soft"></div>
+                        <h3 class="mt-2 font-semibold">Accent Purple</h3>
+                        <p class="text-sm text-text-secondary">#AF52DE</p>
+                    </div>
+                    <div class="text-center">
+                        <div class="w-full h-24 rounded-lg bg-text-primary shadow-soft"></div>
+                        <h3 class="mt-2 font-semibold">Text Primary</h3>
+                        <p class="text-sm text-text-secondary">#1D1D1F</p>
+                    </div>
+                    <div class="text-center">
+                        <div class="w-full h-24 rounded-lg bg-text-secondary shadow-soft"></div>
+                        <h3 class="mt-2 font-semibold">Text Secondary</h3>
+                        <p class="text-sm text-text-secondary">#6E6E73</p>
+                    </div>
+                    <div class="text-center">
+                        <div class="w-full h-24 rounded-lg bg-background-light shadow-soft border border-border-light"></div>
+                        <h3 class="mt-2 font-semibold">Background Light</h3>
+                        <p class="text-sm text-text-secondary">#f7f7f6</p>
+                    </div>
+                     <div class="text-center">
+                        <div class="w-full h-24 rounded-lg bg-border-light shadow-soft"></div>
+                        <h3 class="mt-2 font-semibold">Border Light</h3>
+                        <p class="text-sm text-text-secondary">#E5E5EA</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Typography -->
+            <section class="mb-16">
+                <h2 class="text-2xl font-bold border-b border-border-light pb-2 mb-6">Typography</h2>
+                <div class="space-y-4">
+                    <h1 class="text-5xl font-black">Display Heading - Aa</h1>
+                    <h2 class="text-4xl font-bold">Heading 1 - Aa</h2>
+                    <h3 class="text-3xl font-semibold">Heading 2 - Aa</h3>
+                    <h4 class="text-2xl font-medium">Heading 3 - Aa</h4>
+                    <p class="text-base leading-relaxed">This is a paragraph of body text. It uses the Inter font family. The quick brown fox jumps over the lazy dog. This text should feel clean, modern, and highly readable.</p>
+                    <p class="text-sm text-text-secondary">This is secondary text, often used for captions or less important information.</p>
+                </div>
+            </section>
+
+            <!-- Buttons -->
+            <section class="mb-16">
+                <h2 class="text-2xl font-bold border-b border-border-light pb-2 mb-6">Buttons</h2>
+                <div class="flex flex-wrap items-center gap-4">
+                    <button class="px-6 py-2.5 rounded-lg bg-primary text-white font-semibold transition hover:opacity-90">Primary</button>
+                    <button class="px-6 py-2.5 rounded-lg bg-accent-blue text-white font-semibold transition hover:opacity-90">Accent Blue</button>
+                    <button class="px-6 py-2.5 rounded-lg bg-white border border-border-light text-text-primary font-semibold transition hover:bg-gray-50">Secondary</button>
+                    <button class="px-6 py-2.5 rounded-lg text-text-secondary font-semibold transition hover:bg-gray-100">Ghost</button>
+                    <button class="px-6 py-2.5 rounded-lg bg-red-500 text-white font-semibold transition hover:bg-red-600">Destructive</button>
+                    <button class="px-6 py-2.5 rounded-lg bg-primary text-white font-semibold opacity-50 cursor-not-allowed">Disabled</button>
+                </div>
+            </section>
+
+            <!-- Form Elements -->
+            <section class="mb-16">
+                <h2 class="text-2xl font-bold border-b border-border-light pb-2 mb-6">Form Elements</h2>
+                <div class="max-w-sm space-y-6">
+                    <div>
+                        <label for="text-input" class="text-sm font-medium text-text-primary pb-2 block">Text Input</label>
+                        <input type="text" id="text-input" placeholder="Enter your name" class="form-input w-full rounded-lg border-border-light focus:ring-2 focus:ring-primary/50 focus:border-primary/50 h-12 px-4">
+                    </div>
+                    <div>
+                        <label for="select-input" class="text-sm font-medium text-text-primary pb-2 block">Select Menu</label>
+                        <select id="select-input" class="form-select w-full rounded-lg border-border-light focus:ring-2 focus:ring-primary/50 focus:border-primary/50 h-12 px-4">
+                            <option>Option 1</option>
+                            <option>Option 2</option>
+                        </select>
+                    </div>
+                    <div class="flex items-center gap-4">
+                        <input type="checkbox" id="checkbox-input" class="form-checkbox h-5 w-5 rounded text-primary focus:ring-primary/50">
+                        <label for="checkbox-input" class="font-medium text-text-primary">Remember me</label>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Cards -->
+            <section class="mb-16">
+                <h2 class="text-2xl font-bold border-b border-border-light pb-2 mb-6">Cards</h2>
+                <div class="grid md:grid-cols-2 gap-8">
+                    <div class="relative flex flex-col justify-between gap-6 rounded-xl border border-border-light bg-white p-6 shadow-soft transition-shadow hover:shadow-soft-hover">
+                        <div class="flex flex-col gap-3">
+                            <div class="flex size-12 items-center justify-center rounded-lg bg-accent-blue/10">
+                                <span class="material-symbols-outlined text-accent-blue" style="font-size: 28px;">school</span>
+                            </div>
+                            <h2 class="text-text-primary text-xl font-bold leading-normal">Standard Card</h2>
+                            <p class="text-text-secondary text-sm font-normal leading-normal">This is a standard card component, used for displaying grouped information.</p>
+                        </div>
+                        <button class="w-full rounded-lg bg-accent-blue py-2.5 text-sm font-semibold text-white transition-opacity hover:opacity-90">Action Button</button>
+                    </div>
+                    <div class="relative flex flex-col justify-between gap-6 rounded-xl border border-border-light bg-white/70 p-6 shadow-soft backdrop-blur-md transition-shadow hover:shadow-soft-hover">
+                        <div class="flex flex-col gap-3">
+                            <div class="flex size-12 items-center justify-center rounded-lg bg-accent-purple/10">
+                                <span class="material-symbols-outlined text-accent-purple" style="font-size: 28px;">auto_awesome</span>
+                            </div>
+                            <h2 class="text-text-primary text-xl font-bold leading-normal">Glassmorphism Card</h2>
+                            <p class="text-text-secondary text-sm font-normal leading-normal">This card uses a semi-transparent background to create a frosted glass effect.</p>
+                        </div>
+                        <button class="w-full rounded-lg bg-accent-purple py-2.5 text-sm font-semibold text-white transition-opacity hover:opacity-90">Another Action</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Alerts & Feedback -->
+            <section>
+                <h2 class="text-2xl font-bold border-b border-border-light pb-2 mb-6">Alerts & Feedback</h2>
+                <div class="space-y-4">
+                    <div class="flex items-center gap-3 rounded-lg bg-accent-green/10 text-accent-green border border-accent-green/20 p-4">
+                        <span class="material-symbols-outlined">check_circle</span>
+                        <span class="font-medium">Your notes have been saved successfully!</span>
+                    </div>
+                    <div class="flex items-center gap-3 rounded-lg bg-accent-blue/10 text-accent-blue border border-accent-blue/20 p-4">
+                        <span class="material-symbols-outlined">info</span>
+                        <span class="font-medium">You have 3 new quizzes available.</span>
+                    </div>
+                    <div class="flex items-center gap-3 rounded-lg bg-yellow-500/10 text-yellow-600 border border-yellow-500/20 p-4">
+                        <span class="material-symbols-outlined">warning</span>
+                        <span class="font-medium">Your session is about to expire.</span>
+                    </div>
+                    <div class="flex items-center gap-3 rounded-lg bg-red-500/10 text-red-600 border border-red-500/20 p-4">
+                        <span class="material-symbols-outlined">cancel</span>
+                        <span class="font-medium">Failed to generate quiz. Please try again.</span>
+                    </div>
+                </div>
+            </section>
         </div>
-    </div>
+    </main>
+</div>
+
 </body>
 </html>

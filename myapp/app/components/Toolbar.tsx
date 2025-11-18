@@ -48,7 +48,7 @@ export const Toolbar = ({ editor, onSave }: Props) => {
         {onSave && (
           <button
             onClick={onSave}
-            className="p-2 rounded-md hover:bg-gray-200"
+            className="p-2 rounded-md bg-secondary text-text-dark shadow-md hover:bg-secondary/80"
             title="Save Note"
           >
             <span>💾</span>

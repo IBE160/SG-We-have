@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Generate Quiz - StudyTool</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+<script>tailwind.config = {darkMode: "class", theme: {extend: {colors: {primary: "#D0BB95", "background-light": "#f7f7f6", "background-dark": "#1d1a15"}, fontFamily: {display: "Inter"}, borderRadius: {DEFAULT: "0.25rem", lg: "0.5rem", xl: "0.75rem", full: "9999px"}}}};</script>
+<style type="text/tailwindcss">
+        body {
+            @apply font-display bg-background-light;
+        }
+        .form-select {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236B7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+            background-position: right 0.5rem center;
+            background-repeat: no-repeat;
+            background-size: 1.5em 1.5em;
+            padding-right: 2.5rem;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+    </style>
+</head>
+<body class="light">
+<div class="relative flex min-h-screen w-full flex-col bg-background-light font-display group/design-root overflow-x-hidden">
+<div class="layout-container flex h-full grow flex-col">
+<div class="flex flex-1 justify-center py-5">
+<div class="layout-content-container flex w-full flex-col max-w-[960px] flex-1">
+<header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-b-[#E5E5E7] px-10 py-4">
+<div class="flex items-center gap-4 text-[#1D1D1F]">
+<div class="size-6 text-primary">
+<svg fill="currentColor" viewbox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+<path d="M42.4379 44C42.4379 44 36.0744 33.9038 41.1692 24C46.8624 12.9336 42.2078 4 42.2078 4L7.01134 4C7.01134 4 11.6577 12.932 5.96912 23.9969C0.876273 33.9029 7.27094 44 7.27094 44L42.4379 44Z"></path>
+</svg>
+</div>
+<h2 class="text-[#1D1D1F] text-lg font-bold leading-tight tracking-[-0.015em]">StudyTool</h2>
+</div>
+<div class="flex flex-1 justify-end gap-8">
+<nav class="flex items-center gap-9">
+<a class="text-[#1D1D1F] text-sm font-medium leading-normal" href="#">Dashboard</a>
+<a class="text-[#1D1D1F] text-sm font-medium leading-normal" href="#">Notes</a>
+<a class="text-[#1D1D1F] text-sm font-medium leading-normal" href="#">Quizzes</a>
+</nav>
+<div class="flex items-center gap-2">
+<button class="flex h-10 w-10 cursor-pointer items-center justify-center overflow-hidden rounded-full bg-[#E5E5E7]/50 text-[#1D1D1F]">
+<span class="material-symbols-outlined text-xl">settings</span>
+</button>
+<button class="flex h-10 w-10 cursor-pointer items-center justify-center overflow-hidden rounded-full bg-[#E5E5E7]/50 text-[#1D1D1F]">
+<span class="material-symbols-outlined text-xl">notifications</span>
+</button>
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10" data-alt="User profile picture" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBEpM3FCWoZ1Chr_Ab6_rUz4WaDk8Md44yFf475DHrQ5hn9Tbh9hJcdiJ3fmoINKbUWMqmsagwNj5BjIngAE8q6OIjOzXDsVEuytEVT1HX9JbM7A8T8ykRi9rKivy0Q2l4sgzuOI1Bdgl4rQoPt68s9SD3noaGyE7cBTlkxBLoRdJg7kqvh3mUQTlX2TrfqPIvKuNoG1ee_CUY6zF7FoywwW-PCWrkh_Sy1kYHj3gh115pk8lyocx1W0wGR5HKQQwAZhUwBZJ19OVz_");'></div>
+</div>
+</div>
+</header>
+<main class="p-10 flex flex-col gap-12">
+<div class="flex flex-wrap justify-between gap-4">
+<div class="flex flex-col gap-2">
+<p class="text-[#1D1D1F] text-4xl font-black leading-tight tracking-[-0.033em]">Generate Quiz</p>
+<p class="text-[#1D1D1F]/60 text-base font-normal leading-normal">Select a course and the notes you want to be quizzed on.</p>
+</div>
+</div>
+<div class="flex flex-col gap-8">
+<section class="flex flex-col gap-4">
+<h3 class="text-[#1D1D1F] text-lg font-bold leading-tight tracking-[-0.015em]">1. Select Course</h3>
+<div class="flex max-w-[480px]">
+<label class="flex w-full flex-col">
+<select class="form-select flex w-full min-w-0 flex-1 resize-none appearance-none overflow-hidden rounded-xl border border-[#E5E5E7] bg-white px-4 py-3 text-base font-medium text-[#1D1D1F] placeholder:text-[#1D1D1F]/60 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 h-14">
+<option>Introduction to Psychology</option>
+<option>Calculus II</option>
+<option>World History: 1500-Present</option>
+</select>
+</label>
+</div>
+</section>
+<section class="flex flex-col gap-4">
+<div class="flex items-center justify-between">
+<h3 class="text-[#1D1D1F] text-lg font-bold leading-tight tracking-[-0.015em]">2. Choose notes to include</h3>
+<div class="flex gap-4">
+<button class="text-sm font-medium text-[#1D1D1F]/60 hover:text-primary">Deselect All</button>
+<button class="text-sm font-medium text-primary">Select All</button>
+</div>
+</div>
+<div class="flex flex-col gap-2 rounded-xl border border-[#E5E5E7] bg-white p-2">
+<label class="flex cursor-pointer items-center justify-between gap-4 rounded-lg p-4 transition-colors hover:bg-primary/10 has-[:checked]:bg-primary/10">
+<div class="flex items-center gap-4">
+<input checked="" class="h-5 w-5 rounded border-gray-300 text-primary focus:ring-primary/50" type="checkbox"/>
+<p class="font-medium text-[#1D1D1F]">Cognitive Biases</p>
+</div>
+<p class="text-sm text-[#1D1D1F]/60">Oct 12, 2023</p>
+</label>
+<label class="flex cursor-pointer items-center justify-between gap-4 rounded-lg p-4 transition-colors hover:bg-primary/10 has-[:checked]:bg-primary/10">
+<div class="flex items-center gap-4">
+<input class="h-5 w-5 rounded border-gray-300 text-primary focus:ring-primary/50" type="checkbox"/>
+<p class="font-medium text-[#1D1D1F]">Memory and Learning</p>
+</div>
+<p class="text-sm text-[#1D1D1F]/60">Oct 5, 2023</p>
+</label>
+<label class="flex cursor-pointer items-center justify-between gap-4 rounded-lg p-4 transition-colors hover:bg-primary/10 has-[:checked]:bg-primary/10">
+<div class="flex items-center gap-4">
+<input checked="" class="h-5 w-5 rounded border-gray-300 text-primary focus:ring-primary/50" type="checkbox"/>
+<p class="font-medium text-[#1D1D1F]">Developmental Psychology</p>
+</div>
+<p class="text-sm text-[#1D1D1F]/60">Sep 28, 2023</p>
+</label>
+</div>
+</section>
+<section class="flex flex-col items-center gap-4 pt-4">
+<button class="flex w-full max-w-sm cursor-pointer items-center justify-center gap-2 overflow-hidden rounded-xl bg-primary px-6 py-4 text-base font-bold text-white transition-opacity hover:opacity-90">
+                                Generate Quiz
+                            </button>
+<div class="flex min-h-[24px] items-center justify-center gap-2 text-sm text-[#1D1D1F]/60">
+<!-- Loading State -->
+<!-- <svg class="animate-spin h-5 w-5 text-primary" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                </svg>
+                                <span>Generating your quiz...</span> -->
+<!-- Success State -->
+<!-- <span class="material-symbols-outlined text-[#34C759] text-xl">check_circle</span>
+                                <span class="text-[#34C759]">Quiz successfully created!</span> -->
+<!-- Error State -->
+<!-- <span class="material-symbols-outlined text-[#FF3B30] text-xl">cancel</span>
+                                <span class="text-[#FF3B30]">An error occurred. Please try again.</span> -->
+</div>
+</section>
+</div>
+</main>
+</div>
+</div>
+</div>
+</div>
+</body></html>

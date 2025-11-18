@@ -1,43 +1,27 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 
-export async function GET(request: Request, context: { params: Promise<{ courseId: string }> }) {
+export async function GET(request: Request, { params }: { params: { courseId: string } }) {
+  const { courseId } = params;
   try {
-    const resolvedParams = await context.params;
-    const { courseId } = resolvedParams;
     const course = await prisma.course.findUnique({
-      where: {
-        id: courseId,
-      },
+      where: { id: courseId },
       include: {
-        notes: true,
-        quizzes: true,
+        notes: {
+          orderBy: {
+            updatedAt: 'desc',
+          },
+        },
       },
     });
 
     if (!course) {
-      return NextResponse.json({ message: 'Course not found' }, { status: 404 });
+      return NextResponse.json({ error: 'Course not found' }, { status: 404 });
     }
 
     return NextResponse.json(course);
   } catch (error) {
-    console.error('Error fetching course:', error);
-    return NextResponse.json({ message: 'Error fetching course' }, { status: 500 });
-  }
-}
-
-export async function DELETE(request: Request, context: { params: Promise<{ courseId: string }> }) {
-  try {
-    const resolvedParams = await context.params;
-    const { courseId } = resolvedParams;
-    await prisma.course.delete({
-      where: {
-        id: courseId,
-      },
-    });
-    return NextResponse.json({ message: 'Course deleted successfully' });
-  } catch (error) {
-    console.error('Error deleting course:', error);
-    return NextResponse.json({ message: 'Error deleting course' }, { status: 500 });
+    console.error(`Error fetching course with ID ${courseId}:`, error);
+    return NextResponse.json({ error: 'Failed to fetch course' }, { status: 500 });
   }
 }

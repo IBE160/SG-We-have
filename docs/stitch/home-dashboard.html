@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>StudyTool Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+<script id="tailwind-config">tailwind.config = {darkMode: "class", theme: {extend: {colors: {primary: "#D0BB95", "background-light": "#f7f7f6", "background-dark": "#1d1a15", "accent-blue": "#007AFF", "accent-green": "#30D158", "accent-purple": "#AF52DE", "text-primary": "#1D1D1F", "text-secondary": "#6E6E73", "border-light": "#E5E5EA"}, fontFamily: {display: "Inter"}, borderRadius: {DEFAULT: "0.25rem", lg: "0.5rem", xl: "0.75rem", full: "9999px"}, boxShadow: {soft: "0 4px 12px 0 rgba(0, 0, 0, 0.05)", "soft-hover": "0 8px 20px 0 rgba(0, 0, 0, 0.07)"}}}};</script>
+<style>
+      .material-symbols-outlined {
+        font-variation-settings:
+        'FILL' 0,
+        'wght' 300,
+        'GRAD' 0,
+        'opsz' 24
+      }
+    </style>
+</head>
+<body class="bg-background-light font-display">
+<div class="relative flex h-auto min-h-screen w-full flex-row">
+<!-- SideNavBar -->
+<aside class="flex h-screen w-64 flex-col border-r border-border-light bg-white p-4 sticky top-0">
+<div class="flex h-full flex-col justify-between">
+<div class="flex flex-col gap-8">
+<div class="flex items-center gap-3 px-3">
+<div class="flex items-center justify-center rounded-lg bg-accent-blue size-10">
+<span class="material-symbols-outlined text-white" style="font-size: 24px;">school</span>
+</div>
+<h1 class="text-text-primary text-xl font-bold">StudyTool</h1>
+</div>
+<nav class="flex flex-col gap-2">
+<a class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-text-secondary transition-colors hover:bg-background-light hover:text-text-primary" href="#">
+<span class="material-symbols-outlined" style="font-size: 24px;">add_circle</span>
+<p class="text-sm font-medium">New Course</p>
+</a>
+<a class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-text-secondary transition-colors hover:bg-background-light hover:text-text-primary" href="#">
+<span class="material-symbols-outlined" style="font-size: 24px;">note_add</span>
+<p class="text-sm font-medium">New Note</p>
+</a>
+<a class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-text-secondary transition-colors hover:bg-background-light hover:text-text-primary" href="#">
+<span class="material-symbols-outlined" style="font-size: 24px;">quiz</span>
+<p class="text-sm font-medium">New Quiz</p>
+</a>
+<a class="flex items-center gap-3 rounded-lg bg-background-light px-3 py-2.5 text-text-primary transition-colors" href="#">
+<span class="material-symbols-outlined" style="font-size: 24px; font-variation-settings: 'FILL' 1;">collections_bookmark</span>
+<p class="text-sm font-medium">My Courses</p>
+</a>
+</nav>
+</div>
+<div class="flex flex-col gap-2">
+<div class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-text-secondary transition-colors hover:bg-background-light hover:text-text-primary cursor-pointer">
+<span class="material-symbols-outlined" style="font-size: 24px;">settings</span>
+<p class="text-sm font-medium">Settings</p>
+</div>
+<div class="flex items-center gap-4 rounded-lg p-2">
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10" data-alt="User avatar image" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuC7qwWHeQRYf37PkmlYyuasfDpzJL2OxB_5MIFxwAUlDhpP_ZniaOUPCsmsOXI_YtRjOlicz27Q9ko87mNt_QJnQEMuqmBj3yC9J65UHlTcoWpnwpsgUwiqrPRV6ykB8PCUfXoNGJb5whgJGjNqDktoK2d22eQNOFkTzMcHOVNYwt13rkCtjvcG-putMwAj4KOlcvbkVkllruK5dZPDGh08YKv1liIUjFR0hCs9TG5dTU3Fw3LmyO7UekpDvE3i991jy2G0u7r3L9Rs");'></div>
+<div class="flex flex-col">
+<p class="text-text-primary text-sm font-semibold leading-normal">Alex Johnson</p>
+<p class="text-text-secondary text-xs font-normal leading-normal">alex.j@email.com</p>
+</div>
+<span class="material-symbols-outlined text-text-secondary ml-auto" style="font-size: 20px;">logout</span>
+</div>
+</div>
+</div>
+</aside>
+<!-- Main Content -->
+<main class="flex-1 p-10">
+<div class="mx-auto max-w-5xl">
+<!-- PageHeading -->
+<div class="flex flex-wrap justify-between gap-3 pb-8">
+<div class="flex min-w-72 flex-col gap-2">
+<h1 class="text-text-primary text-4xl font-black leading-tight tracking-[-0.033em]">Welcome back, Alex!</h1>
+<p class="text-text-secondary text-lg font-normal leading-normal">Ready to dive back into your studies?</p>
+</div>
+</div>
+<!-- Action Cards with Glassmorphism background -->
+<div class="relative grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+<!-- Glassmorphism Accent -->
+<div class="absolute inset-x-0 top-1/2 h-64 -translate-y-1/2 transform">
+<div class="absolute left-[5%] h-full w-2/5 rounded-full bg-accent-blue/10 blur-3xl"></div>
+<div class="absolute right-[5%] h-full w-2/5 rounded-full bg-accent-purple/10 blur-3xl"></div>
+</div>
+<!-- Card 1: Create New Course -->
+<div class="relative flex flex-col justify-between gap-6 rounded-xl border border-border-light bg-white/70 p-6 shadow-soft backdrop-blur-md transition-shadow hover:shadow-soft-hover">
+<div class="flex flex-col gap-3">
+<div class="flex size-12 items-center justify-center rounded-lg bg-accent-blue/10">
+<span class="material-symbols-outlined text-accent-blue" style="font-size: 28px;">add_circle</span>
+</div>
+<h2 class="text-text-primary text-xl font-bold leading-normal">Create a New Course</h2>
+<p class="text-text-secondary text-sm font-normal leading-normal">Start by organizing your notes into a new subject.</p>
+</div>
+<button class="w-full rounded-lg bg-accent-blue py-2.5 text-sm font-semibold text-white transition-opacity hover:opacity-90">Get Started</button>
+</div>
+<!-- Card 2: Continue Last Note -->
+<div class="relative flex flex-col justify-between gap-6 rounded-xl border border-border-light bg-white/70 p-6 shadow-soft backdrop-blur-md transition-shadow hover:shadow-soft-hover">
+<div class="flex flex-col gap-3">
+<div class="flex size-12 items-center justify-center rounded-lg bg-accent-purple/10">
+<span class="material-symbols-outlined text-accent-purple" style="font-size: 28px;">history_edu</span>
+</div>
+<h2 class="text-text-primary text-xl font-bold leading-normal">Pick Up Where You Left Off</h2>
+<p class="text-text-secondary text-sm font-normal leading-normal">Lecture 3: Quantum Physics</p>
+</div>
+<button class="w-full rounded-lg bg-accent-purple py-2.5 text-sm font-semibold text-white transition-opacity hover:opacity-90">Continue Writing</button>
+</div>
+<!-- Card 3: Create a Quiz -->
+<div class="relative flex flex-col justify-between gap-6 rounded-xl border border-border-light bg-white/70 p-6 shadow-soft backdrop-blur-md transition-shadow hover:shadow-soft-hover">
+<div class="flex flex-col gap-3">
+<div class="flex size-12 items-center justify-center rounded-lg bg-accent-green/10">
+<span class="material-symbols-outlined text-accent-green" style="font-size: 28px;">quiz</span>
+</div>
+<h2 class="text-text-primary text-xl font-bold leading-normal">Test Your Knowledge</h2>
+<p class="text-text-secondary text-sm font-normal leading-normal">Generate a practice quiz from any of your existing notes.</p>
+</div>
+<button class="w-full rounded-lg bg-accent-green py-2.5 text-sm font-semibold text-white transition-opacity hover:opacity-90">Create Quiz</button>
+</div>
+</div>
+</div>
+</main>
+</div>
+</body></html>
