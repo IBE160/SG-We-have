@@ -1,7 +1,8 @@
 "use client";
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
+import { useState, useEffect } from 'react';
 
 const links = [
   { href: '/', label: 'Dashboard', icon: 'dashboard' },
@@ -11,6 +12,11 @@ const links = [
 
 export default function Sidebar() {
   const pathname = usePathname();
+  const router = useRouter();
+
+  const handleLogout = () => {
+    router.push('/login');
+  };
 
   return (
     <aside className="flex h-screen w-64 flex-col border-r border-border-light bg-white p-4 sticky top-0">
@@ -18,13 +24,13 @@ export default function Sidebar() {
             <div className="flex flex-col gap-8">
                 <div className="flex items-center gap-3 px-3">
                     <div className="flex items-center justify-center rounded-lg bg-accent-blue size-10">
-                        <span className="material-symbols-outlined text-white" style={{fontSize: '24px'}}>school</span>
+                        <span className="material-symbols-outlined" style={{fontSize: '24px'}}>school</span>
                     </div>
                     <h1 className="text-text-primary text-xl font-bold">StudyTool</h1>
                 </div>
                 <nav className="flex flex-col gap-2">
                     {links.map(({ href, label, icon }) => (
-                        <Link key={href} href={href} className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-text-secondary transition-colors hover:bg-background-light hover:text-text-primary ${pathname === href ? 'bg-background-light text-text-primary' : ''}`}>
+                        <Link key={href} href={href} className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-text-secondary transition-colors hover:bg-background-light hover:text-text-primary ${pathname === href ? 'bg-neutral-200 text-primary' : ''}`}>
                             <span className="material-symbols-outlined" style={{fontSize: '24px', fontVariationSettings: pathname === href ? "'FILL' 1" : "'FILL' 0"}}>{icon}</span>
                             <p className="text-sm font-medium">{label}</p>
                         </Link>
@@ -42,7 +48,7 @@ export default function Sidebar() {
                         <p className="text-text-primary text-sm font-semibold leading-normal">Alex Johnson</p>
                         <p className="text-text-secondary text-xs font-normal leading-normal">alex.j@email.com</p>
                     </div>
-                    <span className="material-symbols-outlined text-text-secondary ml-auto" style={{fontSize: '20px'}}>logout</span>
+                    <button onClick={handleLogout} className="material-symbols-outlined text-text-secondary ml-auto" style={{fontSize: '20px'}} title="Logout">logout</button>
                 </div>
             </div>
         </div>

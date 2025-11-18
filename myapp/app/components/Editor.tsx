@@ -1,7 +1,7 @@
 "use client";
 
 import { useEditor, EditorContent } from "@tiptap/react";
-import StarterKit from "@tiptap/starter-kit";
+// import StarterKit from "@tiptap/starter-kit"; // Removed StarterKit
 import QuestionBlock from './QuestionBlock';
 import Cloze from './ClozeMark';
 import AnswerBlock from './AnswerBlock';
@@ -24,6 +24,20 @@ import Link from '@tiptap/extension-link';
 import Superscript from '@tiptap/extension-superscript';
 import Subscript from '@tiptap/extension-subscript';
 import Strike from '@tiptap/extension-strike';
+import Paragraph from '@tiptap/extension-paragraph'; // Explicitly import Paragraph
+import Bold from '@tiptap/extension-bold'; // Explicitly import Bold
+import Italic from '@tiptap/extension-italic'; // Explicitly import Italic
+import Document from '@tiptap/extension-document'; // Explicitly import Document
+import Text from '@tiptap/extension-text'; // Explicitly import Text
+import History from '@tiptap/extension-history'; // Explicitly import History
+import ListItem from '@tiptap/extension-list-item'; // Explicitly import ListItem
+
+// Explicitly import extensions for headings, lists, and blockquote
+import Heading from '@tiptap/extension-heading';
+import BulletList from '@tiptap/extension-bullet-list';
+import OrderedList from '@tiptap/extension-ordered-list';
+import Blockquote from '@tiptap/extension-blockquote';
+
 
 import "./editor.css";
 
@@ -38,11 +52,13 @@ const Tiptap = ({ courseId, noteId, initialContent, onContentChange }: TiptapPro
   const editor = useEditor({
     immediatelyRender: false, // Add this line
     extensions: [
-      StarterKit.configure({
-        strike: false,
-        paragraph: false,
-        link: false,
-      }),
+      Document, // Core extension
+      Paragraph, // Core extension
+      Text, // Core extension
+      History, // Core extension
+      Bold, // Core extension
+      Italic, // Core extension
+      Strike, // Core extension
       SlashCommand,
       QuestionBlock,
       AnswerBlock,
@@ -62,12 +78,21 @@ const Tiptap = ({ courseId, noteId, initialContent, onContentChange }: TiptapPro
       Color,
       Highlight.configure({ multicolor: true }),
       Link.configure({
-        openOnClick: false,
+        openOnClick: true,
+        HTMLAttributes: {
+          target: '_blank',
+          rel: 'noopener noreferrer',
+        },
       }),
       Superscript.configure(),
       Subscript.configure(),
-      Strike,
       BubbleMenuExtension,
+      // Explicitly add these extensions
+      Heading.configure({ level: [1, 2, 3] }),
+      ListItem, // Moved ListItem before BulletList and OrderedList
+      BulletList,
+      OrderedList,
+      Blockquote,
     ],
     content: initialContent,
     onUpdate: ({ editor }) => {
@@ -84,6 +109,9 @@ const Tiptap = ({ courseId, noteId, initialContent, onContentChange }: TiptapPro
     if (editor && initialContent !== editor.getHTML()) {
       editor.commands.setContent(initialContent);
     }
+    if (editor) { // Add this block
+      console.log("Editor initialized:", editor);
+    }
   }, [editor, initialContent]);
 
   const saveNote = () => {
@@ -94,9 +122,11 @@ const Tiptap = ({ courseId, noteId, initialContent, onContentChange }: TiptapPro
   };
 
   return (
-    <div className="border border-gray-300 rounded-md">
+    <div className="border border-gray-300 rounded-md flex flex-col h-full">
       <Toolbar editor={editor} onSave={saveNote} />
-      <EditorContent editor={editor} />
+      <div className="flex-grow overflow-y-auto">
+        <EditorContent editor={editor} className="prose max-w-none" />
+      </div>
     </div>
   );
 };

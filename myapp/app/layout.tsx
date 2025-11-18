@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import Sidebar from "./components/Sidebar";
+import AuthWrapper from "./components/AuthWrapper"; // Import AuthWrapper
 
 const inter = Inter({
   variable: "--font-inter",
@@ -26,12 +26,9 @@ export default function RootLayout({
       <body
         className={`${inter.variable} font-display bg-background-light`}
       >
-        <div className="relative flex h-auto min-h-screen w-full flex-row">
-          <Sidebar />
-          <div className="flex-1">
-            {children}
-          </div>
-        </div>
+        <AuthWrapper>
+          {children}
+        </AuthWrapper>
       </body>
     </html>
   );

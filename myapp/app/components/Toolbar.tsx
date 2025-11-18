@@ -1,7 +1,7 @@
 "use client";
 
 import { type Editor } from "@tiptap/react";
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react"; // Import useEffect
 import { LinkEditPopover } from "./LinkEditPopover"; // Import the new component
 
 type Props = {
@@ -22,12 +22,20 @@ export const Toolbar = ({ editor, onSave }: Props) => {
     setIsLinkPopoverOpen(true); // Open the link popover
   }, [editor]);
 
+  useEffect(() => {
+    if (editor) {
+      console.log("Toolbar Editor Initialized (Link Check):", editor);
+      console.log("Can set Link:", editor.can().chain().focus().setLink({ href: 'test' }).run());
+      console.log("Can unset Link:", editor.can().chain().focus().unsetLink().run());
+    }
+  }, [editor]);
+
   if (!editor) {
     return null;
   }
 
   return (
-    <div className="p-2 border-b border-gray-300 bg-gray-50">
+    <div className="sticky top-0 z-50 p-2 border-b border-gray-300 bg-gray-50">
       <div className="flex flex-wrap items-center gap-2">
         <button
           onClick={() => editor.chain().focus().undo().run()}
@@ -186,6 +194,7 @@ export const Toolbar = ({ editor, onSave }: Props) => {
           <span>🚫</span>
         </button>
         <div className="w-px h-6 bg-gray-300" />
+        {/*
         <button
           onClick={() => editor.chain().focus().insertContent('<question-block></question-block>').run()}
           className="p-2 rounded-md hover:bg-gray-200"
@@ -207,6 +216,7 @@ export const Toolbar = ({ editor, onSave }: Props) => {
         >
           <span>C</span>
         </button>
+        */}
       </div>
     </div>
   );

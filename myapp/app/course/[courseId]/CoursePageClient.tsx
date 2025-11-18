@@ -28,6 +28,10 @@ export default function CoursePageClient({ courseId }: CoursePageClientProps) {
   const [selectedNote, setSelectedNote] = useState<Note | null>(null);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [noteToDelete, setNoteToDelete] = useState<Note | null>(null);
+  const [isNewNoteModalOpen, setIsNewNoteModalOpen] = useState(false); // New state for new note modal
+  const [newNoteTitleInput, setNewNoteTitleInput] = useState(''); // New state for new note title input
+  const [editingNoteId, setEditingNoteId] = useState<string | null>(null); // New state for editing note title
+  const [editedNoteTitle, setEditedNoteTitle] = useState(''); // New state for edited note title
 
   // Load all courses and notes from localStorage on initial render
   useEffect(() => {
@@ -44,10 +48,10 @@ export default function CoursePageClient({ courseId }: CoursePageClientProps) {
 
       if (courseSpecificNotes.length > 0) {
         setSelectedNote(courseSpecificNotes[0]);
-      } else {
+      }
+    } else {
         setSelectedNote(null);
       }
-    }
   }, [courseId]);
 
   // Save notes to localStorage whenever the notes state changes
@@ -63,18 +67,20 @@ export default function CoursePageClient({ courseId }: CoursePageClientProps) {
   }, [notes, course]);
 
 
-  const handleNewNote = () => {
-    if (!course) return; // Should not happen if course is loaded
+  const handleCreateNewNote = () => { // Renamed from handleNewNote
+    if (!course || !newNoteTitleInput.trim()) return;
 
     const newNote: Note = {
       id: `note-${Date.now()}`,
-      title: 'Untitled Note',
+      title: newNoteTitleInput.trim(), // Use input title
       content: '',
       courseId: course.id,
       updatedAt: new Date().toISOString(),
     };
     setNotes(prev => [...prev, newNote]);
     setSelectedNote(newNote);
+    setNewNoteTitleInput(''); // Clear input
+    setIsNewNoteModalOpen(false); // Close modal
   };
 
   const handleDeleteNote = () => {
@@ -98,6 +104,23 @@ export default function CoursePageClient({ courseId }: CoursePageClientProps) {
       );
       setSelectedNote(updatedNote);
     }
+  };
+
+  const handleSaveNoteTitle = (noteId: string) => {
+    if (editedNoteTitle.trim()) {
+      setNotes(prevNotes =>
+        prevNotes.map(note =>
+          note.id === noteId ? { ...note, title: editedNoteTitle.trim() } : note
+        )
+      );
+      setEditingNoteId(null);
+      setEditedNoteTitle('');
+    }
+  };
+
+  const handleCancelEditNoteTitle = () => {
+    setEditingNoteId(null);
+    setEditedNoteTitle('');
   };
 
   if (!course) {
@@ -126,26 +149,69 @@ export default function CoursePageClient({ courseId }: CoursePageClientProps) {
               <div
                 key={note.id}
                 onClick={() => setSelectedNote(note)}
-                className={`flex items-center justify-between gap-3 px-3 py-2 cursor-pointer rounded-lg ${selectedNote?.id === note.id ? 'bg-primary/10' : ''}`}
+                className={`flex items-center justify-between gap-3 px-3 py-2 cursor-pointer rounded-lg ${selectedNote?.id === note.id ? 'bg-neutral-200' : ''}`}
               >
-                <p className={`text-sm font-medium leading-normal ${selectedNote?.id === note.id ? 'text-primary' : 'text-secondary-text'}`}>{note.title}</p>
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setNoteToDelete(note);
-                    setIsDeleteModalOpen(true);
-                  }}
-                  className="text-secondary-text hover:text-red-500"
-                >
-                  <span className="material-symbols-outlined text-base">delete</span>
-                </button>
+                {editingNoteId === note.id ? (
+                  <input
+                    type="text"
+                    value={editedNoteTitle}
+                    onChange={(e) => setEditedNoteTitle(e.target.value)}
+                    className="text-sm font-medium leading-normal text-primary-text bg-transparent border-b border-gray-400 focus:outline-none w-full"
+                    onBlur={() => handleSaveNoteTitle(note.id)}
+                    onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                          handleSaveNoteTitle(note.id);
+                        }
+                        if (e.key === 'Escape') {
+                          handleCancelEditNoteTitle();
+                        }
+                      }}
+                    />
+                ) : (
+                  <p className={`text-sm font-medium leading-normal ${selectedNote?.id === note.id ? 'text-primary' : 'text-secondary-text'}`}>{note.title}</p>
+                )}
+                <div className="flex gap-1">
+                  {editingNoteId !== note.id && (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setEditingNoteId(note.id);
+                        setEditedNoteTitle(note.title);
+                      }}
+                      className="text-secondary-text hover:text-primary"
+                      title="Edit Note Title"
+                    >
+                      <span className="material-symbols-outlined text-base">edit</span>
+                    </button>
+                  )}
+                  {editingNoteId === note.id && (
+                    <>
+                      <button onClick={(e) => { e.stopPropagation(); handleSaveNoteTitle(note.id); }} className="text-green-500 hover:text-green-700" title="Save">
+                        <span className="material-symbols-outlined text-base">done</span>
+                      </button>
+                      <button onClick={(e) => { e.stopPropagation(); handleCancelEditNoteTitle(); }} className="text-red-500 hover:text-red-700" title="Cancel">
+                        <span className="material-symbols-outlined text-base">close</span>
+                      </button>
+                    </>
+                  )}
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setNoteToDelete(note);
+                      setIsDeleteModalOpen(true);
+                    }}
+                    className="text-secondary-text hover:text-red-500"
+                  >
+                    <span className="material-symbols-outlined text-base">delete</span>
+                  </button>
+                </div>
               </div>
             )) : (
               <p className="px-3 py-2 text-sm text-text-secondary">No notes yet. Create one!</p>
             )}
           </div>
         </div>
-        <button onClick={handleNewNote} className="flex min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-secondary text-text-dark text-sm font-bold leading-normal tracking-[0.015em] w-full shadow-md hover:bg-secondary/80">
+        <button onClick={() => setIsNewNoteModalOpen(true)} className="flex min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 mockup-button mockup-button-primary bg-primary text-text-light text-sm font-bold leading-normal tracking-[0.015em] w-full shadow-md hover:opacity-90">
           <span className="truncate">+ New Note</span>
         </button>
       </aside>
@@ -179,6 +245,19 @@ export default function CoursePageClient({ courseId }: CoursePageClientProps) {
           <button className="px-4 py-2 rounded-lg bg-red-500 text-white" onClick={handleDeleteNote}>Delete</button>
         </div>
       </Modal>
+
+      {/* New Note Creation Modal */}
+      <Modal isOpen={isNewNoteModalOpen} onClose={() => setIsNewNoteModalOpen(false)} title="Create New Note">
+        <input
+          type="text"
+          placeholder="Note Title"
+          className="form-input w-full rounded-lg border-border-light focus:ring-2 focus:ring-primary/50 focus:border-primary/50 h-12 px-4"
+          value={newNoteTitleInput}
+          onChange={(e) => setNewNoteTitleInput(e.target.value)}
+        />
+        <button className="w-full mt-4 rounded-lg mockup-button mockup-button-primary bg-primary py-2.5 text-sm font-semibold text-text-light transition-opacity hover:opacity-90" onClick={handleCreateNewNote}>Create</button>
+      </Modal>
     </div>
   );
 }
+

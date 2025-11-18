@@ -41,7 +41,7 @@ export default function Home() {
               <p className="text-text-secondary text-sm font-normal leading-normal">Start by organizing your notes into a new subject.</p>
             </div>
             <Link href="/course">
-              <button className="w-full rounded-lg bg-accent-blue py-2.5 text-sm font-semibold text-white transition-opacity hover:opacity-90">Get Started</button>
+              <button className="w-full rounded-lg mockup-button mockup-button-primary bg-primary py-2.5 text-sm font-semibold text-text-light transition-opacity hover:opacity-90">Get Started</button>
             </Link>
           </div>
           {/* Card 2: Continue Last Note */}
@@ -53,8 +53,8 @@ export default function Home() {
               <h2 className="text-text-primary text-xl font-bold leading-normal">Pick Up Where You Left Off</h2>
               <p className="text-text-secondary text-sm font-normal leading-normal">Lecture 3: Quantum Physics</p>
             </div>
-            <Link href="/course/some-placeholder-id">
-              <button className="w-full rounded-lg bg-accent-purple py-2.5 text-sm font-semibold text-white transition-opacity hover:opacity-90">View Notes</button>
+            <Link href="/course"> {/* Changed from /course/some-placeholder-id */}
+              <button className="w-full rounded-lg mockup-button mockup-button-primary bg-primary py-2.5 text-sm font-semibold text-text-light transition-opacity hover:opacity-90">View Notes</button>
             </Link>
           </div>
           {/* Card 3: Create a Quiz */}
@@ -67,7 +67,7 @@ export default function Home() {
               <p className="text-text-secondary text-sm font-normal leading-normal">Generate a practice quiz from any of your existing notes.</p>
             </div>
             <Link href="/quiz">
-              <button className="w-full rounded-lg bg-accent-green py-2.5 text-sm font-semibold text-white transition-opacity hover:opacity-90">Create Quiz</button>
+              <button className="w-full rounded-lg mockup-button mockup-button-primary bg-primary py-2.5 text-sm font-semibold text-text-light transition-opacity hover:opacity-90">Create Quiz</button>
             </Link>
           </div>
         </div>
@@ -81,7 +81,7 @@ export default function Home() {
           value={newCourseTitle}
           onChange={(e) => setNewCourseTitle(e.target.value)}
         />
-        <button className="w-full mt-4 rounded-lg bg-primary py-2.5 text-sm font-semibold text-white transition-opacity hover:opacity-90" onClick={handleCreateCourse}>Create</button>
+        <button className="w-full mt-4 rounded-lg mockup-button mockup-button-primary bg-primary py-2.5 text-sm font-semibold text-white transition-opacity hover:opacity-90" onClick={handleCreateCourse}>Create</button>
       </Modal>
     </main>
   );

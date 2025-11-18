@@ -13,6 +13,16 @@
     margin-top: 0;
 }
 
+.tiptap a {
+  color: #007bff; /* A common blue for links */
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.tiptap a:hover {
+  text-decoration: none;
+}
+
 /* Styles for the Bubble Menu */
 .bubble-menu {
   display: flex;
@@ -105,6 +115,7 @@ span[data-type="cloze"] {
   border-radius: 0.5rem;
   padding: 0.5rem;
   margin: 1rem 0;
+  position: relative;
 }
 
 .answer-block .answer-header {
@@ -148,4 +159,45 @@ span[data-type="cloze"] {
 
 .callout-block .content {
   flex-grow: 1;
+}
+
+/* Aggressive temporary styles for debugging block-level elements */
+.tiptap h1 {
+  font-size: 3em !important;
+  color: black !important;
+  margin: 1em 0 !important;
+  border-bottom: 2px solid black !important;
+}
+
+.tiptap h2 {
+  font-size: 2.5em !important;
+  color: black !important;
+  margin: 0.8em 0 !important;
+  border-bottom: 1px solid black !important;
+}
+
+.tiptap h3 {
+  font-size: 2em !important;
+  color: black !important;
+  margin: 0.6em 0 !important;
+}
+
+.tiptap ul {
+  list-style-type: disc !important;
+  margin-left: 2em !important;
+  color: black !important;
+}
+
+.tiptap ol {
+  list-style-type: decimal !important;
+  margin-left: 2em !important;
+  color: black !important;
+}
+
+.tiptap blockquote {
+  border-left: 5px solid black !important;
+  padding-left: 1em !important;
+  margin: 1em 0 !important;
+  color: black !important;
+  font-style: italic !important;
 }
