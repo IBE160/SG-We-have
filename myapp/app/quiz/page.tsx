@@ -120,7 +120,7 @@ export default function GenerateQuizPage() {
           </div>
         </section>
         <section className="flex flex-col items-center gap-4 pt-4">
-          <button onClick={handleGenerateQuiz} className="flex w-full max-w-sm cursor-pointer items-center justify-center gap-2 overflow-hidden rounded-xl bg-primary px-6 py-4 text-base font-bold text-white transition-opacity hover:opacity-90">
+          <button onClick={handleGenerateQuiz} className="mockup-button mockup-button-primary">
             Generate Quiz
           </button>
           <div className="flex min-h-[24px] items-center justify-center gap-2 text-sm text-[#1D1D1F]/60">
