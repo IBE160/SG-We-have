@@ -120,7 +120,7 @@ export default function CourseListPage() {
                       <button onClick={() => handleSaveCourseTitle(course.id)} className="text-green-500 hover:text-green-700" title="Save">
                         <span className="material-symbols-outlined text-base">done</span>
                       </button>
-                      <button onClick={handleCancelEditEditCourseTitle} className="text-red-500 hover:text-red-700" title="Cancel">
+                      <button onClick={handleCancelEditCourseTitle} className="text-red-500 hover:text-red-700" title="Cancel">
                         <span className="material-symbols-outlined text-base">close</span>
                       </button>
                     </div>
