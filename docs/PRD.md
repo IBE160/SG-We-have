@@ -121,6 +121,9 @@ Motivated university students frequently struggle with fragmented study processe
 
 ## Epic List
 
+*   **Epic 0: Project Initialization & Environment Setup**
+    *   Goal: Initialize the project repository and configure the development environments for both frontend and backend to enable parallel development.
+    *   Estimated story count: 4 stories
 *   **Epic 1: User Foundation & Course Management**
     *   Goal: Establish user accounts and enable basic course and lecture organization.
     *   Estimated story count: 5-7 stories

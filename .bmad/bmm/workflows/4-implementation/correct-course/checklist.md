@@ -10,7 +10,7 @@
 <check-item id="1.1">
 <prompt>Identify the triggering story that revealed this issue</prompt>
 <action>Document story ID and brief description</action>
-<status>[ ] Done / [ ] N/A / [ ] Action-needed</status>
+<status>[x] Done / [ ] N/A / [ ] Action-needed</status>
 </check-item>
 
 <check-item id="1.2">
@@ -22,14 +22,14 @@
   - Strategic pivot or market change
   - Failed approach requiring different solution
 <action>Write clear problem statement</action>
-<status>[ ] Done / [ ] N/A / [ ] Action-needed</status>
+<status>[x] Done / [ ] N/A / [ ] Action-needed</status>
 </check-item>
 
 <check-item id="1.3">
 <prompt>Assess initial impact and gather supporting evidence</prompt>
 <action>Collect concrete examples, error messages, stakeholder feedback, or technical constraints</action>
 <action>Document evidence for later reference</action>
-<status>[ ] Done / [ ] N/A / [ ] Action-needed</status>
+<status>[x] Done / [ ] N/A / [ ] Action-needed</status>
 </check-item>
 
 <halt-condition>
@@ -45,7 +45,7 @@
 <prompt>Evaluate current epic containing the trigger story</prompt>
 <action>Can this epic still be completed as originally planned?</action>
 <action>If no, what modifications are needed?</action>
-<status>[ ] Done / [ ] N/A / [ ] Action-needed</status>
+<status>[x] Done / [ ] N/A / [ ] Action-needed</status>
 </check-item>
 
 <check-item id="2.2">
@@ -56,28 +56,28 @@
   - Remove or defer epic that's no longer viable
   - Completely redefine epic based on new understanding
 <action>Document specific epic changes needed</action>
-<status>[ ] Done / [ ] N/A / [ ] Action-needed</status>
+<status>[x] Done / [ ] N/A / [ ] Action-needed</status>
 </check-item>
 
 <check-item id="2.3">
 <prompt>Review all remaining planned epics for required changes</prompt>
 <action>Check each future epic for impact</action>
 <action>Identify dependencies that may be affected</action>
-<status>[ ] Done / [ ] N/A / [ ] Action-needed</status>
+<status>[x] Done / [ ] N/A / [ ] Action-needed</status>
 </check-item>
 
 <check-item id="2.4">
 <prompt>Check if issue invalidates future epics or necessitates new ones</prompt>
 <action>Does this change make any planned epics obsolete?</action>
 <action>Are new epics needed to address gaps created by this change?</action>
-<status>[ ] Done / [ ] N/A / [ ] Action-needed</status>
+<status>[x] Done / [ ] N/A / [ ] Action-needed</status>
 </check-item>
 
 <check-item id="2.5">
 <prompt>Consider if epic order or priority should change</prompt>
 <action>Should epics be resequenced based on this issue?</action>
 <action>Do priorities need adjustment?</action>
-<status>[ ] Done / [ ] N/A / [ ] Action-needed</status>
+<status>[x] Done / [ ] N/A / [ ] Action-needed</status>
 </check-item>
 
 </section>
@@ -89,7 +89,7 @@
 <action>Does issue conflict with core PRD goals or objectives?</action>
 <action>Do requirements need modification, addition, or removal?</action>
 <action>Is the defined MVP still achievable or does scope need adjustment?</action>
-<status>[ ] Done / [ ] N/A / [ ] Action-needed</status>
+<status>[x] Done / [ ] N/A / [ ] Action-needed</status>
 </check-item>
 
 <check-item id="3.2">
@@ -102,7 +102,7 @@
   - API designs and contracts
   - Integration points
 <action>Document specific architecture sections requiring updates</action>
-<status>[ ] Done / [ ] N/A / [ ] Action-needed</status>
+<status>[ ] Done / [ ] N/A / [!] Action-needed</status>
 </check-item>
 
 <check-item id="3.3">
@@ -114,7 +114,7 @@
   - Interaction patterns
   - Accessibility considerations
 <action>Note specific UI/UX sections needing revision</action>
-<status>[ ] Done / [ ] N/A / [ ] Action-needed</status>
+<status>[x] Done / [ ] N/A / [ ] Action-needed</status>
 </check-item>
 
 <check-item id="3.4">
@@ -127,7 +127,7 @@
   - Documentation
   - CI/CD pipelines
 <action>Document any secondary artifacts requiring updates</action>
-<status>[ ] Done / [ ] N/A / [ ] Action-needed</status>
+<status>[x] Done / [ ] N/A / [ ] Action-needed</status>
 </check-item>
 
 </section>
@@ -139,9 +139,9 @@
 <action>Can the issue be addressed by modifying existing stories?</action>
 <action>Can new stories be added within the current epic structure?</action>
 <action>Would this approach maintain project timeline and scope?</action>
-<action>Effort estimate: [High/Medium/Low]</action>
-<action>Risk level: [High/Medium/Low]</action>
-<status>[ ] Viable / [ ] Not viable</status>
+<action>Effort estimate: [Low]</action>
+<action>Risk level: [Low]</action>
+<status>[x] Viable / [ ] Not viable</status>
 </check-item>
 
 <check-item id="4.2">
@@ -151,7 +151,7 @@
 <action>Is the rollback effort justified by the simplification gained?</action>
 <action>Effort estimate: [High/Medium/Low]</action>
 <action>Risk level: [High/Medium/Low]</action>
-<status>[ ] Viable / [ ] Not viable</status>
+<status>[ ] Viable / [x] Not viable</status>
 </check-item>
 
 <check-item id="4.3">
@@ -162,7 +162,7 @@
 <action>What would be deferred to post-MVP if scope is reduced?</action>
 <action>Effort estimate: [High/Medium/Low]</action>
 <action>Risk level: [High/Medium/Low]</action>
-<status>[ ] Viable / [ ] Not viable</status>
+<status>[ ] Viable / [x] Not viable</status>
 </check-item>
 
 <check-item id="4.4">
@@ -174,9 +174,9 @@
   - Impact on team morale and momentum
   - Long-term sustainability and maintainability
   - Stakeholder expectations and business value
-<action>Selected approach: [Option 1 / Option 2 / Option 3 / Hybrid]</action>
-<action>Justification: [Document reasoning]</action>
-<status>[ ] Done / [ ] N/A / [ ] Action-needed</status>
+<action>Selected approach: [Option 1]</action>
+<action>Justification: Adding an explicit setup epic clarifies the work needed before feature development.</action>
+<status>[x] Done / [ ] N/A / [ ] Action-needed</status>
 </check-item>
 
 </section>
@@ -187,7 +187,7 @@
 <prompt>Create identified issue summary</prompt>
 <action>Write clear, concise problem statement</action>
 <action>Include context about discovery and impact</action>
-<status>[ ] Done / [ ] N/A / [ ] Action-needed</status>
+<status>[x] Done / [ ] N/A / [ ] Action-needed</status>
 </check-item>
 
 <check-item id="5.2">
@@ -195,7 +195,7 @@
 <action>Summarize findings from Epic Impact Assessment (Section 2)</action>
 <action>Summarize findings from Artifact Conflict Analysis (Section 3)</action>
 <action>Be specific about what changes are needed and why</action>
-<status>[ ] Done / [ ] N/A / [ ] Action-needed</status>
+<status>[x] Done / [ ] N/A / [ ] Action-needed</status>
 </check-item>
 
 <check-item id="5.3">
@@ -203,7 +203,7 @@
 <action>Include selected approach from Section 4</action>
 <action>Provide complete justification for recommendation</action>
 <action>Address trade-offs and alternatives considered</action>
-<status>[ ] Done / [ ] N/A / [ ] Action-needed</status>
+<status>[x] Done / [ ] N/A / [ ] Action-needed</status>
 </check-item>
 
 <check-item id="5.4">
@@ -211,7 +211,7 @@
 <action>State clearly if MVP is affected</action>
 <action>Outline major action items needed for implementation</action>
 <action>Identify dependencies and sequencing</action>
-<status>[ ] Done / [ ] N/A / [ ] Action-needed</status>
+<status>[x] Done / [ ] N/A / [ ] Action-needed</status>
 </check-item>
 
 <check-item id="5.5">
@@ -221,7 +221,7 @@
   - Product Owner / Scrum Master (for backlog changes)
   - Product Manager / Architect (for strategic changes)
 <action>Define responsibilities for each role</action>
-<status>[ ] Done / [ ] N/A / [ ] Action-needed</status>
+<status>[x] Done / [ ] N/A / [ ] Action-needed</status>
 </check-item>
 
 </section>
@@ -233,7 +233,7 @@
 <action>Verify all applicable sections have been addressed</action>
 <action>Confirm all [Action-needed] items have been documented</action>
 <action>Ensure analysis is comprehensive and actionable</action>
-<status>[ ] Done / [ ] N/A / [ ] Action-needed</status>
+<status>[x] Done / [ ] N/A / [ ] Action-needed</status>
 </check-item>
 
 <check-item id="6.2">
@@ -241,7 +241,7 @@
 <action>Review complete proposal for consistency and clarity</action>
 <action>Ensure all recommendations are well-supported by analysis</action>
 <action>Check that proposal is actionable and specific</action>
-<status>[ ] Done / [ ] N/A / [ ] Action-needed</status>
+<status>[x] Done / [ ] N/A / [ ] Action-needed</status>
 </check-item>
 
 <check-item id="6.3">
@@ -249,7 +249,7 @@
 <action>Present complete proposal to user</action>
 <action>Get clear yes/no approval for proceeding</action>
 <action>Document approval and any conditions</action>
-<status>[ ] Done / [ ] N/A / [ ] Action-needed</status>
+<status>[x] Done / [ ] N/A / [ ] Action-needed</status>
 </check-item>
 
 <check-item id="6.4">
@@ -257,7 +257,7 @@
 <action>Review handoff responsibilities with user</action>
 <action>Ensure all stakeholders understand their roles</action>
 <action>Confirm timeline and success criteria</action>
-<status>[ ] Done / [ ] N/A / [ ] Action-needed</status>
+<status>[x] Done / [ ] N/A / [ ] Action-needed</status>
 </check-item>
 
 <halt-condition>

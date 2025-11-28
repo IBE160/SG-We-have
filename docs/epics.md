@@ -27,6 +27,55 @@ Each epic includes:
 
 ---
 
+# Epic 0: Project Initialization & Environment Setup
+
+**Goal:** Initialize the project repository and configure the development environments for both frontend and backend to enable parallel development.
+
+**User Stories:**
+
+### Story 0.1: Initialize Next.js Frontend
+**As a** Developer
+**I want to** initialize a Next.js project with Tailwind CSS
+**So that** I have a modern foundation for building the user interface.
+
+**Acceptance Criteria:**
+- [ ] Next.js project created using `create-next-app`
+- [ ] Tailwind CSS configured and working
+- [ ] Project structure follows best practices (app directory)
+- [ ] Application runs locally on port 3000
+
+### Story 0.2: Initialize FastAPI Backend
+**As a** Developer
+**I want to** set up a Python FastAPI project structure
+**So that** I can build high-performance API endpoints.
+
+**Acceptance Criteria:**
+- [ ] Python environment set up (virtualenv/poetry)
+- [ ] FastAPI installed
+- [ ] Basic directory structure created (app, api, core, etc.)
+- [ ] "Hello World" endpoint working on localhost:8000
+
+### Story 0.3: Configure Supabase Connection
+**As a** Developer
+**I want to** set up the Supabase client in both frontend and backend
+**So that** the application can interact with the database and auth services.
+
+**Acceptance Criteria:**
+- [ ] Supabase project created (or instructions to connect to one)
+- [ ] Environment variables configured (.env)
+- [ ] Database connection verified from Backend
+- [ ] Auth client initialized in Frontend
+
+### Story 0.4: Repository Structure & CI/CD Prep
+**As a** DevOps Engineer
+**I want to** organize the repository
+**So that** frontend and backend code are manageable in a single repo (monorepo style) or cleanly separated.
+
+**Acceptance Criteria:**
+- [ ] Root directory contains clear `frontend/` and `backend/` folders (or equivalent)
+- [ ] .gitignore configured for both Node and Python artifacts
+- [ ] README.md updated with setup instructions
+
 ## Epic 1: User Foundation & Course Management
 
 **Expanded Goal:** To provide a secure and intuitive entry point for users, allowing them to register, log in, and establish their academic structure by creating and managing courses and associated lectures.
