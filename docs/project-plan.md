@@ -56,9 +56,10 @@
   - foreach epic in sprint planning:
     - [ ] /run-agent-task sm create-epic-tech-context {prompt / user-input-file}
       - [x] File: sprint-artifacts/tech-spec-epic-0.md
-    - [ ] /run-agent-task sm validate-epic-tech-context {prompt / user-input-file}
+    - [ ] /run-agent-task sm validate-epic-tech-context
+      - [x] validation-report-2025-11-28_14-30-00.md
     - foreach story in epic:
-      - [ ] /run-agent-task sm *create-story {prompt / user-input-file}
+      - [ ]  {prompt / user-input-file}
         - [ ] File: sprint-artifacts/{{story_key}}.md
       - [ ] /run-agent-task sm *validate-create-story {prompt / user-input-file}
       - [ ] /run-agent-task sm *create-story-context {prompt / user-input-file}
