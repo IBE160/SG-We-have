@@ -1,6 +1,6 @@
 # Story 0.1: Initialize Next.js Frontend
 
-Status: review
+Status: done
 
 ## Story
 
@@ -56,6 +56,10 @@ so that I have a modern foundation for building the user interface.
 -   [Source: docs/sprint-artifacts/tech-spec-epic-0.md#Frontend Initialization]
 
 ## Dev Agent Record
+
+### Completion Notes
+**Completed:** 2025-11-28
+**Definition of Done:** All acceptance criteria met, code reviewed, tests passing
 
 ### Context Reference
 

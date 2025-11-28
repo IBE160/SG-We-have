@@ -42,8 +42,9 @@ All stories are either still in development or already done.
    </check>
 
 <action>Use the first reviewed story found</action>
-<action>Find matching story file in {story_dir} using story_key pattern</action>
-<action>Read the COMPLETE story file</action>
+<action>Extract epic_number and story_number from story_key (e.g., "0-1-..." -> epic_number="0", story_number="1")</action>
+<action>Construct story_file_path using derived numbers: {story_dir}/epic-{epic_number}/story-{epic_number}-{story_number}/{story_key}.md</action>
+<action>Read the COMPLETE story file from {story_file_path}</action>
 </check>
 
 <action>Extract story_id and story_title from the story file</action>
