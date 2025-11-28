@@ -1,0 +1,75 @@
+# generated: 2025-11-28
+# project: ibe160
+# project_key: ibe160
+# tracking_system: file-system
+# story_location: docs/sprint-artifacts
+
+# STATUS DEFINITIONS:
+# ==================
+# Epic Status:
+#   - backlog: Epic exists in epic file but not contexted
+#   - contexted: Next epic tech context created by *epic-tech-context (required)
+#
+# Story Status:
+#   - backlog: Story only exists in epic file
+#   - drafted: Story file created in stories folder by *create-story
+#   - ready-for-dev: Draft approved and story context created by *story-ready
+#   - in-progress: Developer actively working on implementation by *dev-story
+#   - review: Implementation complete, ready for review by *code-review
+#   - done: Story completed by *story-done
+#
+# Retrospective Status:
+#   - optional: Can be completed but not required
+#   - completed: Retrospective has been done by *retrospective
+#
+# WORKFLOW NOTES:
+# ===============
+# - Epics should be 'contexted' before stories can be 'drafted'
+# - SM typically drafts next story ONLY after previous one is 'done' to incorporate learnings
+# - Dev moves story to 'review', dev reviews, then Dev moves to 'done'
+
+generated: 2025-11-28
+project: ibe160
+project_key: ibe160
+tracking_system: file-system
+story_location: docs/sprint-artifacts
+
+development_status:
+  epic-0: contexted
+  0-1-initialize-next-js-frontend: backlog
+  0-2-initialize-fastapi-backend: backlog
+  0-3-configure-supabase-connection: backlog
+  0-4-repository-structure-ci-cd-prep: backlog
+  epic-0-retrospective: optional
+
+  epic-1: backlog
+  1-1-user-registration: backlog
+  1-2-user-login-logout: backlog
+  1-3-create-new-course: backlog
+  1-4-view-course-list: backlog
+  1-5-add-lecture-to-course: backlog
+  epic-1-retrospective: optional
+
+  epic-2: backlog
+  2-1-access-note-editor: backlog
+  2-2-basic-text-formatting: backlog
+  2-3-save-lecture-notes: backlog
+  2-4-auto-timestamp-notes: backlog
+  epic-2-retrospective: optional
+
+  epic-3: backlog
+  3-1-initiate-quiz-generation: backlog
+  3-2-select-lectures-for-quiz: backlog
+  3-3-configure-quiz-length: backlog
+  3-4-ai-generates-multiple-choice-questions: backlog
+  3-5-ai-fact-checking-for-accuracy: backlog
+  epic-3-retrospective: optional
+
+  epic-4: backlog
+  4-1-display-single-question: backlog
+  4-2-immediate-answer-feedback: backlog
+  4-3-quiz-progress-tracking: backlog
+  4-4-final-score-summary: backlog
+  4-5-retake-new-quiz-options: backlog
+  4-6-micro-learning-content: backlog
+  epic-4-retrospective: optional
