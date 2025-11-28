@@ -19,41 +19,45 @@ This project is a monorepo containing:
 
 ### Backend (FastAPI)
 
-Navigate to the backend directory:
-```bash
-cd backend
-```
+From the project root:
 
-#### 1. Install Dependencies
-```bash
-uv sync
-```
+1. **Navigate to backend:**
+   ```bash
+   cd backend
+   ```
 
-#### 2. Run the Development Server
-Starts the server on `http://localhost:8000`.
-```bash
-uv run uvicorn app.main:app --reload --port 8000
-```
+2. **Sync Environment & Install Dependencies:**
+   ```bash
+   uv sync
+   ```
 
-#### 3. Run Tests
-```bash
-uv run pytest
-```
+3. **Run Development Server:**
+   Starts the server on `http://localhost:8000`.
+   ```bash
+   uv run uvicorn app.main:app --reload --port 8000
+   ```
+
+4. **Run Tests:**
+   ```bash
+   uv run pytest
+   ```
 
 ### Frontend (Next.js)
 
-Navigate to the frontend directory:
-```bash
-cd frontend
-```
+From the project root:
 
-#### 1. Install Dependencies
-```bash
-npm install
-```
+1. **Navigate to frontend:**
+   ```bash
+   cd frontend
+   ```
 
-#### 2. Run the Development Server
-Starts the server on `http://localhost:3000`.
-```bash
-npm run dev
-```
+2. **Sync/Install Dependencies:**
+   ```bash
+   npm install
+   ```
+
+3. **Run Development Server:**
+   Starts the server on `http://localhost:3000`.
+   ```bash
+   npm run dev
+   ```
