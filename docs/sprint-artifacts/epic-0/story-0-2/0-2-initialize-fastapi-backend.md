@@ -1,6 +1,6 @@
 # Story 0.2: Initialize FastAPI Backend
 
-Status: drafted
+Status: ready-for-dev
 
 ## Story
 
@@ -84,7 +84,7 @@ so that I have a high-performance, type-safe backend foundation for building API
 
 ### Context Reference
 
-<!-- Path(s) to story context XML will be added here by context workflow -->
+- docs/sprint-artifacts/epic-0/story-0-2/0-2-initialize-fastapi-backend.context.xml
 
 ### Agent Model Used
 
