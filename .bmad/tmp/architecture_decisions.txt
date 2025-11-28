@@ -19,3 +19,7 @@ Refined Decisions:
 Data Access: ALL data via FastAPI Backend. No direct Supabase calls from Browser (except Auth maybe?).
 Auth: Frontend uses Supabase Auth for login/token. Frontend sends Token to Backend. Backend verifies.
 Quiz Generation: Synchronous with Retry Logic (Client-side retry on timeout). No Polling.
+AI Framework: Pydantic AI (via FastAPI)
+
+User Question: Why Supabase keys in frontend?
+Answer: Yes, strictly for Auth (Sign Up / Login / Session Management) via the @supabase/supabase-js client. The Anon Key is safe for public browser use if RLS is on (but we aren't using RLS for data, just Auth).
