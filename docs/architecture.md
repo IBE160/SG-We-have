@@ -2,12 +2,12 @@
 
 **Date:** 2025-11-28
 **Project:** ibe160
-**Version:** 1.0
+**Version:** 1.1
 **Status:** Approved
 
 ## 1. Executive Summary
 
-This architecture defines a modern, monolithic web application designed for the "AI-Powered Student Helper". It leverages **Next.js** for a responsive frontend and **FastAPI (Python)** for a high-performance backend capable of seamless AI integration. Data persistence and authentication are offloaded to **Supabase (Cloud)**, while **Google Gemini Pro 2.5** provides the core intelligence. The system is designed for simplicity and developer velocity, utilizing a local development environment without complex containerization for the MVP phase.
+This architecture defines a modern, monolithic web application designed for the "AI-Powered Student Helper". It leverages **Next.js** for a responsive frontend and **FastAPI (Python)** for a high-performance backend capable of seamless AI integration. Data persistence and authentication are offloaded to **Supabase (Cloud)**. **Google Gemini Pro 2.5** provides the core intelligence, orchestrated via the **Pydantic AI** framework for type-safe, structured interactions. The system is designed for simplicity and developer velocity, utilizing a local development environment without complex containerization for the MVP phase.
 
 ## 2. Project Initialization & Structure
 
@@ -29,7 +29,8 @@ C:\IBE160\projects\SG-We-have\
     │   ├── main.py         # App entry point
     │   ├── api/            # Route handlers (endpoints)
     │   ├── core/           # Config, DB connection, Security
-    │   ├── services/       # Business logic (Gemini, Quiz Gen)
+    │   ├── services/       # Business logic (Quiz Gen)
+    │   ├── agents/         # Pydantic AI Agents
     │   └── models/         # Pydantic schemas & DB models
     ├── pyproject.toml      # Dependencies (managed by uv)
     └── .env                # Backend env vars (DB URL, API Keys)
@@ -43,7 +44,7 @@ Agents must use these exact commands to scaffold the project:
 mkdir backend
 cd backend
 uv init
-uv add fastapi uvicorn supabase python-dotenv pydantic google-generativeai
+uv add fastapi uvicorn supabase python-dotenv pydantic pydantic-ai google-generativeai
 
 # Frontend Setup
 cd ..
@@ -60,6 +61,7 @@ npm install @supabase/supabase-js @tanstack/react-query zustand lucide-react cls
 | :--- | :--- | :--- | :--- |
 | **Frontend Framework** | **Next.js** | 15.x | React standard, App Router, robust ecosystem. |
 | **Backend Framework** | **FastAPI** | 0.110+ | High performance, native Python (for AI), easy async. |
+| **AI Framework** | **Pydantic AI** | Latest | Type-safe, structured output generation, seamless FastAPI integration. |
 | **Language (FE)** | **TypeScript** | 5.x | Type safety, developer experience. |
 | **Language (BE)** | **Python** | 3.12+ | AI ecosystem dominance (Gemini SDK), readability. |
 | **Database** | **Supabase (PostgreSQL)** | Cloud | Remote managed DB, powerful auth, vector ready. |
@@ -106,10 +108,10 @@ Prompts are **not** hardcoded in files. They are stored in Supabase.
 *   **Flow**:
     1.  Service fetches prompt from DB by key.
     2.  Service injects variables (notes content).
-    3.  Service calls Gemini.
+    3.  Service calls Pydantic AI Agent with the specific prompt.
 
 ### 4.4. Quiz Generation Pattern (Synchronous + Retry)
-*   **Flow**: Frontend `POST /api/quiz/generate` -> Backend (Calls AI) -> Waits -> Returns Quiz.
+*   **Flow**: Frontend `POST /api/quiz/generate` -> Backend (Calls Pydantic AI Agent) -> Waits -> Returns Quiz.
 *   **Timeout Handling**: Gemini Flash is fast, but network issues happen.
 *   **Frontend**: React Query configured with `retry: 3` and `retryDelay: 1000` for this specific mutation.
 *   **No Polling**: Simplified flow for MVP.
@@ -145,7 +147,7 @@ Since we are using **Manual Sync** (no auto-generator), agents must follow this 
 | **Epic 0: Setup** | Scaffold, Tailwind | FastAPI Setup, Env | N/A |
 | **Epic 1: User Foundation** | `LoginPage`, `CourseList` | `auth.py`, `courses.py` | `profiles`, `courses` |
 | **Epic 2: Note Taking** | `Editor` (TipTap/Quill), `NoteView` | `lectures.py`, `notes.py` | `lectures`, `notes` |
-| **Epic 3: AI Quiz Gen** | `QuizConfigModal` | `quiz_service.py`, `gemini_client.py` | `system_prompts` |
+| **Epic 3: AI Quiz Gen** | `QuizConfigModal` | `quiz_service.py`, `quiz_agent.py` | `system_prompts` |
 | **Epic 4: Quiz Experience** | `QuizPlayer`, `ScoreCard` | `quiz_submission.py` | `quizzes`, `questions`, `submissions` |
 
 ---
@@ -164,5 +166,6 @@ Since we are using **Manual Sync** (no auto-generator), agents must follow this 
 1.  **Check `architecture.md` first**. If you are unsure where a file goes, look at the Source Tree section.
 2.  **Respect the Monorepo**. Do not mix frontend and backend dependencies.
 3.  **Manual Type Sync**. If you change an API return type, you **must** update the frontend interface.
-4.  **Prompts in DB**. Do not write long prompt strings in Python files. Create a migration/seed script to insert them into the `system_prompts` table.
-5.  **Keep it Local**. Assume `npm run dev` and `uvicorn` are how the app runs. Do not add Dockerfiles unless requested.
+4.  **Pydantic AI**. Use `pydantic-ai` for all LLM interactions. Define clear Pydantic models for outputs.
+5.  **Prompts in DB**. Do not write long prompt strings in Python files. Create a migration/seed script to insert them into the `system_prompts` table.
+6.  **Keep it Local**. Assume `npm run dev` and `uvicorn` are how the app runs. Do not add Dockerfiles unless requested.

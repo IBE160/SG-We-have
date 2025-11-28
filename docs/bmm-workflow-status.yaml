@@ -28,7 +28,7 @@ workflow_status:
   prd: "docs/PRD.md"
   validate-prd: "optional"
   create-design: "docs/myapp_UX_Validation_Report_20251117.md"
-  create-architecture: "required"
+  create-architecture: "docs/architecture.md"
   create-epics-and-stories: "docs/epics.md"
   test-design: "recommended"
   validate-architecture: "optional"
