@@ -36,7 +36,7 @@ story_location: docs/sprint-artifacts
 
 development_status:
   epic-0: contexted
-  0-1-initialize-next-js-frontend: drafted
+  0-1-initialize-next-js-frontend: ready-for-dev
   0-2-initialize-fastapi-backend: backlog
   0-3-configure-supabase-connection: backlog
   0-4-repository-structure-ci-cd-prep: backlog

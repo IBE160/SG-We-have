@@ -1,6 +1,6 @@
 # Story 0.1: Initialize Next.js Frontend
 
-Status: drafted
+Status: ready-for-dev
 
 ## Story
 
@@ -59,7 +59,7 @@ so that I have a modern foundation for building the user interface.
 
 ### Context Reference
 
-<!-- Path(s) to story context XML will be added here by context workflow -->
+- docs/sprint-artifacts/0-1-initialize-next-js-frontend.context.xml
 
 ### Agent Model Used
 
