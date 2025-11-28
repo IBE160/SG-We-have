@@ -1,6 +1,6 @@
 # Story 0.2: Initialize FastAPI Backend
 
-Status: ready-for-dev
+Status: review
 
 ## Story
 
@@ -19,26 +19,26 @@ so that I have a high-performance, type-safe backend foundation for building API
 
 ## Tasks / Subtasks
 
-- [ ] Initialize Python project with `uv` in `backend/` (AC: #1)
-  - [ ] Run `uv init` inside `backend/` directory
-  - [ ] Configure `pyproject.toml`
-- [ ] Install core dependencies (AC: #2)
-  - [ ] `uv add fastapi uvicorn`
-  - [ ] `uv add supabase python-dotenv pydantic`
-- [ ] Create project directory structure (AC: #3)
-  - [ ] Create `backend/app/__init__.py`
-  - [ ] Create `backend/app/main.py`
-  - [ ] Create `backend/app/api/`
-  - [ ] Create `backend/app/core/`
-- [ ] Implement basic application entry point in `main.py` (AC: #4, #6)
-  - [ ] Initialize `FastAPI` app instance
-  - [ ] Add root route (`GET /`) returning `{"message": "Hello World"}`
-- [ ] Configure CORS Middleware (AC: #5)
-  - [ ] Allow origins: `http://localhost:3000`
-  - [ ] Allow credentials, methods, and headers
-- [ ] Verify server startup and access (AC: #4, #6)
-  - [ ] Run `uv run uvicorn app.main:app --reload --port 8000`
-  - [ ] Curl `localhost:8000` to verify response
+- [x] Initialize Python project with `uv` in `backend/` (AC: #1)
+  - [x] Run `uv init` inside `backend/` directory
+  - [x] Configure `pyproject.toml`
+- [x] Install core dependencies (AC: #2)
+  - [x] `uv add fastapi uvicorn`
+  - [x] `uv add supabase python-dotenv pydantic`
+- [x] Create project directory structure (AC: #3)
+  - [x] Create `backend/app/__init__.py`
+  - [x] Create `backend/app/main.py`
+  - [x] Create `backend/app/api/`
+  - [x] Create `backend/app/core/`
+- [x] Implement basic application entry point in `main.py` (AC: #4, #6)
+  - [x] Initialize `FastAPI` app instance
+  - [x] Add root route (`GET /`) returning `{"message": "Hello World"}`
+- [x] Configure CORS Middleware (AC: #5)
+  - [x] Allow origins: `http://localhost:3000`
+  - [x] Allow credentials, methods, and headers
+- [x] Verify server startup and access (AC: #4, #6)
+  - [x] Run `uv run uvicorn app.main:app --reload --port 8000`
+  - [x] Curl `localhost:8000` to verify response
 
 ## Dev Notes
 
@@ -94,8 +94,23 @@ gemini-1.5-pro
 
 ### Completion Notes List
 
+- Initialized FastAPI backend using uv.
+- Set up directory structure: `app/`, `app/api`, `app/core`.
+- Installed core dependencies: `fastapi`, `uvicorn`, `supabase`, `python-dotenv`, `pydantic`.
+- Implemented `main.py` with Hello World endpoint and CORS for localhost:3000.
+- Verified server startup and response with `curl` and `pytest`.
+
 ### File List
+
+- backend/pyproject.toml
+- backend/uv.lock
+- backend/app/__init__.py
+- backend/app/main.py
+- backend/app/api/
+- backend/app/core/
+- backend/tests/test_main.py
 
 ## Change Log
 
 - 2025-11-28: Initial Draft created from Epic 0 Tech Spec.
+- 2025-11-28: Implemented story: initialized backend, added dependencies, created app structure, added CORS, verified with tests.
