@@ -1,0 +1,21 @@
+Using manual setup (Monorepo)
+Structure: frontend/ (Next.js) and backend/ (FastAPI)
+Database: Supabase (Remote)
+Auth: Supabase Auth
+Package Manager (Backend): uv
+Development: Local (No Docker)
+AI: Google Gemini Pro 2.5 (via FastAPI)
+Run Command Frontend: npm run dev
+Run Command Backend: uv run uvicorn main:app --reload
+
+Additional Decisions:
+Type Sync: Manual (Agents responsible for keeping sync)
+Styling: Tailwind CSS
+State Management: React Query (Server) + Zustand (Client)
+Naming: snake_case (DB/Python), kebab-case (API), PascalCase (React)
+Prompt Storage: Database (Supabase table 'prompts')
+
+Refined Decisions:
+Data Access: ALL data via FastAPI Backend. No direct Supabase calls from Browser (except Auth maybe?).
+Auth: Frontend uses Supabase Auth for login/token. Frontend sends Token to Backend. Backend verifies.
+Quiz Generation: Synchronous with Retry Logic (Client-side retry on timeout). No Polling.
