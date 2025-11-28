@@ -32,5 +32,5 @@ workflow_status:
   create-epics-and-stories: "docs/epics.md"
   test-design: "recommended"
   validate-architecture: "optional"
-  implementation-readiness: "required"
+  implementation-readiness: "docs/implementation-readiness-report-2025-11-28.md"
   sprint-planning: "required"
