@@ -1,7 +1,18 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from app.core import config
+from app.core.database import verify_supabase_connection
+
 
 app = FastAPI()
+
+# Verify Supabase connection on startup
+@app.on_event("startup")
+async def startup_event():
+    if verify_supabase_connection():
+        print("Backend: Supabase connection verified successfully during startup.")
+    else:
+        print("Backend: Supabase connection verification FAILED during startup.")
 
 origins = [
     "http://localhost:3000",
