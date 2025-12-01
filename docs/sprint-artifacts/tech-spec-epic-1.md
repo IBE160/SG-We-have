@@ -56,7 +56,7 @@ This epic aligns with the "Scale Adaptive Architecture" by implementing the core
 ### Data Models and Contracts
 
 **Table: `profiles`**
-*   `id`: uuid (Primary Key, references `auth.users.id` ON DELETE CASCADE)
+*   `id`: uuid (Primary Key, references `auth.users` on delete cascade)
 *   `username`: text (Unique)
 *   `created_at`: timestamptz
 
@@ -187,3 +187,10 @@ This epic aligns with the "Scale Adaptive Architecture" by implementing the core
 *   **Unit Tests:** Test Pydantic models and FastAPI route logic (mocking DB calls).
 *   **Integration Tests:** Test API endpoints against a local Supabase instance (or test project) to verify RLS and DB constraints.
 *   **Manual Tests:** Verify full "New User" flow: Register -> Login -> Create Course -> Add Lecture.
+
+## Post-Review Follow-ups
+
+-   **From Story 1.3: Create New Course (Changes Requested)**
+    -   [ ] Implement visual confirmation for course creation (e.g., refresh course list, success toast) in `frontend/app/dashboard/page.tsx` within the `handleCourseCreated` function. (AC 1.3.2)
+    -   [ ] Refine frontend error typing to use a more specific error interface instead of `any` in `frontend/components/CreateCourseModal.tsx` and `frontend/lib/api.ts`.
+    -   [ ] Replace `print()` statement with a proper logging framework in `backend/app/api/routers/courses.py`.

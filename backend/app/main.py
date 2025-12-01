@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.core import config
 from app.core.database import verify_supabase_connection
 from app.core.security import get_current_user
-
+from app.api.routers import courses
 
 app = FastAPI()
 
@@ -26,6 +26,8 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+app.include_router(courses.router, prefix="/api/v1", tags=["courses"])
 
 @app.get("/")
 def read_root():

@@ -1,0 +1,169 @@
+<story-context id="epic-1-story-1-3-context" v="1.0">
+  <metadata>
+    <epicId>epic-1</epicId>
+    <storyId>1-3</storyId>
+    <title>Create New Course</title>
+    <status>ready-for-dev</status>
+    <generatedAt>2025-12-01</generatedAt>
+    <generator>BMAD Story Context Workflow</generator>
+    <sourceStoryPath>docs/sprint-artifacts/epic-1/story-1-3/1-3-create-new-course.md</sourceStoryPath>
+  </metadata>
+
+  <story>
+    <asA>logged-in user</asA>
+    <iWant>to create a new course</iWant>
+    <soThat>I can organize my lectures and notes under specific subjects.</soThat>
+    <tasks>
+      <task name="Frontend: Implement Create Course UI" ac-ref="1.3.1">
+        <subtasks>
+          <subtask>Create `CreateCourseModal` component or similar on the `Dashboard` page.</subtask>
+          <subtask>Add "Create Course" button to trigger the modal.</subtask>
+          <subtask>Implement form validation (non-empty name).</subtask>
+        </subtasks>
+      </task>
+      <task name="Frontend: Integrate Course Creation API" ac-ref="1.3.2">
+        <subtasks>
+          <subtask>Update `frontend/lib/api.ts` (or similar service) to call `POST /api/v1/courses`.</subtask>
+          <subtask>Pass the Supabase JWT token in the `Authorization` header.</subtask>
+          <subtask>Handle success (close modal, refresh list/update state) and error states.</subtask>
+        </subtasks>
+      </task>
+      <task name="Backend: Implement Create Course Endpoint" ac-ref="1.3.3">
+        <subtasks>
+          <subtask>Create `POST /api/v1/courses` endpoint in `backend/app/api/routers/courses.py`.</subtask>
+          <subtask>Define Pydantic model: `class CourseCreate(BaseModel): name: str`.</subtask>
+          <subtask>Use `deps.get_current_user` to validate JWT and get `user_id`.</subtask>
+          <subtask>Insert record into `courses` table: `{ user_id: user.id, name: body.name }`.</subtask>
+          <subtask>Return the created course object.</subtask>
+        </subtasks>
+      </task>
+      <task name="Backend: Verify RLS Policies" ac-ref="1.3.3">
+        <subtasks>
+          <subtask>Ensure Supabase RLS policy for `courses` table allows `INSERT` only for authenticated users where `auth.uid() = user_id`.</subtask>
+        </subtasks>
+      </task>
+      <task name="Testing: Backend Integration Tests" ac-ref="1.3.3">
+        <subtasks>
+          <subtask>Test `POST /api/v1/courses` with valid token -&gt; 201 Created.</subtask>
+          <subtask>Test `POST /api/v1/courses` without token -&gt; 401 Unauthorized.</subtask>
+          <subtask>Test `POST /api/v1/courses` with invalid data (empty name) -&gt; 422 Unprocessable Entity.</subtask>
+        </subtasks>
+      </task>
+    </tasks>
+  </story>
+
+  <acceptanceCriteria>
+    <criterion id="1.3.1">
+      <description>The dashboard provides a clearly visible "Create Course" button. Clicking the button opens a modal or input field prompting for the "Course Name". The input field validates that the name is not empty.</description>
+    </criterion>
+    <criterion id="1.3.2">
+      <description>Upon submission, the system sends a request to create the course. The course is saved in the database and associated *only* with the currently logged-in user. The user receives visual confirmation (e.g., the new course appears in the list immediately or a success toast).</description>
+    </criterion>
+    <criterion id="1.3.3">
+      <description>The backend stores the course with a unique ID, the user's ID, the provided name, and a timestamp. Row Level Security (RLS) policies ensure the course is linked to `auth.uid()`.</description>
+    </criterion>
+  </acceptanceCriteria>
+
+  <artifacts>
+    <docs>
+      <doc>
+        <path>docs/sprint-artifacts/tech-spec-epic-1.md</path>
+        <title>Epic Technical Specification: User Foundation & Course Management</title>
+        <section>Detailed Design / APIs and Interfaces</section>
+        <snippet>Course API (FastAPI): POST /api/v1/courses (Request: { "name": "string" }, Response: { "data": { "id": "uuid", "name": "string", "created_at": "timestamp" } })</snippet>
+      </doc>
+      <doc>
+        <path>docs/architecture.md</path>
+        <title>Scale Adaptive Architecture</title>
+        <section>4.1. Data Flow Pattern (Frontend Auth + Backend Data)</section>
+        <snippet>Frontend calls FastAPI Backend for ALL data. Frontend MUST include Authorization: Bearer &lt;token&gt; header. Backend Middleware validates JWT.</snippet>
+      </doc>
+      <doc>
+        <path>docs/PRD.md</path>
+        <title>Product Requirements Document</title>
+        <section>Requirements / Functional Requirements</section>
+        <snippet>FR002: Course Management: The system shall allow users to create and view courses. User Journey 1: Fiona clicks "Create Course", inputs "Distributed Systems".</snippet>
+      </doc>
+      <doc>
+        <path>docs/sprint-artifacts/epic-1/story-1-2/1-2-user-login-logout.md</path>
+        <title>Story 1.2: User Login & Logout</title>
+        <section>Learnings from Previous Story</section>
+        <snippet>Reusable Auth Components: SupabaseClientProvider for auth context and backend/app/core/security.py for token validation. Advisory: Consider typing the error object in LoginPage.</snippet>
+      </doc>
+    </docs>
+    <code>
+      <item>
+        <path>frontend/lib/api.ts</path>
+        <kind>file</kind>
+        <symbol>api_client</symbol>
+        <reason>Where API calls to backend courses endpoint will be made.</reason>
+      </item>
+      <item>
+        <path>backend/app/api/routers/courses.py</path>
+        <kind>file</kind>
+        <symbol>courses_router</symbol>
+        <reason>New router for course-related endpoints, including POST /api/v1/courses.</reason>
+      </item>
+      <item>
+        <path>backend/app/core/security.py</path>
+        <kind>file</kind>
+        <symbol>get_current_user</symbol>
+        <reason>Existing dependency for JWT validation and user extraction, to be reused.</reason>
+      </item>
+      <item>
+        <path>backend/tests/test_courses.py</path>
+        <kind>file</kind>
+        <symbol>test_create_course</symbol>
+        <reason>New test file for backend integration tests for course creation.</reason>
+      </item>
+      <item>
+        <path>supabase/migrations/20251201000000_create_profiles.sql</path>
+        <kind>database</kind>
+        <symbol>courses</symbol>
+        <reason>Reference to the courses table, on which RLS policies will be applied.</reason>
+      </item>
+    </code>
+    <dependencies>
+      <ecosystem name="npm">
+        <package>@supabase/supabase-js</package>
+      </ecosystem>
+      <ecosystem name="uv">
+        <package>fastapi</package>
+        <package>uvicorn</package>
+        <package>pydantic</package>
+        <package>supabase</package>
+      </ecosystem>
+    </dependencies>
+  </artifacts>
+
+  <constraints>
+    <constraint>Frontend-Backend Separation: Frontend must use Backend API POST /api/v1/courses for data operations.</constraint>
+    <constraint>Authentication: Established `security.py` dependency must be used for JWT validation.</constraint>
+    <constraint>Data Persistence: Row Level Security (RLS) must be active on the `courses` table.</constraint>
+  </constraints>
+  <interfaces>
+    <interface>
+      <name>POST /api/v1/courses</name>
+      <kind>API Endpoint</kind>
+      <signature>Request: { "name": "string" }, Response: { "data": { "id": "uuid", "name": "string", "created_at": "timestamp" } }</signature>
+      <description>Creates a new course for the authenticated user.</description>
+    </interface>
+    <interface>
+      <name>get_current_user</name>
+      <kind>Backend Dependency</kind>
+      <signature>get_current_user(token: str = Depends(oauth2_scheme))</signature>
+      <description>Validates JWT token from Authorization header and extracts user ID.</description>
+    </interface>
+  </interfaces>
+  <tests>
+    <standards>Integration testing for backend endpoints with valid/invalid tokens and data.</standards>
+    <locations>
+      <location>backend/tests/</location>
+    </locations>
+    <ideas>
+      <idea>Integration test: POST /api/v1/courses with valid token -&gt; 201 Created.</idea>
+      <idea>Integration test: POST /api/v1/courses without token -&gt; 401 Unauthorized.</idea>
+      <idea>Integration test: POST /api/v1/courses with invalid data (empty name) -&gt; 422 Unprocessable Entity.</idea>
+    </ideas>
+  </tests>
+</story-context>
