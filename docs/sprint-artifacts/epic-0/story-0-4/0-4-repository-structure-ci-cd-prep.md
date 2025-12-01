@@ -1,6 +1,6 @@
 # Story 0.4: Repository Structure & CI/CD Prep
 
-Status: ready-for-dev
+Status: done
 
 ## Story
 
@@ -16,25 +16,25 @@ so that frontend and backend code are manageable in a single repo (monorepo styl
 
 ## Tasks / Subtasks
 
-- [ ] **AC 1: Verify and Formalize Repository Structure**
-  - [ ] Audit root directory to ensure clean separation of `frontend/` and `backend/`.
-  - [ ] Move any misplaced configuration files to their respective directories.
-  - [ ] Verify no cross-contamination of dependencies (e.g., `package.json` in backend).
+- [x] **AC 1: Verify and Formalize Repository Structure**
+  - [x] Audit root directory to ensure clean separation of `frontend/` and `backend/`.
+  - [x] Move any misplaced configuration files to their respective directories.
+  - [x] Verify no cross-contamination of dependencies (e.g., `package.json` in backend).
 
-- [ ] **AC 2: Configure .gitignore**
-  - [ ] Review existing `.gitignore` (or create if missing).
-  - [ ] Ensure Node.js artifacts are ignored (node_modules, .next, .env.local, npm-debug.log, etc.).
-  - [ ] Ensure Python artifacts are ignored (venv, __pycache__, .pytest_cache, .env, *.pyc, etc.).
-  - [ ] Ensure system files are ignored (.DS_Store, Thumbs.db).
-  - [ ] Consolidate ignores into a single root `.gitignore` or verify split configuration.
+- [x] **AC 2: Configure .gitignore**
+  - [x] Review existing `.gitignore` (or create if missing).
+  - [x] Ensure Node.js artifacts are ignored (node_modules, .next, .env.local, npm-debug.log, etc.).
+  - [x] Ensure Python artifacts are ignored (venv, __pycache__, .pytest_cache, .env, *.pyc, etc.).
+  - [x] Ensure system files are ignored (.DS_Store, Thumbs.db).
+  - [x] Consolidate ignores into a single root `.gitignore` or verify split configuration.
 
-- [ ] **AC 3: Update Documentation**
-  - [ ] Update root `README.md` with comprehensive setup instructions.
-  - [ ] Include "Prerequisites" section (Node, Python, uv, etc.).
-  - [ ] Include "Getting Started" for Frontend (npm install, run dev).
-  - [ ] Include "Getting Started" for Backend (uv sync, run server).
-  - [ ] Document the monorepo structure and where to find things.
-  - [ ] Add a "Troubleshooting" section if common issues are known (e.g., port conflicts).
+- [x] **AC 3: Update Documentation**
+  - [x] Update root `README.md` with comprehensive setup instructions.
+  - [x] Include "Prerequisites" section (Node, Python, uv, etc.).
+  - [x] Include "Getting Started" for Frontend (npm install, run dev).
+  - [x] Include "Getting Started" for Backend (uv sync, run server).
+  - [x] Document the monorepo structure and where to find things.
+  - [x] Add a "Troubleshooting" section if common issues are known (e.g., port conflicts).
 
 ## Dev Notes
 
@@ -83,6 +83,78 @@ Gemini CLI
 
 ### Debug Log References
 
+- **AC 1 Planning:**
+  - Auditing root, frontend, and backend directories.
+  - Will verify file placements and dependency isolation.
+
 ### Completion Notes List
 
+- Verified `frontend/` and `backend/` separation.
+- Consolidated ignores into root `.gitignore`, covering Node, Python, and secrets.
+- Removed redundant `frontend/.gitignore`.
+- Updated `README.md` with comprehensive setup instructions for both stacks.
+
 ### File List
+- .gitignore
+- README.md
+- frontend/.gitignore (deleted)
+
+### Change Log
+- 2025-12-01: Implemented repository structure audit, consolidated .gitignore, and updated README.md. Marked story as Review.
+- 2025-12-01: Senior Developer Review performed. Outcome: Approve. Story marked Done.
+
+## Senior Developer Review (AI)
+
+- **Reviewer:** Amelia (AI Senior Dev)
+- **Date:** 2025-12-01
+- **Outcome:** Approve
+- **Summary:** The repository structure has been successfully formalized with a clean separation of concerns between frontend and backend. The `.gitignore` configuration is comprehensive and secure, correctly ignoring environment files and build artifacts for both stacks. Documentation has been significantly improved to guide new developers.
+
+### Key Findings
+
+-   **[None]** No High or Medium severity issues found. Implementation is solid.
+
+### Acceptance Criteria Coverage
+
+| AC# | Description | Status | Evidence |
+| :--- | :--- | :--- | :--- |
+| 1 | Root directory contains clear `frontend/` and `backend/` folders | **IMPLEMENTED** | `ls -R` confirmed `frontend/package.json` and `backend/pyproject.toml` exist in correct locations. |
+| 2 | `.gitignore` configured for both Node and Python artifacts | **IMPLEMENTED** | Root `.gitignore` includes `node_modules`, `.next`, `.venv`, `__pycache__`, and `.env`. verified `frontend/.gitignore` was removed. |
+| 3 | `README.md` updated with setup instructions | **IMPLEMENTED** | `README.md` contains clear sections for Prerequisites, Frontend/Backend setup, and Troubleshooting. |
+
+**Summary:** 3 of 3 acceptance criteria fully implemented.
+
+### Task Completion Validation
+
+| Task | Marked As | Verified As | Evidence |
+| :--- | :--- | :--- | :--- |
+| Audit root directory | [x] | **VERIFIED** | File system check passed. |
+| Move misplaced config files | [x] | **VERIFIED** | No config files found in root (except monorepo level ones). |
+| Verify no cross-contamination | [x] | **VERIFIED** | `package.json` only in frontend, `pyproject.toml` only in backend. |
+| Review existing `.gitignore` | [x] | **VERIFIED** | `.gitignore` content reviewed. |
+| Ensure Node.js artifacts ignored | [x] | **VERIFIED** | Lines 18-25 in `.gitignore`. |
+| Ensure Python artifacts ignored | [x] | **VERIFIED** | Lines 28-39 in `.gitignore`. |
+| Ensure system files ignored | [x] | **VERIFIED** | Lines 2-4 in `.gitignore`. |
+| Consolidate ignores | [x] | **VERIFIED** | Single root `.gitignore` exists. |
+| Update root `README.md` | [x] | **VERIFIED** | Content verified. |
+| Include "Prerequisites" | [x] | **VERIFIED** | "Prerequisites" section present. |
+| Include "Getting Started" (FE) | [x] | **VERIFIED** | "Frontend (Next.js)" section present. |
+| Include "Getting Started" (BE) | [x] | **VERIFIED** | "Backend (FastAPI)" section present. |
+| Document monorepo structure | [x] | **VERIFIED** | "Repository Structure" section present. |
+| Add "Troubleshooting" | [x] | **VERIFIED** | "Troubleshooting" section present. |
+
+**Summary:** 14 of 14 completed tasks verified.
+
+### Test Coverage and Gaps
+-   **Verification:** Manual verification of file structure and configuration files was appropriate for this infrastructure story.
+-   **CI/CD:** `README.md` lists test commands (`uv run pytest`) which is good preparation.
+
+### Architectural Alignment
+-   **Alignment:** Perfect alignment with `docs/architecture.md` regarding Monorepo Structure and Initialization.
+-   **Security:** `.env` files are correctly ignored as per security requirements.
+
+### Action Items
+
+**Advisory Notes:**
+-   Note: Ensure all developers run `uv sync` and `npm install` after pulling these changes to respect the new structure.
+
