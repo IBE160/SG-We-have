@@ -1,7 +1,8 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from app.core import config
 from app.core.database import verify_supabase_connection
+from app.core.security import get_current_user
 
 
 app = FastAPI()
@@ -29,3 +30,7 @@ app.add_middleware(
 @app.get("/")
 def read_root():
     return {"message": "Hello World"}
+
+@app.get("/api/protected")
+def protected_route(user: dict = Depends(get_current_user)):
+    return {"message": "You are authenticated", "user": user}

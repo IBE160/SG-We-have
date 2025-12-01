@@ -52,24 +52,40 @@
 
 - [ ] Implementation
   - [x] /run-agent-task sm *sprint-planning {prompt / user-input-file}
+    - 
     - [x] File: sprint-artifacts/sprint-status.yaml
   - foreach epic in sprint planning:
+    - 
     - [ ] /run-agent-task sm create-epic-tech-context {prompt / user-input-file}
+      
       - [x] File: sprint-artifacts/tech-spec-epic-0.md
+    - 
     - [ ] /run-agent-task sm validate-epic-tech-context
+      
       - [x] validation-report-2025-11-28_14-30-00.md
     - foreach story in epic:
+      
       - [ ] /run-agent-task sm *create-story {prompt / user-input-file}
+      
         - [ ] File: sprint-artifacts/{{story_key}}.md
+      
       - [ ] /run-agent-task sm *validate-create-story {prompt / user-input-file}
+      
       - [ ] /run-agent-task sm *create-story-context {prompt / user-input-file}
+      
         - [ ] File: sprint-artifacts/{{story_key}}.context.xml
+      
       - [ ] /run-agent-task sm *validate-story-context {prompt / user-input-file}
       while code-review != approved:
+      
         - [ ] /run-agent-task dev *develop-story {prompt / user-input-file}
+      
         - [ ] /run-agent-task dev *code-review {prompt / user-input-file}
+      
       - [ ] /run-agent-task dev *story-done {prompt / user-input-file}
+      
       - [ ] /run-agent-task sm *test-review {prompt / user-input-file}
+    - 
     - [ ] /run-agent-task sm *epic-retrospective {prompt / user-input-file}
 
 

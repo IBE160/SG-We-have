@@ -1,153 +1,189 @@
 # Epic Technical Specification: User Foundation & Course Management
 
-**Date:** mandag 1. desember 2025
-**Author:** BIP (SM Agent)
-**Epic ID:** 1
-**Status:** Draft
+Date: 2025-12-01
+Author: BIP
+Epic ID: 1
+Status: Draft
 
 ---
 
 ## Overview
 
-Epic 1 establishes the core user journey for the "AI-Powered Student Helper". It transitions the application from a skeleton to a functional multi-user system. This epic focuses on implementing secure User Authentication (Sign Up, Login, Logout) using Supabase Auth and building the fundamental data structures for Course and Lecture management. By the end of this epic, a user will be able to log in, create courses, and organize lectures within those courses, laying the groundwork for note-taking and quiz generation in subsequent epics.
+This epic establishes the foundational user experience for the StudyTool application. It covers the essential capabilities for users to create an account, securely log in, and manage their academic structure. Specifically, it focuses on enabling students to register and authenticate, create courses to organize their subjects, and add lectures within those courses. This foundation is critical for the subsequent note-taking and quiz generation features, as all data must be associated with specific users and courses.
 
 ## Objectives and Scope
 
-**In Scope:**
-*   **Database Schema:** Designing and applying the Supabase PostgreSQL schema for `profiles`, `courses`, and `lectures`.
-*   **Row Level Security (RLS):** Implementing strict RLS policies to ensure users can only access their own data.
-*   **Authentication UI:** Implementing Login and Registration pages in Next.js.
-*   **Authentication Logic:** Integrating Supabase Auth (SSR/Client) for session management and route protection.
-*   **Backend API:** Creating FastAPI endpoints for Course and Lecture CRUD operations, secured by JWT validation.
-*   **Frontend UI:** Building the User Dashboard (Course List) and Course Details View (Lecture List).
-*   **Frontend State:** Managing server state (Courses/Lectures) using React Query.
+**In-Scope:**
+*   **User Authentication:**
+    *   User Registration (Username/Email + Password).
+    *   User Login (Supabase Auth).
+    *   User Logout.
+*   **Course Management:**
+    *   Create a new course.
+    *   View list of all created courses.
+*   **Lecture Management:**
+    *   Add a new lecture to a specific course.
+    *   View list of lectures within a course.
 
-**Out of Scope:**
-*   Note-taking capabilities (Rich Text Editor) - *Epic 2*.
-*   Quiz generation or taking - *Epic 3 & 4*.
-*   User profile image uploading (basic placeholder or URL is fine).
-*   Social features or sharing.
+**Out-of-Scope (for this Epic):**
+*   Password reset functionality.
+*   Email verification (deferred for MVP).
+*   Deleting or editing courses and lectures.
+*   Social login providers (Google, GitHub, etc.).
+*   Note-taking functionality (covered in Epic 2).
+*   Quiz generation (covered in Epic 3).
 
 ## System Architecture Alignment
 
-This epic implements the **User Foundation** and **Course Management** subsystems defined in the [Architecture Document](../architecture.md).
+This epic aligns with the "Scale Adaptive Architecture" by implementing the core "User Foundation" and "Course Management" verticals.
 
-*   **Pattern Alignment:**
-    *   **Auth:** Frontend talks directly to Supabase Auth. Backend validates JWTs.
-    *   **Data:** Frontend calls Backend APIs. Backend queries Supabase DB.
-    *   **Security:** "Zero Trust" between Frontend and Backend; Backend verifies Identity via Supabase.
+*   **Frontend (Next.js):** Will implement `RegisterPage`, `LoginPage`, `Dashboard` (Course List), and `CourseDetail` (Lecture List) using the `app` router. It will utilize the Supabase client (`@supabase/supabase-js`) for direct authentication and for passing JWTs to the backend.
+*   **Backend (FastAPI):** Will implement `courses.py` and `lectures.py` routers in the `api` module. It will use `Supabase` (PostgreSQL) for data persistence. The backend will **not** handle login/registration directly but will validate JWT tokens passed in the `Authorization` header for all course and lecture operations.
+*   **Database (Supabase):** Will use the `profiles` table (linked to `auth.users`), `courses` table, and `lectures` table. RLS policies will be applied to ensure users can only access their own data.
 
 ## Detailed Design
 
 ### Services and Modules
 
-| Module/Service | Responsibility | Key Technologies |
+| Module/Service | Responsibility | Owner |
 | :--- | :--- | :--- |
-| **Supabase Auth** | User Identity, JWT issuance | GoTrue (Supabase) |
-| **PostgreSQL** | Data Storage, RLS | Supabase DB |
-| **Frontend / Auth** | Login/Register forms, Session Context | Next.js Middleware, Supabase SSR |
-| **Frontend / Dashboard** | View Courses, Create Course Modal | React, React Query, Tailwind |
-| **Backend / Auth** | Dependency to validate Bearer Token | FastAPI Depends, PyJWT/Supabase |
-| **Backend / Courses** | CRUD logic for Courses | FastAPI Router, Pydantic |
-| **Backend / Lectures** | CRUD logic for Lectures | FastAPI Router, Pydantic |
+| **Frontend: AuthContext** | Manages global user session state using Supabase `onAuthStateChange`. | Frontend |
+| **Frontend: SupabaseClient** | Singleton instance for Auth and API calls. | Frontend |
+| **Backend: Core/Security** | Validates JWT tokens from incoming requests. | Backend |
+| **Backend: CourseService** | Handles business logic for creating and retrieving courses. | Backend |
+| **Backend: LectureService** | Handles business logic for adding and retrieving lectures. | Backend |
 
-### Data Models (Database Schema)
+### Data Models and Contracts
 
-All tables must have `created_at` (timestamptz) and `updated_at` (timestamptz).
+**Table: `profiles`**
+*   `id`: uuid (Primary Key, references `auth.users.id` ON DELETE CASCADE)
+*   `username`: text (Unique)
+*   `created_at`: timestamptz
 
-1.  **`profiles`** (Extends `auth.users`)
-    *   `id`: UUID (PK, references `auth.users.id` ON DELETE CASCADE)
-    *   `full_name`: Text (nullable)
-    *   `email`: Text (Read-only from auth)
+**Table: `courses`**
+*   `id`: uuid (Primary Key, Default: `gen_random_uuid()`)
+*   `user_id`: uuid (Foreign Key references `profiles.id` NOT NULL)
+*   `name`: text (NOT NULL)
+*   `created_at`: timestamptz (Default: `now()`)
 
-2.  **`courses`**
-    *   `id`: UUID (PK, default `gen_random_uuid()`)
-    *   `user_id`: UUID (FK `profiles.id`, NOT NULL)
-    *   `title`: Text (NOT NULL)
-    *   `description`: Text (nullable)
+**Table: `lectures`**
+*   `id`: uuid (Primary Key, Default: `gen_random_uuid()`)
+*   `course_id`: uuid (Foreign Key references `courses.id` ON DELETE CASCADE NOT NULL)
+*   `title`: text (NOT NULL)
+*   `created_at`: timestamptz (Default: `now()`)
 
-3.  **`lectures`**
-    *   `id`: UUID (PK, default `gen_random_uuid()`)
-    *   `course_id`: UUID (FK `courses.id` ON DELETE CASCADE, NOT NULL)
-    *   `title`: Text (NOT NULL)
-    *   `description`: Text (nullable) - *Optional context for the lecture*
+### APIs and Interfaces
 
-### Security: Row Level Security (RLS) Policies
+**Authentication (Frontend SDK)**
+*   `supabase.auth.signUp({ email, password })`
+*   `supabase.auth.signInWithPassword({ email, password })`
+*   `supabase.auth.signOut()`
 
-*   **`profiles`**:
-    *   `SELECT`: Users can see their own profile. `auth.uid() = id`.
-    *   `UPDATE`: Users can update their own profile.
-*   **`courses`**:
-    *   `ALL`: Users can perform all actions on courses where `auth.uid() = user_id`.
-*   **`lectures`**:
-    *   `ALL`: Users can perform all actions on lectures where `course_id` belongs to a course they own. (Requires a join or helper function check, or denormalizing `user_id` to lectures for simpler RLS - *Decision: Join or `EXISTS` clause preferred for normalization*).
+**Course API (FastAPI)**
+*   `POST /api/v1/courses`
+    *   Request: `{ "name": "string" }`
+    *   Response: `{ "data": { "id": "uuid", "name": "string", "created_at": "timestamp" } }`
+*   `GET /api/v1/courses`
+    *   Response: `{ "data": [ { "id": "uuid", "name": "string" } ] }`
 
-### APIs and Interfaces (FastAPI)
+**Lecture API (FastAPI)**
+*   `POST /api/v1/courses/{course_id}/lectures`
+    *   Request: `{ "title": "string" }`
+    *   Response: `{ "data": { "id": "uuid", "title": "string", "course_id": "uuid" } }`
+*   `GET /api/v1/courses/{course_id}/lectures`
+    *   Response: `{ "data": [ { "id": "uuid", "title": "string" } ] }`
 
-**Base URL:** `/api/v1`
+### Workflows and Sequencing
 
-1.  **Auth Dependency:** `get_current_user` (Validates `Authorization: Bearer <token>`)
+**1. User Registration Flow**
+*   User enters email/password on Register Page.
+*   Frontend calls `supabase.auth.signUp()`.
+*   Supabase creates user in `auth.users`.
+*   **Trigger:** A Supabase Database Trigger (`after insert on auth.users`) automatically inserts a row into `public.profiles`.
+*   User is redirected to Login/Dashboard.
 
-2.  **Courses**
-    *   `GET /courses/` - List all courses for current user.
-    *   `POST /courses/` - Create a new course. Body: `CourseCreate`.
-    *   `GET /courses/{course_id}` - Get details of a specific course.
-    *   `DELETE /courses/{course_id}` - Delete a course.
-
-3.  **Lectures**
-    *   `GET /courses/{course_id}/lectures/` - List lectures for a course.
-    *   `POST /courses/{course_id}/lectures/` - Create a lecture. Body: `LectureCreate`.
-    *   `DELETE /lectures/{lecture_id}` - Delete a lecture.
-
-### Frontend Routes (Next.js)
-
-*   `/login` - Public. Login form.
-*   `/register` - Public. Registration form.
-*   `/` - Landing page (redirects to /dashboard if logged in).
-*   `/dashboard` - **Protected**. Lists courses.
-*   `/courses/[courseId]` - **Protected**. Lists lectures, "Add Lecture" button.
+**2. Create Course Flow**
+*   User clicks "Create Course" on Dashboard.
+*   Frontend prompts for Course Name.
+*   Frontend sends `POST /api/v1/courses` with `Authorization: Bearer <token>`.
+*   Backend validates token.
+*   Backend inserts into `courses` table with `user_id` from token.
+*   Backend returns created course object.
+*   Frontend updates list.
 
 ## Non-Functional Requirements
 
-*   **Usability:** Login/Register must provide clear error messages (e.g., "Invalid password").
-*   **Performance:** Dashboard loading state must be handled gracefully (skeleton loaders).
-*   **Security:** No raw SQL in backend. Use Supabase Client (Python) or ORM-like interaction to prevent injection. RLS is the final barrier.
+### Performance
+*   API response time for Course/Lecture CRUD operations should be < 200ms.
+*   Dashboard load time (fetching course list) should be < 500ms on 4G networks.
+
+### Security
+*   **Authentication:** All backend API endpoints (except health checks) must require a valid Supabase JWT.
+*   **Authorization:** Row Level Security (RLS) must be enabled on all tables (`profiles`, `courses`, `lectures`) to strictly enforce that users can only SELECT/INSERT/UPDATE/DELETE rows where `user_id` matches their own ID.
+
+### Reliability/Availability
+*   The system relies on Supabase cloud availability.
+*   Frontend should handle network errors gracefully (e.g., "Failed to create course, please try again").
+
+### Observability
+*   Backend requests should be logged with method, path, status code, and processing time.
+*   Client-side errors (API failures) should be logged to the console (MVP) or telemetry service (Future).
+
+## Dependencies and Integrations
+
+*   **Supabase Auth:** For user management and token generation.
+*   **Supabase Database:** PostgreSQL for data storage.
+*   **FastAPI:** Backend framework.
+*   **Next.js:** Frontend framework.
+*   **Lucide React:** Icons for UI.
+*   **Tailwind CSS:** Styling.
 
 ## Acceptance Criteria (Authoritative)
 
-1.  **User Registration:**
-    *   User can sign up with email/password.
-    *   User is redirected to Dashboard after signup.
-    *   `profiles` row is created (via trigger or manual call).
-2.  **User Login:**
-    *   User can log in.
-    *   Session persists on refresh.
-    *   User can log out.
-3.  **Course Management:**
-    *   User sees *only* their courses on Dashboard.
-    *   User can create a course (Name required).
-    *   User can click a course to view details.
-4.  **Lecture Management:**
-    *   User can add a lecture to a course.
-    *   Lecture appears in the list immediately (optimistic update or refetch).
+**AC 1.1: User Registration**
+1.  User can successfully create an account with a valid email and password.
+2.  System prevents registration with an already existing email.
+3.  Upon success, a user profile is created in the database.
+
+**AC 1.2: User Login & Logout**
+1.  User can log in with registered credentials.
+2.  System rejects invalid credentials with an appropriate error message.
+3.  User can log out, clearing the local session state.
+4.  Accessing protected routes (Dashboard) without a session redirects to Login.
+
+**AC 1.3: Create New Course**
+1.  Logged-in user can create a course by providing a name.
+2.  The course is saved to the database associated with the user.
+3.  The course appears immediately in the user's course list.
+
+**AC 1.4: View Course List**
+1.  Dashboard displays a list of all courses belonging to the logged-in user.
+2.  Dashboard does **not** display courses from other users.
+3.  Clicking a course navigates to the course details page.
+
+**AC 1.5: Add Lecture to Course**
+1.  User can add a lecture title within a selected course.
+2.  The lecture is saved and associated with that specific course.
+3.  The lecture appears in the lecture list for that course.
 
 ## Traceability Mapping
 
-| User Story | Component | Test Strategy |
-| :--- | :--- | :--- |
-| 1.1 Registration | FE/Auth | Manual: Sign up new user, check DB `auth.users`. |
-| 1.2 Login/Logout | FE/Auth | Manual: Login, refresh page (check session), Logout. |
-| 1.3 Create Course | BE/API | Integration: POST /courses/ with token. Check DB. |
-| 1.4 View Courses | FE/Dash | Manual: Verify list matches DB. |
-| 1.5 Add Lecture | BE/API | Integration: POST /lectures/. Verify linkage to Course. |
+| Acceptance Criteria | Spec Section | Component / API | Test Idea |
+| :--- | :--- | :--- | :--- |
+| AC 1.1 | Workflows (1) | `RegisterPage`, `public.profiles` trigger | Register user, check `auth.users` and `public.profiles` tables. |
+| AC 1.2 | APIs (Auth) | `LoginPage`, `AuthContext` | Login with valid/invalid creds; try accessing `/dashboard` while logged out. |
+| AC 1.3 | APIs (Course) | `POST /api/v1/courses` | Create course, verify response ID, check DB for `user_id` match. |
+| AC 1.4 | APIs (Course), Security | `GET /api/v1/courses` | Create courses as User A and User B; verify User A only sees A's courses. |
+| AC 1.5 | APIs (Lecture) | `POST /api/v1/courses/{id}/lectures` | Create lecture, verify `course_id` foreign key linkage. |
 
 ## Risks, Assumptions, Open Questions
 
-*   **Risk:** Supabase Auth Cookie handling in Next.js App Router can be tricky with Server Actions/Middleware. *Mitigation: Follow Supabase official Next.js guide strictly.*
-*   **Decision:** We will use Supabase Python Client (`supabase`) in the backend, which uses PostgREST under the hood. We will NOT use a separate SQL driver (like `psycopg2`) or ORM (SQLAlchemy) to keep the stack simple and aligned with Supabase primitives.
+*   **Assumption:** We are using Supabase's built-in Auth UI or building custom UI with their SDK? -> **Decision:** Custom UI (`RegisterPage`, `LoginPage`) using the SDK functions for better control over styling (Tailwind).
+*   **Risk:** Handling the `profiles` table creation sync. If the DB trigger fails, the user exists in Auth but not in our app logic. **Mitigation:** Ensure the trigger is robust and tested; consider a "create profile if missing" check on login as backup.
+*   **Question:** Do we need email confirmation enabled for MVP? -> **Decision:** No, disable "Confirm Email" in Supabase settings for smoother MVP onboarding.
 
 ## Test Strategy Summary
 
-*   **Unit Tests:** Backend Pydantic models and simple service logic.
-*   **Integration Tests:** Backend API tests using `TestClient` and a mocked Supabase client (or separate test project).
-*   **Manual Verification:** Critical for Auth flows (cookies, redirects).
+*   **Unit Tests:** Test Pydantic models and FastAPI route logic (mocking DB calls).
+*   **Integration Tests:** Test API endpoints against a local Supabase instance (or test project) to verify RLS and DB constraints.
+*   **Manual Tests:** Verify full "New User" flow: Register -> Login -> Create Course -> Add Lecture.
