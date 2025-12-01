@@ -39,7 +39,7 @@ development_status:
   0-1-initialize-next-js-frontend: done
   0-2-initialize-fastapi-backend: done
   0-3-configure-supabase-connection: done
-  0-4-repository-structure-ci-cd-prep: backlog
+  0-4-repository-structure-ci-cd-prep: ready-for-dev
   epic-0-retrospective: optional
 
   epic-1: backlog

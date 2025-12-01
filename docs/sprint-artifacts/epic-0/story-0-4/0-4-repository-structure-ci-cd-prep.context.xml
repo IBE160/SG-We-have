@@ -1,0 +1,122 @@
+<story-context id="0-4-repository-structure-ci-cd-prep" v="1.0">
+  <metadata>
+    <epicId>0</epicId>
+    <storyId>0.4</storyId>
+    <title>Repository Structure &amp; CI/CD Prep</title>
+    <status>drafted</status>
+    <generatedAt>2025-11-28</generatedAt>
+    <generator>BMAD Story Context Workflow</generator>
+    <sourceStoryPath>docs/sprint-artifacts/epic-0/story-0-4/0-4-repository-structure-ci-cd-prep.md</sourceStoryPath>
+  </metadata>
+
+  <story>
+    <asA>DevOps Engineer</asA>
+    <iWant>organize the repository</iWant>
+    <soThat>frontend and backend code are manageable in a single repo (monorepo style) or cleanly separated</soThat>
+    <tasks>
+- [ ] **AC 1: Verify and Formalize Repository Structure**
+  - [ ] Audit root directory to ensure clean separation of `frontend/` and `backend/`.
+  - [ ] Move any misplaced configuration files to their respective directories.
+  - [ ] Verify no cross-contamination of dependencies (e.g., `package.json` in backend).
+
+- [ ] **AC 2: Configure .gitignore**
+  - [ ] Review existing `.gitignore` (or create if missing).
+  - [ ] Ensure Node.js artifacts are ignored (node_modules, .next, .env.local, npm-debug.log, etc.).
+  - [ ] Ensure Python artifacts are ignored (venv, __pycache__, .pytest_cache, .env, *.pyc, etc.).
+  - [ ] Ensure system files are ignored (.DS_Store, Thumbs.db).
+  - [ ] Consolidate ignores into a single root `.gitignore` or verify split configuration.
+
+- [ ] **AC 3: Update Documentation**
+  - [ ] Update root `README.md` with comprehensive setup instructions.
+  - [ ] Include "Prerequisites" section (Node, Python, uv, etc.).
+  - [ ] Include "Getting Started" for Frontend (npm install, run dev).
+  - [ ] Include "Getting Started" for Backend (uv sync, run server).
+  - [ ] Document the monorepo structure and where to find things.
+  - [ ] Add a "Troubleshooting" section if common issues are known (e.g., port conflicts).
+</tasks>
+  </story>
+
+  <acceptanceCriteria>
+1.  Root directory contains clear `frontend/` and `backend/` folders (or equivalent)
+2.  `.gitignore` configured for both Node and Python artifacts
+3.  `README.md` updated with setup instructions
+</acceptanceCriteria>
+
+  <artifacts>
+    <docs>
+- path: docs/architecture.md
+  title: Scale Adaptive Architecture: AI-Powered Student Helper
+  section: 2. Project Initialization & Structure
+  snippet: The project follows a Monorepo structure to keep frontend and backend tightly coupled in context but loosely coupled in code. Source Tree shows explicit frontend/ and backend/ separation.
+
+- path: docs/architecture.md
+  title: Scale Adaptive Architecture: AI-Powered Student Helper
+  section: 7. Security & Environment
+  snippet: Secrets Management: Git must ignore all .env files. Backend uses Service Role key; Frontend uses Anon key.
+
+- path: docs/sprint-artifacts/tech-spec-epic-0.md
+  title: Epic Technical Specification: Project Initialization & Environment Setup
+  section: Detailed Design
+  snippet: Monorepo Pattern: strictly adhering to the `frontend/` and `backend/` root directory structure. CI/CD Preparation: Configuring `.gitignore` and basic README documentation.
+
+- path: docs/sprint-artifacts/tech-spec-epic-0.md
+  title: Epic Technical Specification: Project Initialization & Environment Setup
+  section: Acceptance Criteria (Authoritative)
+  snippet: Repository Structure: Root directory contains clear `frontend/` and `backend/` folders. .gitignore configured for both Node and Python artifacts. README.md updated with setup instructions.
+</docs>
+    <code>
+- path: .gitignore
+  kind: config
+  symbol: ignored files
+  reason: Root gitignore file requiring audit and update for both stacks.
+
+- path: README.md
+  kind: documentation
+  symbol: project documentation
+  reason: Root documentation requiring update with setup instructions.
+
+- path: frontend/package.json
+  kind: config
+  symbol: frontend dependencies
+  reason: Indicates frontend root directory location.
+
+- path: backend/pyproject.toml
+  kind: config
+  symbol: backend dependencies
+  reason: Indicates backend root directory location.
+</code>
+    <dependencies>
+      <ecosystem name="Node.js">
+        <package name="next" version="16.0.5" />
+      </ecosystem>
+      <ecosystem name="Python">
+        <package name="fastapi" version="0.122.0" />
+        <package name="uv" version="latest" />
+      </ecosystem>
+    </dependencies>
+  </artifacts>
+
+  <constraints>
+- Monorepo Pattern: `frontend/` and `backend/` must be top-level directories.
+- Security: All `.env` files must be ignored by git.
+- Documentation: README.md must reside at the project root.
+</constraints>
+  <interfaces>
+</interfaces>
+  <tests>
+    <standards>
+Verification Method: Manual verification of the file system structure and git status (to ensure ignored files are not tracked).
+Documentation Test: Follow the README.md instructions on a fresh clone (or simulate it) to verify they work.
+Git Status: Run `git status` to confirm no artifact files (node_modules, venv) are showing up as untracked files.
+</standards>
+    <locations>
+- (root)
+</locations>
+    <ideas>
+- Verify existence of `frontend/` and `backend/` at root (AC #1)
+- Verify `.gitignore` contains entries for node_modules, .next, __pycache__, .venv, .env (AC #2)
+- Run `git check-ignore -v .env` to confirm it is ignored (AC #2)
+- Verify README.md contains "Getting Started" sections for both stacks (AC #3)
+</ideas>
+  </tests>
+</story-context>
