@@ -49,7 +49,6 @@
   - [x] /run-agent-task architect *validate-architecture
 
 ## Fase 3
-cls
 
 - [ ] Implementation
   - [x] /run-agent-task sm *sprint-planning {prompt / user-input-file}
