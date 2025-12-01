@@ -1,0 +1,122 @@
+<story-context id="1-5-add-lecture-to-course" v="1.0">
+  <metadata>
+    <epicId>1</epicId>
+    <storyId>5</storyId>
+    <title>Add Lecture to Course</title>
+    <status>drafted</status>
+    <generatedAt>2025-12-01</generatedAt>
+    <generator>BMAD Story Context Workflow</generator>
+    <sourceStoryPath>docs/sprint-artifacts/epic-1/story-1-5/1-5-add-lecture-to-course.md</sourceStoryPath>
+  </metadata>
+
+  <story>
+    <asA>student</asA>
+    <iWant>to add a new lecture to a specific course</iWant>
+    <soThat>I can organize my notes within that subject.</soThat>
+    <tasks>
+      <task>Implement Course Details Page (Frontend)</task>
+      <task>Integrate Add Lecture API (Frontend)</task>
+      <task>Implement Lecture Endpoints (Backend)</task>
+      <task>Verify RLS Policies (Backend)</task>
+      <task>Backend Integration Tests</task>
+      <task>Frontend Manual Verification</task>
+    </tasks>
+  </story>
+
+  <acceptanceCriteria>
+    <criterion id="1.5.1">Add Lecture Input: "Add Lecture" button displays; prompt for title; validate non-empty.</criterion>
+    <criterion id="1.5.2">Successful Addition: Lecture created; associated with course; visual confirmation.</criterion>
+    <criterion id="1.5.3">Data Persistence: Stored with unique ID, course_id, title, timestamp; user ownership verified.</criterion>
+    <criterion id="1.5.4">View Lecture List: List displays on Course Details page; ordered by creation date.</criterion>
+  </acceptanceCriteria>
+
+  <artifacts>
+    <docs>
+      <doc>
+        <path>docs/sprint-artifacts/tech-spec-epic-1.md</path>
+        <title>Epic 1 Technical Specification</title>
+        <section>APIs and Interfaces (Lecture API)</section>
+        <snippet>POST /api/v1/courses/{course_id}/lectures requires title, returns lecture object. GET returns list.</snippet>
+      </doc>
+      <doc>
+        <path>docs/architecture.md</path>
+        <title>System Architecture</title>
+        <section>4.1. Data Flow Pattern</section>
+        <snippet>Frontend calls Backend API -> Backend validates ownership -> Backend inserts to DB. Frontend never accesses DB directly.</snippet>
+      </doc>
+      <doc>
+        <path>docs/epics.md</path>
+        <title>Epic Breakdown</title>
+        <section>Epic 1: User Foundation & Course Management</section>
+        <snippet>User Story 1.5: Add Lecture to Course. AC includes input validation, successful addition, data persistence, and view lecture list.</snippet>
+      </doc>
+      <doc>
+        <path>docs/sprint-artifacts/epic-1/story-1-4/1-4-view-course-list.md</path>
+        <title>Previous Story: View Course List</title>
+        <section>Learnings from Previous Story</section>
+        <snippet>Visual Feedback: Ensure visual confirmation (toast/refresh) is implemented immediately. State Management: useEffect was used; keep consistent.</snippet>
+      </doc>
+    </docs>
+    <code>
+      <artifact>
+        <path>backend/app/main.py</path>
+        <kind>config</kind>
+        <symbol>app</symbol>
+        <reason>Register new lectures router here.</reason>
+      </artifact>
+      <artifact>
+        <path>frontend/lib/api.ts</path>
+        <kind>client</kind>
+        <symbol>getCourses, createCourse</symbol>
+        <reason>Add getLectures and createLecture functions here.</reason>
+      </artifact>
+      <artifact>
+        <path>frontend/app/dashboard/page.tsx</path>
+        <kind>component</kind>
+        <symbol>DashboardPage</symbol>
+        <reason>Reference for UI consistency and API usage pattern.</reason>
+      </artifact>
+    </code>
+    <dependencies>
+      <dep ecosystem="python">fastapi</dep>
+      <dep ecosystem="python">supabase</dep>
+      <dep ecosystem="python">pydantic</dep>
+      <dep ecosystem="npm">next</dep>
+      <dep ecosystem="npm">@supabase/supabase-js</dep>
+      <dep ecosystem="npm">lucide-react</dep>
+      <dep ecosystem="npm">@tanstack/react-query</dep>
+    </dependencies>
+  </artifacts>
+
+  <constraints>
+    <constraint>Frontend must use POST /api/v1/courses/{course_id}/lectures endpoint.</constraint>
+    <constraint>Backend MUST verify course_id belongs to current_user before adding a lecture.</constraint>
+    <constraint>RLS policies must allow INSERT/SELECT only for course owner.</constraint>
+    <constraint>Visual confirmation (toast/refresh) is required upon success.</constraint>
+  </constraints>
+
+  <interfaces>
+    <interface>
+      <name>Lecture API</name>
+      <kind>REST</kind>
+      <signature>POST /api/v1/courses/{course_id}/lectures</signature>
+      <path>backend/app/api/routers/lectures.py (to be created)</path>
+    </interface>
+    <interface>
+      <name>Course</name>
+      <kind>Type</kind>
+      <signature>interface Course { id: string; name: string; created_at: string; user_id: string; }</signature>
+      <path>frontend/lib/api.ts</path>
+    </interface>
+  </interfaces>
+
+  <tests>
+    <standards>Use pytest for backend integration tests. Manual verification for frontend UI flows.</standards>
+    <locations>backend/tests/</locations>
+    <ideas>
+      <idea>Test creating lecture in owned course (Success 201)</idea>
+      <idea>Test creating lecture in unowned course (Fail 403/404)</idea>
+      <idea>Test fetching lectures for owned/unowned courses</idea>
+    </ideas>
+  </tests>
+</story-context>

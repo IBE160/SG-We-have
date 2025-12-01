@@ -75,3 +75,47 @@ def test_create_course_no_auth(mock_supabase):
     # FastAPI HTTPBearer raises 401 or 403 depending on version/config.
     # The actual response was 401.
     assert response.status_code == 401
+
+def test_get_courses_success(monkeypatch, mock_supabase):
+    # Configure mock for Select chain
+    mock_select = MagicMock()
+    mock_eq = MagicMock()
+    mock_order = MagicMock()
+    mock_execute = MagicMock()
+
+    # Connect the chain
+    mock_supabase.table.return_value.select.return_value = mock_select
+    mock_select.eq.return_value = mock_eq
+    mock_eq.order.return_value = mock_order
+    mock_order.execute.return_value = mock_execute
+
+    # Set data
+    mock_execute.data = [
+        {"id": "c1", "name": "Course 1", "user_id": "123", "created_at": "2023-01-01T00:00:00Z"},
+        {"id": "c2", "name": "Course 2", "user_id": "123", "created_at": "2023-01-02T00:00:00Z"}
+    ]
+
+    secret = "testsecret"
+    monkeypatch.setenv("SUPABASE_JWT_SECRET", secret)
+    payload = {"sub": "123", "aud": "authenticated"}
+    token = jwt.encode(payload, secret, algorithm="HS256")
+    
+    response = client.get(
+        "/api/v1/courses",
+        headers={"Authorization": f"Bearer {token}"}
+    )
+    
+    assert response.status_code == 200
+    data = response.json()
+    assert len(data) == 2
+    assert data[0]["id"] == "c1"
+
+    # Verify calls
+    mock_supabase.table.assert_called_with("courses")
+    mock_supabase.table().select.assert_called_with("*")
+    mock_select.eq.assert_called_with("user_id", "123")
+    mock_eq.order.assert_called_with("created_at", desc=True)
+
+def test_get_courses_unauth(mock_supabase):
+    response = client.get("/api/v1/courses")
+    assert response.status_code == 401
