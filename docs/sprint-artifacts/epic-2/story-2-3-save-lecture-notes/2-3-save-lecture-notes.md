@@ -2,7 +2,7 @@
 
 **Story ID:** 2-3
 **Epic:** 2 - Core Note-Taking Experience
-**Status:** review
+**Status:** done
 
 ## User Story
 **AS A** student
