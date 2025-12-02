@@ -101,5 +101,19 @@ describe('NoteEditor Component', () => {
         expect(screen.getByText('Failed to save notes. Please try again.')).toBeInTheDocument()
     })
   })
+
+  it('renders the lastSavedAt timestamp when provided', () => {
+    const date = new Date('2023-01-01T12:00:00Z')
+    render(<NoteEditor initialContent="" lastSavedAt={date.toISOString()} />)
+    
+    // We expect local time formatting, so we check for a partial match or use a flexible regex
+    // Or easier: just check that "Last updated:" text is present
+    expect(screen.getByText(/Last updated:/)).toBeInTheDocument()
+  })
+
+  it('does not render timestamp when lastSavedAt is null', () => {
+    render(<NoteEditor initialContent="" lastSavedAt={null} />)
+    expect(screen.queryByText(/Last updated:/)).not.toBeInTheDocument()
+  })
 })
 

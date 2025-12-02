@@ -10,6 +10,7 @@ interface NoteEditorProps {
   initialContent?: string | null
   onUpdate?: (content: string) => void
   onSave?: (content: string) => Promise<void>
+  lastSavedAt?: string | null
 }
 
 const ToolbarButton = ({
@@ -43,7 +44,7 @@ const ToolbarButton = ({
   </button>
 )
 
-const EditorToolbar = ({ editor, onSave, isSaving }: { editor: Editor, onSave?: () => void, isSaving?: boolean }) => {
+const EditorToolbar = ({ editor, onSave, isSaving, lastSavedAt }: { editor: Editor, onSave?: () => void, isSaving?: boolean, lastSavedAt?: string | null }) => {
   if (!editor) return null
 
   return (
@@ -104,29 +105,33 @@ const EditorToolbar = ({ editor, onSave, isSaving }: { editor: Editor, onSave?: 
         <ListOrdered className="w-4 h-4" />
       </ToolbarButton>
 
-      {onSave && (
-        <>
-          <div className="w-px h-6 bg-gray-300 mx-1" />
-          <button
-              onClick={onSave}
-              disabled={isSaving}
-              className={clsx(
-                  'p-2 rounded transition-colors flex items-center gap-1 ml-auto',
-                  isSaving ? 'text-gray-400 cursor-wait' : 'text-blue-600 hover:bg-blue-50'
-              )}
-              type="button"
-              title="Save Notes"
-          >
-              <Save className="w-4 h-4" />
-              <span className="text-xs font-bold uppercase">{isSaving ? 'Saving...' : 'Save'}</span>
-          </button>
-        </>
-      )}
+      <div className="ml-auto flex items-center gap-3">
+        {lastSavedAt && (
+            <span className="text-xs text-gray-500">
+                Last updated: {new Date(lastSavedAt).toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' })}
+            </span>
+        )}
+        {onSave && (
+            <button
+                onClick={onSave}
+                disabled={isSaving}
+                className={clsx(
+                    'p-2 rounded transition-colors flex items-center gap-1',
+                    isSaving ? 'text-gray-400 cursor-wait' : 'text-blue-600 hover:bg-blue-50'
+                )}
+                type="button"
+                title="Save Notes"
+            >
+                <Save className="w-4 h-4" />
+                <span className="text-xs font-bold uppercase">{isSaving ? 'Saving...' : 'Save'}</span>
+            </button>
+        )}
+      </div>
     </div>
   )
 }
 
-const NoteEditor = ({ initialContent, onUpdate, onSave }: NoteEditorProps) => {
+const NoteEditor = ({ initialContent, onUpdate, onSave, lastSavedAt }: NoteEditorProps) => {
   const [isSaving, setIsSaving] = useState(false);
   const [saveStatus, setSaveStatus] = useState<'idle' | 'success' | 'error'>('idle');
   
@@ -186,7 +191,7 @@ const NoteEditor = ({ initialContent, onUpdate, onSave }: NoteEditorProps) => {
 
   return (
     <div className="border rounded-md bg-white shadow-sm flex flex-col">
-      <EditorToolbar editor={editor} onSave={onSave ? handleSave : undefined} isSaving={isSaving} />
+      <EditorToolbar editor={editor} onSave={onSave ? handleSave : undefined} isSaving={isSaving} lastSavedAt={lastSavedAt} />
       
       {saveStatus === 'success' && (
          <div className="bg-green-50 text-green-700 px-4 py-1 text-xs text-center border-b border-green-100">

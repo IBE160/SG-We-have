@@ -201,6 +201,7 @@ def test_update_note_success(monkeypatch, mock_supabase):
 
     assert response.status_code == 200
     assert response.json()["content"] == "New Content"
+    assert "updated_at" in response.json()
     mock_notes_table.insert.assert_called_once()
 
 def test_update_note_existing(monkeypatch, mock_supabase):

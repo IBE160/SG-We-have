@@ -58,7 +58,8 @@ export default function LectureDetailsPage() {
   const handleSave = async (content: string) => {
     if (!lectureId) return;
     try {
-      await updateLectureNotes(lectureId, content);
+      const updatedNote = await updateLectureNotes(lectureId, content);
+      setNote(updatedNote);
     } catch (err) {
       // Error handling is done in NoteEditor via promise rejection, 
       // but we can also log or show global error here if needed.
@@ -106,7 +107,11 @@ export default function LectureDetailsPage() {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="bg-white shadow sm:rounded-md p-6">
             <h2 className="text-lg font-medium text-gray-900 mb-4">Lecture Notes</h2>
-            <NoteEditor initialContent={note?.content || null} onSave={handleSave} />
+            <NoteEditor 
+                initialContent={note?.content || null} 
+                onSave={handleSave} 
+                lastSavedAt={note?.updated_at}
+            />
         </div>
       </main>
     </div>
