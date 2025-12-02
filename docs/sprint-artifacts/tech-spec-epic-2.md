@@ -166,3 +166,11 @@ This epic builds upon the "User Foundation" by attaching data (Notes) to the exi
 *   **Component Tests:** Test `NoteEditor` rendering and toolbar interactions using React Testing Library.
 *   **API Tests:** Test `PUT` upsert logic – ensure creating a note works, and updating it works (and updates the timestamp).
 *   **Manual Tests:** Verify "Write -> Save -> Reload -> Verify" loop.
+
+## Post-Review Follow-ups (AI)
+
+### From Story 2.3 Review (2025-12-02)
+- [ ] [High] Add test cases to `frontend/components/__tests__/NoteEditor.test.tsx` for "Saving..." button text and "Failed to save" error message.
+- [ ] [High] Add `test_update_note_forbidden` to `backend/tests/test_notes.py` to verify 403 on PUT for unowned lecture.
+- [ ] [Med] Add `test_update_note_existing` to `backend/tests/test_notes.py` to explicitly test the UPDATE SQL path.
+

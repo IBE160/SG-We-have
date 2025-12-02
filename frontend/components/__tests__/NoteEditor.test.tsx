@@ -1,5 +1,5 @@
 import '@testing-library/jest-dom'
-import { render, screen, fireEvent } from '@testing-library/react'
+import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import NoteEditor from '../NoteEditor'
 
 // Mock Tiptap hooks and extensions to avoid complex DOM manipulation in tests
@@ -49,4 +49,57 @@ describe('NoteEditor Component', () => {
       render(<NoteEditor initialContent="" />)
       expect(screen.getByTestId('editor-content')).toBeInTheDocument()
   })
+
+  it('renders the Save button when onSave is provided', () => {
+    render(<NoteEditor initialContent="" onSave={jest.fn()} />)
+    expect(screen.getByTitle('Save Notes')).toBeInTheDocument()
+  })
+
+  it('calls onSave when Save button is clicked', () => {
+    const mockOnSave = jest.fn().mockResolvedValue(undefined)
+    render(<NoteEditor initialContent="" onSave={mockOnSave} />)
+    
+    const saveButton = screen.getByTitle('Save Notes')
+    fireEvent.click(saveButton)
+    
+    expect(mockOnSave).toHaveBeenCalled()
+  })
+
+  it('shows "Saving..." while save is in progress', async () => {
+    // Mock a slow save
+    const mockOnSave = jest.fn().mockImplementation(() => new Promise(resolve => setTimeout(resolve, 100)))
+    render(<NoteEditor initialContent="" onSave={mockOnSave} />)
+    
+    const saveButton = screen.getByTitle('Save Notes')
+    fireEvent.click(saveButton)
+    
+    expect(screen.getByText('Saving...')).toBeInTheDocument()
+    
+    await waitFor(() => expect(mockOnSave).toHaveBeenCalled())
+  })
+
+  it('shows success message after successful save', async () => {
+    const mockOnSave = jest.fn().mockResolvedValue(undefined)
+    render(<NoteEditor initialContent="" onSave={mockOnSave} />)
+    
+    const saveButton = screen.getByTitle('Save Notes')
+    fireEvent.click(saveButton)
+    
+    await waitFor(() => {
+        expect(screen.getByText('Notes saved successfully!')).toBeInTheDocument()
+    })
+  })
+
+  it('shows error message when save fails', async () => {
+    const mockOnSave = jest.fn().mockRejectedValue(new Error('Failed'))
+    render(<NoteEditor initialContent="" onSave={mockOnSave} />)
+    
+    const saveButton = screen.getByTitle('Save Notes')
+    fireEvent.click(saveButton)
+    
+    await waitFor(() => {
+        expect(screen.getByText('Failed to save notes. Please try again.')).toBeInTheDocument()
+    })
+  })
 })
+

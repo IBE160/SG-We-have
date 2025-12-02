@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
-import { getLectures, getLectureNotes, Lecture, Note, ApiError } from '@/lib/api';
+import { getLectures, getLectureNotes, updateLectureNotes, Lecture, Note, ApiError } from '@/lib/api';
 import NoteEditor from '@/components/NoteEditor';
 
 export default function LectureDetailsPage() {
@@ -55,6 +55,18 @@ export default function LectureDetailsPage() {
     fetchData();
   }, [courseId, lectureId]);
 
+  const handleSave = async (content: string) => {
+    if (!lectureId) return;
+    try {
+      await updateLectureNotes(lectureId, content);
+    } catch (err) {
+      // Error handling is done in NoteEditor via promise rejection, 
+      // but we can also log or show global error here if needed.
+      console.error('Save failed in page:', err);
+      throw err; // Re-throw so NoteEditor detects failure
+    }
+  };
+
   if (isLoading) {
       return <div className="p-10 text-center">Loading...</div>;
   }
@@ -94,7 +106,7 @@ export default function LectureDetailsPage() {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="bg-white shadow sm:rounded-md p-6">
             <h2 className="text-lg font-medium text-gray-900 mb-4">Lecture Notes</h2>
-            <NoteEditor initialContent={note?.content || null} />
+            <NoteEditor initialContent={note?.content || null} onSave={handleSave} />
         </div>
       </main>
     </div>

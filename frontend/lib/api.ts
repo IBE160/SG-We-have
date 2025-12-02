@@ -169,3 +169,29 @@ export const getLectureNotes = async (lectureId: string): Promise<Note | null> =
   
   return json; 
 };
+
+export const updateLectureNotes = async (lectureId: string, content: string): Promise<Note> => {
+  const { data: { session } } = await supabase.auth.getSession();
+  const token = session?.access_token;
+
+  if (!token) {
+    throw new ApiError('Not authenticated', 401);
+  }
+
+  const response = await fetch(`${API_BASE_URL}/lectures/${lectureId}/notes`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+    },
+    body: JSON.stringify({ content }),
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new ApiError(errorData.detail || 'Failed to update notes', response.status);
+  }
+
+  return response.json();
+};
+
