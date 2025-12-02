@@ -4,7 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.core import config
 from app.core.database import verify_supabase_connection
 from app.core.security import get_current_user
-from app.api.routers import courses, lectures
+from app.api.routers import courses, lectures, notes
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -31,6 +31,7 @@ app.add_middleware(
 
 app.include_router(courses.router, prefix="/api/v1", tags=["courses"])
 app.include_router(lectures.router, prefix="/api/v1", tags=["lectures"])
+app.include_router(notes.router, prefix="/api/v1", tags=["notes"])
 
 @app.get("/")
 def read_root():
