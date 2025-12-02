@@ -9,8 +9,9 @@ import CreateLectureModal from '@/components/CreateLectureModal';
 export default function CourseDetailsPage() {
   const params = useParams();
   const router = useRouter();
-  // Handle params.id possibly being string | string[]
-  const id = Array.isArray(params.id) ? params.id[0] : params.id;
+  // Handle params.courseId possibly being string | string[]
+  // Renamed from params.id to params.courseId to match directory structure [courseId]
+  const id = Array.isArray(params.courseId) ? params.courseId[0] : params.courseId;
 
   const [course, setCourse] = useState<Course | null>(null);
   const [lectures, setLectures] = useState<Lecture[]>([]);
@@ -114,14 +115,16 @@ export default function CourseDetailsPage() {
               <ul className="divide-y divide-gray-200">
                 {lectures.map((lecture) => (
                   <li key={lecture.id} className="px-4 py-4 sm:px-6 hover:bg-gray-50">
-                    <div className="flex items-center justify-between">
-                      <p className="text-lg font-medium text-blue-600 truncate">{lecture.title}</p>
-                      <div className="ml-2 flex-shrink-0 flex">
-                        <p className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                          {new Date(lecture.created_at).toLocaleDateString()}
-                        </p>
-                      </div>
-                    </div>
+                    <Link href={`/dashboard/courses/${id}/lectures/${lecture.id}`} className="block">
+                        <div className="flex items-center justify-between">
+                        <p className="text-lg font-medium text-blue-600 truncate">{lecture.title}</p>
+                        <div className="ml-2 flex-shrink-0 flex">
+                            <p className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                            {new Date(lecture.created_at).toLocaleDateString()}
+                            </p>
+                        </div>
+                        </div>
+                    </Link>
                   </li>
                 ))}
               </ul>
