@@ -54,7 +54,7 @@ development_status:
   2-1-access-note-editor: done
   2-2-basic-text-formatting: done
   2-3-save-lecture-notes: done
-  2-4-auto-timestamp-notes: backlog
+  2-4-auto-timestamp-notes: ready-for-dev
   epic-2-retrospective: optional
 
   epic-3: backlog
