@@ -178,6 +178,17 @@ def test_get_lectures_success(monkeypatch, mock_supabase):
         ]
     )
 
+    # Setup mock for Notes Check
+    mock_select_notes = MagicMock()
+    mock_in_notes = MagicMock()
+    mock_execute_notes = MagicMock()
+    
+    # Chain: table("notes").select("lecture_id").in_("lecture_id", ids).execute()
+    mock_select_notes.in_.return_value = mock_execute_notes
+    mock_execute_notes.execute.return_value = MagicMock(
+        data=[{"lecture_id": "l2"}] # Only Lec 2 has notes
+    )
+
     def side_effect_table(table_name):
         if table_name == "courses":
             m = MagicMock()
@@ -186,6 +197,10 @@ def test_get_lectures_success(monkeypatch, mock_supabase):
         elif table_name == "lectures":
             m = MagicMock()
             m.select.return_value = mock_select_lectures
+            return m
+        elif table_name == "notes":
+            m = MagicMock()
+            m.select.return_value = mock_select_notes
             return m
         return MagicMock()
 
@@ -200,7 +215,11 @@ def test_get_lectures_success(monkeypatch, mock_supabase):
     data = response.json()
     assert len(data) == 2
     assert data[0]["title"] == "Lec 2"
+    assert data[0]["has_notes"] == True
+    assert data[1]["title"] == "Lec 1"
+    assert data[1]["has_notes"] == False
 
     # Verify calls
     mock_select_lectures.eq.assert_called_with("course_id", course_id)
     mock_eq_lectures.order.assert_called_with("created_at", desc=True)
+    # verify notes query logic if needed, but checking result is sufficient

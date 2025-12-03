@@ -14,6 +14,7 @@ export interface Lecture {
   course_id: string;
   title: string;
   created_at: string;
+  has_notes: boolean;
 }
 
 export interface Note {

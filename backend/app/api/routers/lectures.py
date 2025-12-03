@@ -15,6 +15,7 @@ class Lecture(BaseModel):
     course_id: str
     title: str
     created_at: str
+    has_notes: bool = False
 
 def verify_course_ownership(course_id: str, user_id: str, supabase):
     """
@@ -59,7 +60,11 @@ def create_lecture(course_id: str, lecture: LectureCreate, user: dict = Depends(
         response = supabase.table("lectures").insert(data).execute()
         if not response.data:
              raise HTTPException(status_code=500, detail="Failed to create lecture")
-        return response.data[0]
+        
+        # New lectures don't have notes
+        lecture_data = response.data[0]
+        lecture_data['has_notes'] = False
+        return lecture_data
     except Exception as e:
         logger.error(f"Error creating lecture: {e}")
         raise HTTPException(status_code=500, detail="Internal Server Error")
@@ -78,7 +83,23 @@ def get_lectures(course_id: str, user: dict = Depends(get_current_user)):
     try:
         # Order by created_at descending (newest first)
         response = supabase.table("lectures").select("*").eq("course_id", course_id).order("created_at", desc=True).execute()
-        return response.data
+        lectures_data = response.data
+        
+        if not lectures_data:
+            return []
+            
+        lecture_ids = [l['id'] for l in lectures_data]
+        
+        # Fetch note counts or just IDs where notes exist to determine has_notes
+        notes_response = supabase.table("notes").select("lecture_id").in_("lecture_id", lecture_ids).execute()
+        
+        # Create a set of lecture_ids that have notes
+        lectures_with_notes = set(item['lecture_id'] for item in notes_response.data)
+        
+        for lecture in lectures_data:
+            lecture['has_notes'] = lecture['id'] in lectures_with_notes
+            
+        return lectures_data
     except Exception as e:
         logger.error(f"Error fetching lectures: {e}")
         raise HTTPException(status_code=500, detail="Internal Server Error")

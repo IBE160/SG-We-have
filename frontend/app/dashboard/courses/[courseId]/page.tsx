@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import { getCourses, getLectures, Course, Lecture, ApiError } from '@/lib/api';
 import CreateLectureModal from '@/components/CreateLectureModal';
+import QuizConfigModal from '@/components/QuizConfigModal';
 
 export default function CourseDetailsPage() {
   const params = useParams();
@@ -18,6 +19,7 @@ export default function CourseDetailsPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isQuizModalOpen, setIsQuizModalOpen] = useState(false);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   const fetchData = async () => {
@@ -63,6 +65,11 @@ export default function CourseDetailsPage() {
     fetchData(); // Refresh list
   };
 
+  const handleGenerateQuiz = (selectedLectureIds: string[]) => {
+    // Future: Implement quiz generation logic
+    console.log('Generating quiz for lectures:', selectedLectureIds);
+  };
+
   if (!id) return <div className="p-10 text-center">Invalid Course ID</div>;
 
   return (
@@ -78,12 +85,20 @@ export default function CourseDetailsPage() {
                 </h1>
             </div>
           {course && (
+            <div className="flex space-x-4">
              <button
-             onClick={() => setIsModalOpen(true)}
-             className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors"
-           >
-             Add Lecture
-           </button>
+                onClick={() => setIsQuizModalOpen(true)}
+                className="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition-colors"
+             >
+               Generate Quiz
+             </button>
+             <button
+               onClick={() => setIsModalOpen(true)}
+               className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors"
+             >
+               Add Lecture
+             </button>
+            </div>
           )}
         </div>
       </header>
@@ -117,9 +132,16 @@ export default function CourseDetailsPage() {
                   <li key={lecture.id} className="px-4 py-4 sm:px-6 hover:bg-gray-50">
                     <Link href={`/dashboard/courses/${id}/lectures/${lecture.id}`} className="block">
                         <div className="flex items-center justify-between">
-                        <p className="text-lg font-medium text-blue-600 truncate">{lecture.title}</p>
+                        <div className="flex items-center">
+                          <p className="text-lg font-medium text-blue-600 truncate">{lecture.title}</p>
+                          {lecture.has_notes && (
+                            <span className="ml-2 px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                              Notes
+                            </span>
+                          )}
+                        </div>
                         <div className="ml-2 flex-shrink-0 flex">
-                            <p className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                            <p className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
                             {new Date(lecture.created_at).toLocaleDateString()}
                             </p>
                         </div>
@@ -134,12 +156,20 @@ export default function CourseDetailsPage() {
       </main>
 
       {course && (
-        <CreateLectureModal
-          isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
-          courseId={course.id}
-          onLectureCreated={handleLectureCreated}
-        />
+        <>
+          <CreateLectureModal
+            isOpen={isModalOpen}
+            onClose={() => setIsModalOpen(false)}
+            courseId={course.id}
+            onLectureCreated={handleLectureCreated}
+          />
+          <QuizConfigModal
+            isOpen={isQuizModalOpen}
+            onClose={() => setIsQuizModalOpen(false)}
+            lectures={lectures}
+            onGenerate={handleGenerateQuiz}
+          />
+        </>
       )}
     </div>
   );

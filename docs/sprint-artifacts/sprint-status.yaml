@@ -59,7 +59,7 @@ development_status:
 
   epic-3: contexted
   3-1-initiate-quiz-generation: done
-  3-2-select-lectures-for-quiz: ready-for-dev
+  3-2-select-lectures-for-quiz: done
   3-3-configure-quiz-length: backlog
   3-4-ai-generates-multiple-choice-questions: backlog
   3-5-ai-fact-checking-for-accuracy: backlog

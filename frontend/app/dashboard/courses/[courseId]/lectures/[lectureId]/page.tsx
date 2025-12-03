@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { getLectures, getLectureNotes, updateLectureNotes, Lecture, Note, ApiError } from '@/lib/api';
 import NoteEditor from '@/components/NoteEditor';
+import QuizConfigModal from '@/components/QuizConfigModal';
 
 export default function LectureDetailsPage() {
   const params = useParams();
@@ -13,9 +14,11 @@ export default function LectureDetailsPage() {
   const lectureId = Array.isArray(params.lectureId) ? params.lectureId[0] : params.lectureId;
 
   const [lecture, setLecture] = useState<Lecture | null>(null);
+  const [allLectures, setAllLectures] = useState<Lecture[]>([]);
   const [note, setNote] = useState<Note | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isQuizModalOpen, setIsQuizModalOpen] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -27,6 +30,7 @@ export default function LectureDetailsPage() {
         // 1. Get lecture details (title)
         // We fetch all lectures for the course and find the specific one
         const lectures = await getLectures(courseId);
+        setAllLectures(lectures);
         const foundLecture = lectures.find(l => l.id === lectureId);
 
         if (!foundLecture) {
@@ -68,6 +72,11 @@ export default function LectureDetailsPage() {
     }
   };
 
+  const handleGenerateQuiz = (selectedLectureIds: string[]) => {
+      // Future: Implement quiz generation logic
+      console.log('Generating quiz for lectures:', selectedLectureIds);
+  };
+
   if (isLoading) {
       return <div className="p-10 text-center">Loading...</div>;
   }
@@ -92,7 +101,7 @@ export default function LectureDetailsPage() {
   return (
     <div className="min-h-screen bg-gray-100 py-10">
        <header className="bg-white shadow mb-6">
-        <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 flex justify-between items-center">
             <div className="flex items-center">
                 <Link href={`/dashboard/courses/${courseId}`} className="text-blue-600 hover:text-blue-800 mr-4">
                     &larr; Back to Course
@@ -101,6 +110,12 @@ export default function LectureDetailsPage() {
                     {lecture.title}
                 </h1>
             </div>
+            <button
+                onClick={() => setIsQuizModalOpen(true)}
+                className="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition-colors"
+            >
+                Generate Quiz
+            </button>
         </div>
       </header>
 
@@ -114,6 +129,13 @@ export default function LectureDetailsPage() {
             />
         </div>
       </main>
+
+      <QuizConfigModal
+        isOpen={isQuizModalOpen}
+        onClose={() => setIsQuizModalOpen(false)}
+        lectures={allLectures}
+        onGenerate={handleGenerateQuiz}
+      />
     </div>
   );
 }

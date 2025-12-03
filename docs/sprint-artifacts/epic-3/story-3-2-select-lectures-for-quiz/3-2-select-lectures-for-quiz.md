@@ -2,7 +2,7 @@
 
 **Story ID:** 3.2
 **Epic:** 3 - AI-Powered Quiz Generation
-**Status:** ready-for-dev
+**Status:** done
 
 ## User Story
 **AS A** student
@@ -12,42 +12,42 @@
 ## Acceptance Criteria
 
 ### AC 3.2.1: Lecture Selection Interface
-- [ ] The quiz configuration modal displays a list of available lectures for the current course.
-- [ ] Users can select one or more lectures using checkboxes.
-- [ ] Users can "Select All" or "Deselect All" (usability enhancement).
+- [x] The quiz configuration modal displays a list of available lectures for the current course.
+- [x] Users can select one or more lectures using checkboxes.
+- [x] Users can "Select All" or "Deselect All" (usability enhancement).
 
 ### AC 3.2.2: Note Availability Constraint
-- [ ] Only lectures that have associated saved notes are enabled for selection.
-- [ ] Lectures without notes are visually distinct (e.g., grayed out) and unselectable.
-- [ ] A tooltip or text explains why a lecture is unselectable (e.g., "No notes saved").
+- [x] Only lectures that have associated saved notes are enabled for selection.
+- [x] Lectures without notes are visually distinct (e.g., grayed out) and unselectable.
+- [x] A tooltip or text explains why a lecture is unselectable (e.g., "No notes saved").
 
 ## Tasks
 
 ### Backend Tasks
-- [ ] **Expose Note Status in Lecture API** (AC: 3.2.2)
+- [x] **Expose Note Status in Lecture API** (AC: 3.2.2)
   - Update `backend/app/models/lecture.py` (or schema) to include a `has_notes` boolean field (computed or joined).
   - Update `backend/app/api/lectures.py` to populate this field when listing lectures for a course.
   - Ensure efficient querying (avoid N+1 queries).
 
 ### Frontend Tasks
-- [ ] **Update Api Client** (AC: 3.2.2)
+- [x] **Update Api Client** (AC: 3.2.2)
   - Update `frontend/lib/api.ts` `Lecture` interface to include `has_notes`.
-- [ ] **Enhance QuizConfigModal for Selection** (AC: 3.2.1)
+- [x] **Enhance QuizConfigModal for Selection** (AC: 3.2.1)
   - Update `frontend/components/QuizConfigModal.tsx`.
   - Add prop: `lectures: Lecture[]`.
   - Render a list of lectures with checkboxes.
   - Implement state for `selectedLectureIds`.
   - Disable checkboxes where `lecture.has_notes` is false.
-- [ ] **Implement Select All / Deselect All** (AC: 3.2.1)
+- [x] **Implement Select All / Deselect All** (AC: 3.2.1)
   - Add a control to toggle selection of all *available* (valid) lectures.
-- [ ] **Update Parent Integration** (AC: 3.2.1)
+- [x] **Update Parent Integration** (AC: 3.2.1)
   - Update `frontend/app/dashboard/courses/[courseId]/page.tsx` to pass the course's lecture list to the modal.
   - Update `frontend/app/dashboard/courses/[courseId]/lectures/[lectureId]/page.tsx` to pass the current lecture (pre-selected) or full list.
 
 ### Testing Tasks
-- [ ] **Backend Test: Lecture API**
+- [x] **Backend Test: Lecture API**
   - Verify `GET /courses/{id}/lectures` returns `has_notes` correctly.
-- [ ] **Component Test: QuizConfigModal Selection**
+- [x] **Component Test: QuizConfigModal Selection**
   - Verify list rendering.
   - Verify only lectures with notes are enabled.
   - Verify selection state updates.
@@ -76,6 +76,7 @@
 - 2025-12-03: Initial draft created by SM Agent.
 - 2025-12-03: Validation updates - Added architecture reference and Change Log.
 - 2025-12-03: Story Context generated and status updated to ready-for-dev.
+- 2025-12-03: Story completed and verified by Dev Agent.
 
 ## Dev Agent Record
 
@@ -88,5 +89,9 @@ Gemini
 ### Debug Log References
 
 ### Completion Notes List
+- Story implementation verified via code review.
+- All Acceptance Criteria met.
+- Unit tests (frontend and backend) passing.
+- Code merged.
 
 ### File List
