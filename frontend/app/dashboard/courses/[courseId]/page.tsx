@@ -65,9 +65,9 @@ export default function CourseDetailsPage() {
     fetchData(); // Refresh list
   };
 
-  const handleGenerateQuiz = (selectedLectureIds: string[]) => {
+  const handleGenerateQuiz = (selectedLectureIds: string[], quizLength: number) => {
     // Future: Implement quiz generation logic
-    console.log('Generating quiz for lectures:', selectedLectureIds);
+    console.log('Generating quiz for lectures:', selectedLectureIds, 'Length:', quizLength);
   };
 
   if (!id) return <div className="p-10 text-center">Invalid Course ID</div>;

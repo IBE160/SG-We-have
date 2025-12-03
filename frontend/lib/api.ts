@@ -196,3 +196,29 @@ export const updateLectureNotes = async (lectureId: string, content: string): Pr
   return response.json();
 };
 
+export const generateQuiz = async (lectureIds: string[], quizLength: number): Promise<any> => {
+  const { data: { session } } = await supabase.auth.getSession();
+  const token = session?.access_token;
+
+  if (!token) {
+    throw new ApiError('Not authenticated', 401);
+  }
+
+  const response = await fetch(`${API_BASE_URL}/quiz/generate`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+    },
+    body: JSON.stringify({ lecture_ids: lectureIds, quiz_length: quizLength }),
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new ApiError(errorData.detail || 'Failed to generate quiz', response.status);
+  }
+
+  return response.json();
+};
+
+

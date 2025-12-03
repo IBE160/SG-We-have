@@ -7,11 +7,12 @@ interface QuizConfigModalProps {
   isOpen: boolean;
   onClose: () => void;
   lectures: Lecture[];
-  onGenerate: (selectedLectureIds: string[]) => void;
+  onGenerate: (selectedLectureIds: string[], quizLength: number) => void;
 }
 
 export default function QuizConfigModal({ isOpen, onClose, lectures, onGenerate }: QuizConfigModalProps) {
   const [selectedLectureIds, setSelectedLectureIds] = useState<string[]>([]);
+  const [quizLength, setQuizLength] = useState<number>(10);
 
   const availableLectures = lectures.filter(l => l.has_notes);
 
@@ -39,8 +40,8 @@ export default function QuizConfigModal({ isOpen, onClose, lectures, onGenerate 
     e.preventDefault();
     if (selectedLectureIds.length === 0) return;
     
-    console.log("Quiz generation initiated with lectures:", selectedLectureIds);
-    onGenerate(selectedLectureIds);
+    console.log("Quiz generation initiated with lectures:", selectedLectureIds, "Length:", quizLength);
+    onGenerate(selectedLectureIds, quizLength);
     onClose();
   };
 
@@ -101,6 +102,24 @@ export default function QuizConfigModal({ isOpen, onClose, lectures, onGenerate 
                  ))}
                </div>
              )}
+           </div>
+
+           <div className="mb-4">
+             <label htmlFor="quiz-length" className="block text-sm font-medium text-gray-700 mb-1">
+               Number of Questions
+             </label>
+             <select
+               id="quiz-length"
+               value={quizLength}
+               onChange={(e) => setQuizLength(Number(e.target.value))}
+               className="block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md border"
+             >
+               {[5, 10, 15, 20, 25, 30].map((length) => (
+                 <option key={length} value={length}>
+                   {length} Questions
+                 </option>
+               ))}
+             </select>
            </div>
 
           <div className="flex justify-end space-x-2 pt-4 border-t border-gray-100 mt-auto">

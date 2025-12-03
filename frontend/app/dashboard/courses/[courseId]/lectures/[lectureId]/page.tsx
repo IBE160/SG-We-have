@@ -72,9 +72,9 @@ export default function LectureDetailsPage() {
     }
   };
 
-  const handleGenerateQuiz = (selectedLectureIds: string[]) => {
+  const handleGenerateQuiz = (selectedLectureIds: string[], quizLength: number) => {
       // Future: Implement quiz generation logic
-      console.log('Generating quiz for lectures:', selectedLectureIds);
+      console.log('Generating quiz for lectures:', selectedLectureIds, 'Length:', quizLength);
   };
 
   if (isLoading) {
