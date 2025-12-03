@@ -1,8 +1,11 @@
+import logging
 from typing import List
 from fastapi import HTTPException
 from supabase import Client
 from app.agents.quiz_agent import generate_quiz_content
 from app.models.quiz import QuizGenerateRequest, QuizResponse, QuestionResponse, OptionResponse
+
+logger = logging.getLogger(__name__)
 
 async def generate_quiz(request: QuizGenerateRequest, user_id: str, supabase: Client) -> QuizResponse:
     try:
@@ -28,7 +31,10 @@ async def generate_quiz(request: QuizGenerateRequest, user_id: str, supabase: Cl
         
         if not prompt_response.data:
             # Fallback prompt if DB is empty/fail
-            template = "Generate a {{quiz_length}} question multiple choice quiz for these notes: {{notes}}"
+            template = (
+                "Generate a {{quiz_length}} question multiple choice quiz for these notes: {{notes}}\n\n"
+                "Please ensure all questions are factually correct and verify the information against your knowledge base."
+            )
         else:
             template = prompt_response.data['template']
             
@@ -98,5 +104,6 @@ async def generate_quiz(request: QuizGenerateRequest, user_id: str, supabase: Cl
         raise he
     except Exception as e:
         # Log error
-        print(f"Error generating quiz: {e}")
-        raise HTTPException(status_code=500, detail=str(e))
+        logger.error(f"Error generating quiz: {e}", exc_info=True)
+        # Sanitize error for client
+        raise HTTPException(status_code=500, detail="An unexpected error occurred while generating the quiz.")
