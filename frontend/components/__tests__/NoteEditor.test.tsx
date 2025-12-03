@@ -41,10 +41,6 @@ describe('NoteEditor Component', () => {
     expect(screen.getByTitle('Ordered List')).toBeInTheDocument()
   })
 
-  // Note: Since we mocked useEditor, we can't easily test the click interactions fully without more complex mocking.
-  // However, we verified the buttons are present and wired up in the component code.
-  // Ideally, we would integration test this without mocking useEditor completely, but Tiptap is hard to test in JSDOM without mocks.
-  
   it('renders the editor content area', () => {
       render(<NoteEditor initialContent="" />)
       expect(screen.getByTestId('editor-content')).toBeInTheDocument()
@@ -55,23 +51,20 @@ describe('NoteEditor Component', () => {
     expect(screen.getByTitle('Save Notes')).toBeInTheDocument()
   })
 
-  it('calls onSave when Save button is clicked', () => {
+  it('calls onSave when Save button is clicked', async () => {
     const mockOnSave = jest.fn().mockResolvedValue(undefined)
     render(<NoteEditor initialContent="" onSave={mockOnSave} />)
     
-    const saveButton = screen.getByTitle('Save Notes')
-    fireEvent.click(saveButton)
+    fireEvent.click(screen.getByTitle('Save Notes'))
     
-    expect(mockOnSave).toHaveBeenCalled()
+    await waitFor(() => expect(mockOnSave).toHaveBeenCalled())
   })
 
   it('shows "Saving..." while save is in progress', async () => {
-    // Mock a slow save
     const mockOnSave = jest.fn().mockImplementation(() => new Promise(resolve => setTimeout(resolve, 100)))
     render(<NoteEditor initialContent="" onSave={mockOnSave} />)
     
-    const saveButton = screen.getByTitle('Save Notes')
-    fireEvent.click(saveButton)
+    fireEvent.click(screen.getByTitle('Save Notes'))
     
     expect(screen.getByText('Saving...')).toBeInTheDocument()
     
@@ -79,23 +72,29 @@ describe('NoteEditor Component', () => {
   })
 
   it('shows success message after successful save', async () => {
+    jest.useFakeTimers(); // Use fake timers to control setTimeout
     const mockOnSave = jest.fn().mockResolvedValue(undefined)
     render(<NoteEditor initialContent="" onSave={mockOnSave} />)
     
-    const saveButton = screen.getByTitle('Save Notes')
-    fireEvent.click(saveButton)
+    fireEvent.click(screen.getByTitle('Save Notes'))
     
     await waitFor(() => {
         expect(screen.getByText('Notes saved successfully!')).toBeInTheDocument()
     })
+    
+    jest.runAllTimers(); // Advance timers to clear the message
+    await waitFor(() => {
+        expect(screen.queryByText('Notes saved successfully!')).not.toBeInTheDocument();
+    });
+
+    jest.useRealTimers(); // Restore real timers
   })
 
   it('shows error message when save fails', async () => {
     const mockOnSave = jest.fn().mockRejectedValue(new Error('Failed'))
     render(<NoteEditor initialContent="" onSave={mockOnSave} />)
     
-    const saveButton = screen.getByTitle('Save Notes')
-    fireEvent.click(saveButton)
+    fireEvent.click(screen.getByTitle('Save Notes'))
     
     await waitFor(() => {
         expect(screen.getByText('Failed to save notes. Please try again.')).toBeInTheDocument()
@@ -106,8 +105,6 @@ describe('NoteEditor Component', () => {
     const date = new Date('2023-01-01T12:00:00Z')
     render(<NoteEditor initialContent="" lastSavedAt={date.toISOString()} />)
     
-    // We expect local time formatting, so we check for a partial match or use a flexible regex
-    // Or easier: just check that "Last updated:" text is present
     expect(screen.getByText(/Last updated:/)).toBeInTheDocument()
   })
 

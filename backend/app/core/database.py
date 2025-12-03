@@ -19,7 +19,8 @@ def verify_supabase_connection():
     try:
         # Get the client via the function, allowing it to be mocked
         client = get_supabase_client()
-        client.table("some_table").select("*").limit(1).execute()
+        # Query a table that is known to exist to verify connection
+        client.table("courses").select("*").limit(1).execute()
         print("Supabase client initialized successfully.")
         return True
     except Exception as e:

@@ -47,7 +47,7 @@ def test_verify_supabase_connection_success(reload_modules):
         result = verify_supabase_connection()
         assert result is True
         mock_get_supabase_client.assert_called_once()
-        mock_client_instance.table.assert_called_once_with("some_table")
+        mock_client_instance.table.assert_called_once_with("courses")
 
 
 def test_verify_supabase_connection_failure(reload_modules):
@@ -62,4 +62,4 @@ def test_verify_supabase_connection_failure(reload_modules):
         result = verify_supabase_connection()
         assert result is False
         mock_get_supabase_client.assert_called_once()
-        mock_client_instance.table.assert_called_once_with("some_table")
+        mock_client_instance.table.assert_called_once_with("courses")
