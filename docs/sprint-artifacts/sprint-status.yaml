@@ -61,7 +61,7 @@ development_status:
   3-1-initiate-quiz-generation: done
   3-2-select-lectures-for-quiz: done
   3-3-configure-quiz-length: done
-  3-4-ai-generates-multiple-choice-questions: ready-for-dev
+  3-4-ai-generates-multiple-choice-questions: done
   3-5-ai-fact-checking-for-accuracy: backlog
   epic-3-retrospective: optional
 
