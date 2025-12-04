@@ -1,4 +1,5 @@
 from contextlib import asynccontextmanager
+import os
 from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from app.core import config
@@ -8,6 +9,10 @@ from app.api.routers import courses, lectures, notes, quiz
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    # Check for JWT Secret
+    if not os.getenv("SUPABASE_JWT_SECRET"):
+        print("WARNING: SUPABASE_JWT_SECRET is not set. Authentication will fail.")
+    
     # Verify Supabase connection on startup
     if verify_supabase_connection():
         print("Backend: Supabase connection verified successfully during startup.")
@@ -19,6 +24,11 @@ app = FastAPI(lifespan=lifespan)
 
 origins = [
     "http://localhost:3000",
+    "http://localhost:3001",
+    "http://localhost:3002",
+    "http://127.0.0.1:3000",
+    "http://127.0.0.1:3001",
+    "http://127.0.0.1:3002",
 ]
 
 app.add_middleware(
