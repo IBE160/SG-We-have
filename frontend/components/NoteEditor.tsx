@@ -136,6 +136,7 @@ const NoteEditor = ({ initialContent, onUpdate, onSave, lastSavedAt }: NoteEdito
   const [saveStatus, setSaveStatus] = useState<'idle' | 'success' | 'error'>('idle');
   
   const editor = useEditor({
+    immediatelyRender: false,
     extensions: [
       StarterKit,
     ],
