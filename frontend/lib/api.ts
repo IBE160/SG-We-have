@@ -169,6 +169,15 @@ export const updateNote = async (noteId: string, content: string): Promise<Note>
   return response.json();
 };
 
+// Aliases for domain mapping (Lectures are Notes)
+export type Lecture = Note;
+export const getLectures = getNotes;
+export const getLectureNotes = getNote;
+export const createLecture = createNote;
+export const updateLectureNotes = updateNote;
+
+
+
 export const generateQuiz = async (noteIds: string[], quizLength: number): Promise<any> => {
   const { data: { session } } = await supabase.auth.getSession();
   const token = session?.access_token;

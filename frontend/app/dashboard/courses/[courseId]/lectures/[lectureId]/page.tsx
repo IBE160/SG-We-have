@@ -133,7 +133,7 @@ export default function LectureDetailsPage() {
       <QuizConfigModal
         isOpen={isQuizModalOpen}
         onClose={() => setIsQuizModalOpen(false)}
-        lectures={allLectures}
+        notes={allLectures}
         onGenerate={handleGenerateQuiz}
       />
     </div>
