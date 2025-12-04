@@ -19,7 +19,7 @@ def mock_supabase(monkeypatch):
     mock_insert.execute.return_value = mock_execute
     
     # Default successful response
-    mock_execute.data = [{"id": "course-123", "name": "Test Course", "user_id": "123"}]
+    mock_execute.data = [{"id": "course-123", "title": "Test Course", "user_id": "123", "created_at": "2023-01-01"}]
     
     def mock_get_client():
         return mock_client
@@ -44,13 +44,15 @@ def test_create_course_success(monkeypatch, mock_supabase):
     
     assert response.status_code == 201
     data = response.json()
+    # API still returns "name"
     assert data["name"] == "Test Course"
     
     # Verify calls
     mock_supabase.table.assert_called_with("courses")
     args, _ = mock_supabase.table().insert.call_args
     assert args[0]["user_id"] == "123"
-    assert args[0]["name"] == "Distributed Systems"
+    # DB insert used "title"
+    assert args[0]["title"] == "Distributed Systems"
 
 def test_create_course_empty_name(monkeypatch, mock_supabase):
     secret = "testsecret"
@@ -91,8 +93,8 @@ def test_get_courses_success(monkeypatch, mock_supabase):
 
     # Set data
     mock_execute.data = [
-        {"id": "c1", "name": "Course 1", "user_id": "123", "created_at": "2023-01-01T00:00:00Z"},
-        {"id": "c2", "name": "Course 2", "user_id": "123", "created_at": "2023-01-02T00:00:00Z"}
+        {"id": "c1", "title": "Course 1", "user_id": "123", "created_at": "2023-01-01T00:00:00Z"},
+        {"id": "c2", "title": "Course 2", "user_id": "123", "created_at": "2023-01-02T00:00:00Z"}
     ]
 
     secret = "testsecret"
@@ -109,6 +111,8 @@ def test_get_courses_success(monkeypatch, mock_supabase):
     data = response.json()
     assert len(data) == 2
     assert data[0]["id"] == "c1"
+    # API maps title -> name
+    assert data[0]["name"] == "Course 1"
 
     # Verify calls
     mock_supabase.table.assert_called_with("courses")
