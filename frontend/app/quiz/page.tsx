@@ -16,7 +16,7 @@ export default function GenerateQuizPage() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
-  const { user, signOut } = useAuth();
+  const { user } = useAuth();
 
   useEffect(() => {
     const fetchCourses = async () => {
@@ -66,7 +66,8 @@ export default function GenerateQuizPage() {
   };
 
   const handleSelectAll = () => {
-    setSelectedNoteIds(notes.map(n => n.id));
+    // Only select notes that have content
+    setSelectedNoteIds(notes.filter(n => n.content).map(n => n.id));
   };
 
   const handleDeselectAll = () => {
@@ -84,9 +85,10 @@ export default function GenerateQuizPage() {
     try {
       const quiz = await generateQuiz(selectedNoteIds, 10); // Default to 10 questions
       router.push(`/quiz/${quiz.id}`);
-    } catch (err: any) {
+    } catch (err) {
       console.error('Failed to generate quiz:', err);
-      setError(err.message || 'An error occurred while generating the quiz.');
+      const message = err instanceof Error ? err.message : 'An error occurred while generating the quiz.';
+      setError(message);
     } finally {
       setIsGenerating(false);
     }
@@ -177,22 +179,27 @@ export default function GenerateQuizPage() {
                     ) : notes.length === 0 ? (
                       <div className="p-4 text-center text-gray-500">No notes found for this course.</div>
                     ) : (
-                      notes.map(note => (
-                        <label key={note.id} className="flex cursor-pointer items-center justify-between gap-4 rounded-lg p-4 transition-colors hover:bg-primary/10 has-[:checked]:bg-primary/10">
-                          <div className="flex items-center gap-4">
-                            <input 
-                              type="checkbox"
-                              className="h-5 w-5 rounded border-gray-300 text-primary focus:ring-primary/50"
-                              checked={selectedNoteIds.includes(note.id)}
-                              onChange={() => handleToggleNote(note.id)}
-                            />
-                            <p className="font-medium text-text-primary">{note.title}</p>
-                          </div>
-                          <p className="text-sm text-text-secondary">
-                            {new Date(note.created_at).toLocaleDateString()}
-                          </p>
-                        </label>
-                      ))
+                      notes.map(note => {
+                        const hasContent = !!note.content;
+                        return (
+                          <label key={note.id} className="flex cursor-pointer items-center justify-between gap-4 rounded-lg p-4 transition-colors hover:bg-primary/10 has-[:checked]:bg-primary/10">
+                            <div className="flex items-center gap-4">
+                              <input 
+                                type="checkbox"
+                                className="h-5 w-5 rounded border-gray-300 text-primary focus:ring-primary/50"
+                                checked={selectedNoteIds.includes(note.id)}
+                                onChange={() => handleToggleNote(note.id)}
+                                disabled={!hasContent}
+                              />
+                              <p className={`font-medium text-text-primary ${!hasContent ? 'text-gray-400' : ''}`}>{note.title}</p>
+                            </div>
+                            <p className="text-sm text-text-secondary">
+                              {new Date(note.created_at).toLocaleDateString()}
+                              {!hasContent && " (No content)"}
+                            </p>
+                          </label>
+                        );
+                      })
                     )}
                   </div>
                 </section>
