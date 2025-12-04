@@ -14,6 +14,7 @@ model = GoogleModel('gemini-2.5-flash')
 
 quiz_agent = Agent(
     model,
+    output_type=QuizGenerated,
     system_prompt=(
         "You are an expert educational AI assistant. Create multiple-choice quizzes from the provided lecture notes. "
         "Ensure questions are directly relevant to the content, factually accurate, and pedagogically sound. "
@@ -76,5 +77,5 @@ async def generate_quiz_content(prompt: str) -> QuizGenerated:
     Generates a quiz using the provided prompt.
     """
     # Run the agent
-    result = await quiz_agent.run(prompt, result_type=QuizGenerated)
-    return result.data
+    result = await quiz_agent.run(prompt)
+    return result.output
