@@ -14,6 +14,7 @@ jest.mock('next/navigation', () => ({
 jest.mock('@/lib/api', () => ({
   getCourses: jest.fn(),
   getNotes: jest.fn(),
+  generateQuiz: jest.fn(),
   ApiError: class ApiError extends Error {
     constructor(message: string) {
       super(message);

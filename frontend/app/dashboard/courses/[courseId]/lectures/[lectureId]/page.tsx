@@ -2,13 +2,14 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { useParams } from 'next/navigation';
-import { getLectures, getLectureNotes, updateLectureNotes, Lecture, Note, ApiError } from '@/lib/api';
+import { useParams, useRouter } from 'next/navigation';
+import { getLectures, getLectureNotes, updateLectureNotes, generateQuiz, Lecture, Note, ApiError } from '@/lib/api';
 import NoteEditor from '@/components/NoteEditor';
 import QuizConfigModal from '@/components/QuizConfigModal';
 
 export default function LectureDetailsPage() {
   const params = useParams();
+  const router = useRouter();
   // Use type assertion or check for array to satisfy TypeScript
   const courseId = Array.isArray(params.courseId) ? params.courseId[0] : params.courseId;
   const lectureId = Array.isArray(params.lectureId) ? params.lectureId[0] : params.lectureId;
@@ -72,9 +73,14 @@ export default function LectureDetailsPage() {
     }
   };
 
-  const handleGenerateQuiz = (selectedLectureIds: string[], quizLength: number) => {
-      // Future: Implement quiz generation logic
-      console.log('Generating quiz for lectures:', selectedLectureIds, 'Length:', quizLength);
+  const handleGenerateQuiz = async (selectedLectureIds: string[], quizLength: number) => {
+    try {
+      const quiz = await generateQuiz(selectedLectureIds, quizLength);
+      router.push(`/quiz/${quiz.id}`);
+    } catch (err) {
+      console.error('Failed to generate quiz:', err);
+      alert('Failed to generate quiz. Please try again.');
+    }
   };
 
   if (isLoading) {

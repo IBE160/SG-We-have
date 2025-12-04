@@ -15,6 +15,7 @@ jest.mock('@/lib/api', () => ({
   getLectures: jest.fn(),
   getLectureNotes: jest.fn(),
   updateLectureNotes: jest.fn(),
+  generateQuiz: jest.fn(),
   ApiError: class ApiError extends Error {
     constructor(message: string) {
       super(message);

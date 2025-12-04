@@ -3,7 +3,7 @@
 import { useState, useEffect, use } from 'react';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
-import { getCourses, getNotes, Course, Note, ApiError } from '@/lib/api';
+import { getCourses, getNotes, generateQuiz, Course, Note, ApiError } from '@/lib/api';
 import CreateNoteModal from '@/components/CreateNoteModal';
 import QuizConfigModal from '@/components/QuizConfigModal';
 
@@ -65,9 +65,14 @@ export default function CourseDetailsPage() {
     fetchData(); // Refresh list
   };
 
-  const handleGenerateQuiz = (selectedNoteIds: string[], quizLength: number) => {
-    // Future: Implement quiz generation logic
-    console.log('Generating quiz for notes:', selectedNoteIds, 'Length:', quizLength);
+  const handleGenerateQuiz = async (selectedNoteIds: string[], quizLength: number) => {
+    try {
+      const quiz = await generateQuiz(selectedNoteIds, quizLength);
+      router.push(`/quiz/${quiz.id}`);
+    } catch (err) {
+      console.error('Failed to generate quiz:', err);
+      alert('Failed to generate quiz. Please try again.');
+    }
   };
 
   if (!id) return <div className="p-10 text-center">Invalid Course ID</div>;
