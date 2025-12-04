@@ -62,10 +62,10 @@ development_status:
   3-2-select-lectures-for-quiz: done
   3-3-configure-quiz-length: done
   3-4-ai-generates-multiple-choice-questions: done
-  3-5-ai-fact-checking-for-accuracy: in-progress
+  3-5-ai-fact-checking-for-accuracy: done
   epic-3-retrospective: optional
 
-  epic-4: backlog
+  epic-4: contexted
   4-1-display-single-question: backlog
   4-2-immediate-answer-feedback: backlog
   4-3-quiz-progress-tracking: backlog
