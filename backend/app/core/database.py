@@ -2,7 +2,7 @@ from supabase import create_client, Client
 import os
 from . import config
 
-_supabase_client: Client = None # Make it a private module-level variable, initialized lazily
+_supabase_client: Client = None
 
 def get_supabase_client() -> Client:
     global _supabase_client
@@ -17,10 +17,18 @@ def get_supabase_client() -> Client:
 
 def verify_supabase_connection():
     try:
-        # Get the client via the function, allowing it to be mocked
-        client = get_supabase_client()
-        # Query a table that is known to exist to verify connection
-        client.table("courses").select("*").limit(1).execute()
+        # Create a dedicated client for verification to avoid side effects on the global singleton
+        # during startup (which runs in the event loop thread), while requests run in worker threads.
+        # This helps prevent potential socket/SSL context issues (WinError 10035).
+        SUPABASE_URL = os.environ.get("SUPABASE_URL")
+        SUPABASE_SERVICE_ROLE_KEY = os.environ.get("SUPABASE_SERVICE_ROLE_KEY")
+        
+        if not SUPABASE_URL or not SUPABASE_SERVICE_ROLE_KEY:
+            return False
+            
+        temp_client = create_client(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY)
+        temp_client.table("courses").select("*").limit(1).execute()
+        
         print("Supabase client initialized successfully.")
         return True
     except Exception as e:

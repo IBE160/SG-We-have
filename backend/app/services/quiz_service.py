@@ -10,19 +10,19 @@ logger = logging.getLogger(__name__)
 async def generate_quiz(request: QuizGenerateRequest, user_id: str, supabase: Client) -> QuizResponse:
     try:
         # 1. Fetch Notes
-        # request.lecture_ids is List[str]
-        response = supabase.table("notes").select("content").in_("lecture_id", request.lecture_ids).execute()
+        # request.note_ids is List[str]
+        response = supabase.table("notes").select("content").in_("id", request.note_ids).execute()
         notes_data = response.data
         
         if not notes_data:
-            raise HTTPException(status_code=400, detail="No notes found for selected lectures.")
+            raise HTTPException(status_code=400, detail="No notes found for selected items.")
         
         # Concatenate notes
         # filter out empty notes
         valid_notes = [note['content'] for note in notes_data if note.get('content')]
         
         if not valid_notes:
-             raise HTTPException(status_code=400, detail="Selected lectures have empty notes.")
+             raise HTTPException(status_code=400, detail="Selected notes have empty content.")
              
         full_notes = "\n\n".join(valid_notes)
         

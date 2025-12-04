@@ -15,7 +15,7 @@ class QuizGenerated(BaseModel):
 
 # --- API Request Models ---
 class QuizGenerateRequest(BaseModel):
-    lecture_ids: List[str] # Receiving as strings (UUIDs) from JSON
+    note_ids: List[str] # Receiving as strings (UUIDs) from JSON
     quiz_length: int = Field(..., description="Number of questions in the quiz (5, 10, 15, 20, 25, 30)")
 
     @field_validator('quiz_length')

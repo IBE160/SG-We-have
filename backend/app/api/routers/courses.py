@@ -27,10 +27,9 @@ def create_course(course: CourseCreate, user: dict = Depends(get_current_user)):
 
     supabase = get_supabase_client()
     
-    # Map 'name' to 'title' for DB
     data = {
         "user_id": user_id,
-        "title": course.name
+        "name": course.name
     }
     
     try:
@@ -38,11 +37,10 @@ def create_course(course: CourseCreate, user: dict = Depends(get_current_user)):
         if not response.data:
              raise HTTPException(status_code=500, detail="Failed to create course")
         
-        # Map 'title' back to 'name' for API response
         db_course = response.data[0]
         return {
             "id": db_course["id"],
-            "name": db_course["title"],
+            "name": db_course["name"],
             "user_id": db_course["user_id"],
             "created_at": db_course["created_at"]
         }
@@ -63,12 +61,11 @@ def get_courses(user: dict = Depends(get_current_user)):
         # Order by created_at descending (newest first)
         response = supabase.table("courses").select("*").eq("user_id", user_id).order("created_at", desc=True).execute()
         
-        # Map 'title' back to 'name' for API response
         courses = []
         for db_course in response.data:
             courses.append({
                 "id": db_course["id"],
-                "name": db_course.get("title", db_course.get("name", "Unknown")), # Fallback just in case
+                "name": db_course["name"],
                 "user_id": db_course["user_id"],
                 "created_at": db_course["created_at"]
             })
