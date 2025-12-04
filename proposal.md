@@ -8,10 +8,9 @@ The most critical UX issue is the lack of data persistence. The current in-memor
 
 **I propose to:**
 
-1.  **Integrate a database:** I will add SQLite to the project for simple, file-based data persistence.
-2.  **Set up an ORM:** I will use Prisma to manage the database schema and queries, ensuring type-safety and a clean data access layer.
-3.  **Create API Routes:** I will create API routes for courses, notes, and quizzes to handle all data operations (CRUD - Create, Read, Update, Delete).
-4.  **Refactor the Frontend:** I will update the frontend components to fetch and mutate data through the new API routes, removing the direct dependency on the in-memory data files.
+1.  **Leverage existing Supabase integration:** I will utilize the already integrated Supabase for robust and scalable data persistence.
+2.  **Enhance FastAPI backend:** I will expand the existing FastAPI backend to handle all data operations (CRUD - Create, Read, Update, Delete) for courses, notes, and quizzes, interacting with Supabase.
+3.  **Refactor the Frontend:** I will update the frontend components to fetch and mutate data through the FastAPI backend, ensuring a consistent data flow.
 
 ## 2. Enhance the User Interface and Navigation
 
