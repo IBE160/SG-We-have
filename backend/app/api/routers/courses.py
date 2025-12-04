@@ -27,18 +27,28 @@ def create_course(course: CourseCreate, user: dict = Depends(get_current_user)):
 
     supabase = get_supabase_client()
     
+    # Map 'name' to 'title' for DB
     data = {
         "user_id": user_id,
-        "name": course.name
+        "title": course.name
     }
     
     try:
         response = supabase.table("courses").insert(data).execute()
         if not response.data:
              raise HTTPException(status_code=500, detail="Failed to create course")
-        return response.data[0]
+        
+        # Map 'title' back to 'name' for API response
+        db_course = response.data[0]
+        return {
+            "id": db_course["id"],
+            "name": db_course["title"],
+            "user_id": db_course["user_id"],
+            "created_at": db_course["created_at"]
+        }
     except Exception as e:
         logger.error(f"Error creating course: {e}")
+        print(f"FULL ERROR TRACEBACK: {e}")
         raise HTTPException(status_code=500, detail="Internal Server Error")
 
 @router.get("/courses", response_model=list[Course])
@@ -52,7 +62,17 @@ def get_courses(user: dict = Depends(get_current_user)):
     try:
         # Order by created_at descending (newest first)
         response = supabase.table("courses").select("*").eq("user_id", user_id).order("created_at", desc=True).execute()
-        return response.data
+        
+        # Map 'title' back to 'name' for API response
+        courses = []
+        for db_course in response.data:
+            courses.append({
+                "id": db_course["id"],
+                "name": db_course.get("title", db_course.get("name", "Unknown")), # Fallback just in case
+                "user_id": db_course["user_id"],
+                "created_at": db_course["created_at"]
+            })
+        return courses
     except Exception as e:
         logger.error(f"Error fetching courses: {e}")
         raise HTTPException(status_code=500, detail="Internal Server Error")
