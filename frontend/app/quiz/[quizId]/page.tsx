@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { startQuiz, QuizStartResponse } from '../../../lib/services/quiz';
+import { startQuiz, submitAnswer, QuizStartResponse, QuizSubmissionResponse } from '../../../lib/services/quiz';
 import { QuizQuestionDisplay } from '../../../components/QuizQuestionDisplay';
 
 export default function QuizPage() {
@@ -13,6 +13,10 @@ export default function QuizPage() {
   const [quizState, setQuizState] = useState<QuizStartResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  
+  const [selectedOptionId, setSelectedOptionId] = useState<string | null>(null);
+  const [submissionResult, setSubmissionResult] = useState<QuizSubmissionResponse | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     if (quizId) {
@@ -28,6 +32,29 @@ export default function QuizPage() {
         });
     }
   }, [quizId]);
+
+  const handleAnswerSelect = async (optionId: string) => {
+    if (!quizState || isSubmitting || submissionResult) return;
+    
+    setSelectedOptionId(optionId);
+    setIsSubmitting(true);
+
+    try {
+      const result = await submitAnswer(quizId, {
+        attempt_id: quizState.attempt_id,
+        question_id: quizState.first_question.id,
+        answer_id: optionId
+      });
+      setSubmissionResult(result);
+    } catch (err) {
+      console.error('Failed to submit answer:', err);
+      // Ideally show a toast notification here
+      alert('Failed to submit answer. Please try again.');
+      setSelectedOptionId(null); // Reset selection on error
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   if (loading) {
     return (
@@ -67,13 +94,17 @@ export default function QuizPage() {
 
         <QuizQuestionDisplay 
           question={quizState.first_question}
-          onAnswerSelect={(optionId) => console.log('Selected:', optionId)} 
+          onAnswerSelect={handleAnswerSelect}
+          selectedOptionId={selectedOptionId}
+          isAnswered={!!submissionResult}
+          submissionResult={submissionResult}
         />
 
         <div className="mt-8 flex justify-end">
           <button
-            className="px-6 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors"
+            className="px-6 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             onClick={() => alert('Next question implementation coming in next story')}
+            disabled={!submissionResult}
           >
             Next Question
           </button>

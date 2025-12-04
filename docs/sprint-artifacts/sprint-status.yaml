@@ -67,7 +67,7 @@ development_status:
 
   epic-4: contexted
   4-1-display-single-question: done
-  4-2-immediate-answer-feedback: backlog
+  4-2-immediate-answer-feedback: done
   4-3-quiz-progress-tracking: backlog
   4-4-final-score-summary: backlog
   4-5-retake-new-quiz-options: backlog

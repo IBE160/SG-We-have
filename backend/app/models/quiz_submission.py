@@ -29,3 +29,14 @@ class QuizAttempt(BaseModel):
     score: Optional[int] = None
     status: str = "in_progress" # in_progress, completed
     current_question_index: int = 0
+
+class QuizSubmissionRequest(BaseModel):
+    attempt_id: str
+    question_id: str
+    answer_id: str
+
+class QuizSubmissionResponse(BaseModel):
+    is_correct: bool
+    correct_answer_id: str
+    feedback_text: str
+    explanation: Optional[str] = None

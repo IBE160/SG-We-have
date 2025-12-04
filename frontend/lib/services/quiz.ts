@@ -23,12 +23,50 @@ export interface QuizStartResponse {
   first_question: QuestionDisplay;
 }
 
+export interface QuizSubmissionRequest {
+  attempt_id: string;
+  question_id: string;
+  answer_id: string;
+}
+
+export interface QuizSubmissionResponse {
+  is_correct: boolean;
+  correct_answer_id: string;
+  feedback_text: string;
+  explanation?: string;
+}
+
 export class ApiError extends Error {
   constructor(public message: string, public status?: number) {
     super(message);
     this.name = 'ApiError';
   }
 }
+
+export const submitAnswer = async (quizId: string, request: QuizSubmissionRequest): Promise<QuizSubmissionResponse> => {
+  const { data: { session } } = await supabase.auth.getSession();
+  const token = session?.access_token;
+
+  if (!token) {
+    throw new ApiError('Not authenticated', 401);
+  }
+
+  const response = await fetch(`${API_BASE_URL}/quiz/${quizId}/answer`, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(request),
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new ApiError(errorData.detail || 'Failed to submit answer', response.status);
+  }
+
+  return response.json();
+};
 
 export const startQuiz = async (quizId: string): Promise<QuizStartResponse> => {
   const { data: { session } } = await supabase.auth.getSession();

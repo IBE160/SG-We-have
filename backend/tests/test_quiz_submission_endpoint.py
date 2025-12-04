@@ -7,7 +7,7 @@ from app.main import app
 from jose import jwt
 import pytest
 from unittest.mock import AsyncMock, patch
-from app.models.quiz_submission import QuizStartResponse, QuestionDisplay
+from app.models.quiz_submission import QuizStartResponse, QuestionDisplay, QuizSubmissionResponse
 from app.models.quiz import OptionResponse
 
 client = TestClient(app)
@@ -38,6 +38,35 @@ def auth_headers(monkeypatch):
     payload = {"sub": "user-uuid", "aud": "authenticated"}
     token = jwt.encode(payload, secret, algorithm="HS256")
     return {"Authorization": f"Bearer {token}"}
+
+@patch("app.api.routers.quiz.submit_answer", new_callable=AsyncMock)
+def test_submit_answer_endpoint_success(mock_submit_answer, auth_headers):
+    mock_response = QuizSubmissionResponse(
+        is_correct=True,
+        correct_answer_id="o1",
+        feedback_text="Correct!",
+        explanation="Exp"
+    )
+    mock_submit_answer.return_value = mock_response
+    
+    payload = {
+        "attempt_id": "attempt-uuid",
+        "question_id": "q1",
+        "answer_id": "o1"
+    }
+    
+    response = client.post(
+        "/api/v1/quiz/quiz-uuid/answer",
+        headers=auth_headers,
+        json=payload
+    )
+    
+    assert response.status_code == 200
+    data = response.json()
+    assert data["is_correct"] == True
+    assert data["feedback_text"] == "Correct!"
+    
+    mock_submit_answer.assert_called_once()
 
 @patch("app.api.routers.quiz.start_quiz_attempt", new_callable=AsyncMock)
 def test_start_quiz_success(mock_start_quiz, auth_headers):
