@@ -2,7 +2,7 @@ import '@testing-library/jest-dom';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { useParams, useRouter } from 'next/navigation';
 import CourseDetailsPage from '../[courseId]/page';
-import { getCourses, getLectures, Course, Lecture, ApiError } from '@/lib/api';
+import { getCourses, getNotes, Course, Note, ApiError } from '@/lib/api';
 
 // Mock next/navigation
 jest.mock('next/navigation', () => ({
@@ -13,7 +13,7 @@ jest.mock('next/navigation', () => ({
 // Mock API functions
 jest.mock('@/lib/api', () => ({
   getCourses: jest.fn(),
-  getLectures: jest.fn(),
+  getNotes: jest.fn(),
   ApiError: class ApiError extends Error {
     constructor(message: string) {
       super(message);
@@ -28,20 +28,22 @@ describe('CourseDetailsPage Integration', () => {
     id: mockCourseId,
     name: 'Test Course',
     created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
+    user_id: 'user-123',
   };
-  const mockLectures: Lecture[] = [
+  const mockNotes: Note[] = [
     {
-      id: 'lecture-1',
+      id: 'note-1',
       course_id: mockCourseId,
-      title: 'Lecture 1 Title',
+      title: 'Note 1 Title',
+      content: 'Content 1',
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
     },
     {
-      id: 'lecture-2',
+      id: 'note-2',
       course_id: mockCourseId,
-      title: 'Lecture 2 Title',
+      title: 'Note 2 Title',
+      content: '',
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
     },
@@ -55,7 +57,7 @@ describe('CourseDetailsPage Integration', () => {
       prefetch: jest.fn(),
     });
     (getCourses as jest.Mock).mockResolvedValue([mockCourse]);
-    (getLectures as jest.Mock).mockResolvedValue(mockLectures);
+    (getNotes as jest.Mock).mockResolvedValue(mockNotes);
     jest.clearAllMocks();
   });
 
@@ -63,8 +65,8 @@ describe('CourseDetailsPage Integration', () => {
     render(<CourseDetailsPage />);
 
     expect(await screen.findByText('Test Course')).toBeInTheDocument();
-    expect(screen.getByText('Lecture 1 Title')).toBeInTheDocument();
-    expect(screen.getByText('Lecture 2 Title')).toBeInTheDocument();
+    expect(screen.getByText('Note 1 Title')).toBeInTheDocument();
+    expect(screen.getByText('Note 2 Title')).toBeInTheDocument();
     // Expect single global button
     expect(screen.getByText('Generate Quiz')).toBeInTheDocument();
   });
@@ -84,23 +86,7 @@ describe('CourseDetailsPage Integration', () => {
     const generateQuizButton = await screen.findByText('Generate Quiz');
     fireEvent.click(generateQuizButton);
 
-    // Close button has no accessible name but is a button
-    // We can find it by svg or class, or the one that is not 'Generate Quiz' or 'Add Lecture'
-    // Or simpler: finding by role 'button' will return multiple.
-    // The modal close button is usually the first one in the modal or identified by icon.
-    // In the previous test code: `screen.findByRole('button', { name: '' })`
-    // Let's stick to that if it worked, or make it more specific if needed.
-    // Note: The modal close button has <svg>...
-    
-    // We can just use getAllByRole('button')[0] if we know the order, or try to match the SVG.
-    // But let's assume the previous selector `screen.findByRole('button', { name: '' })` works for the X button.
-    // However, "Add Lecture" and "Generate Quiz" have text.
-    
-    // Let's use a more robust selector if possible, or keep the existing one if valid.
-    // The existing code used: `const closeButton = await screen.findByRole('button', { name: '' });`
-    
     const buttons = await screen.findAllByRole('button');
-    // The X button typically has no text content, so name might be empty string.
     const closeButton = buttons.find(b => !b.textContent);
     
     if (closeButton) {

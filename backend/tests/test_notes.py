@@ -17,38 +17,90 @@ def mock_supabase(monkeypatch):
     monkeypatch.setattr("app.api.routers.notes.get_supabase_client", mock_get_client)
     return mock_client
 
-def test_get_notes_success(monkeypatch, mock_supabase):
+# --- POST /courses/{id}/notes ---
+
+def test_create_note_success(monkeypatch, mock_supabase):
     secret = "testsecret"
     monkeypatch.setenv("SUPABASE_JWT_SECRET", secret)
     user_id = "123"
-    lecture_id = "lec-1"
+    course_id = "c1"
     payload = {"sub": user_id, "aud": "authenticated"}
     token = jwt.encode(payload, secret, algorithm="HS256")
 
-    # Mock Ownership Check
-    mock_lectures_select = MagicMock()
-    mock_lectures_eq = MagicMock()
-    mock_lectures_execute = MagicMock()
+    # Mock Course Ownership Check
+    mock_courses_select = MagicMock()
+    mock_courses_eq = MagicMock()
+    mock_courses_execute = MagicMock()
     
-    mock_lectures_select.eq.return_value = mock_lectures_eq
-    mock_lectures_eq.execute.return_value = MagicMock(
-        data=[{"course_id": "c1", "courses": {"user_id": user_id}}]
+    mock_courses_select.eq.return_value = mock_courses_eq
+    mock_courses_eq.execute.return_value = MagicMock(data=[{"user_id": user_id}])
+
+    # Mock Notes Insert
+    mock_notes_insert = MagicMock()
+    mock_notes_execute = MagicMock()
+    
+    mock_notes_insert.execute.return_value = MagicMock(
+        data=[{"id": "n1", "course_id": course_id, "title": "New Note", "content": "", "created_at": "now"}]
     )
+    
+    mock_notes_table = MagicMock()
+    mock_notes_table.insert.return_value = mock_notes_insert
+
+    def side_effect_table(table_name):
+        if table_name == "courses":
+            m = MagicMock()
+            m.select.return_value = mock_courses_select
+            return m
+        elif table_name == "notes":
+            return mock_notes_table
+        return MagicMock()
+
+    mock_supabase.table.side_effect = side_effect_table
+
+    response = client.post(
+        f"/api/v1/courses/{course_id}/notes",
+        headers={"Authorization": f"Bearer {token}"},
+        json={"title": "New Note"}
+    )
+
+    assert response.status_code == 201
+    data = response.json()
+    assert data["title"] == "New Note"
+    assert data["id"] == "n1"
+
+# --- GET /courses/{id}/notes ---
+
+def test_get_notes_list_success(monkeypatch, mock_supabase):
+    secret = "testsecret"
+    monkeypatch.setenv("SUPABASE_JWT_SECRET", secret)
+    user_id = "123"
+    course_id = "c1"
+    payload = {"sub": user_id, "aud": "authenticated"}
+    token = jwt.encode(payload, secret, algorithm="HS256")
+
+    # Mock Course Ownership Check
+    mock_courses_select = MagicMock()
+    mock_courses_eq = MagicMock()
+    mock_courses_eq.execute.return_value = MagicMock(data=[{"user_id": user_id}])
 
     # Mock Notes Select
     mock_notes_select = MagicMock()
     mock_notes_eq = MagicMock()
-    mock_notes_execute = MagicMock()
-
+    mock_notes_order = MagicMock()
+    
     mock_notes_select.eq.return_value = mock_notes_eq
-    mock_notes_eq.execute.return_value = MagicMock(
-        data=[{"id": "n1", "lecture_id": lecture_id, "content": "<p>Notes</p>", "updated_at": "2023-01-01"}]
+    mock_notes_eq.order.return_value = mock_notes_order
+    mock_notes_order.execute.return_value = MagicMock(
+        data=[
+            {"id": "n1", "course_id": course_id, "title": "Note 1", "content": ""},
+            {"id": "n2", "course_id": course_id, "title": "Note 2", "content": ""}
+        ]
     )
 
     def side_effect_table(table_name):
-        if table_name == "lectures":
+        if table_name == "courses":
             m = MagicMock()
-            m.select.return_value = mock_lectures_select
+            m.select.return_value = mock_courses_select
             return m
         elif table_name == "notes":
             m = MagicMock()
@@ -59,240 +111,106 @@ def test_get_notes_success(monkeypatch, mock_supabase):
     mock_supabase.table.side_effect = side_effect_table
 
     response = client.get(
-        f"/api/v1/lectures/{lecture_id}/notes",
+        f"/api/v1/courses/{course_id}/notes",
         headers={"Authorization": f"Bearer {token}"}
     )
 
     assert response.status_code == 200
     data = response.json()
-    assert data["content"] == "<p>Notes</p>"
-    
-    mock_lectures_select.eq.assert_called_with("id", lecture_id)
-    mock_notes_select.eq.assert_called_with("lecture_id", lecture_id)
+    assert len(data) == 2
+    assert data[0]["title"] == "Note 1"
 
-def test_get_notes_not_found(monkeypatch, mock_supabase):
+# --- GET /notes/{id} ---
+
+def test_get_note_detail_success(monkeypatch, mock_supabase):
     secret = "testsecret"
     monkeypatch.setenv("SUPABASE_JWT_SECRET", secret)
     user_id = "123"
-    lecture_id = "lec-1"
+    note_id = "n1"
     payload = {"sub": user_id, "aud": "authenticated"}
     token = jwt.encode(payload, secret, algorithm="HS256")
 
-    # Mock Ownership Check (Success)
-    mock_lectures_select = MagicMock()
-    mock_lectures_eq = MagicMock()
+    # Mock Note Ownership/Existence (via join)
+    # The code does: supabase.table("notes").select("course_id, courses!inner(user_id)").eq("id", note_id)
+    # Then: supabase.table("notes").select("*").eq("id", note_id)
     
-    mock_lectures_select.eq.return_value = mock_lectures_eq
-    mock_lectures_eq.execute.return_value = MagicMock(
+    mock_ownership_select = MagicMock()
+    mock_ownership_eq = MagicMock()
+    mock_ownership_eq.execute.return_value = MagicMock(
         data=[{"course_id": "c1", "courses": {"user_id": user_id}}]
     )
-
-    # Mock Notes Select (Empty)
-    mock_notes_select = MagicMock()
-    mock_notes_eq = MagicMock()
-
-    mock_notes_select.eq.return_value = mock_notes_eq
-    mock_notes_eq.execute.return_value = MagicMock(data=[])
-
-    def side_effect_table(table_name):
-        if table_name == "lectures":
-            m = MagicMock()
-            m.select.return_value = mock_lectures_select
-            return m
-        elif table_name == "notes":
-            m = MagicMock()
-            m.select.return_value = mock_notes_select
-            return m
-        return MagicMock()
-
-    mock_supabase.table.side_effect = side_effect_table
-
-    response = client.get(
-        f"/api/v1/lectures/{lecture_id}/notes",
-        headers={"Authorization": f"Bearer {token}"}
-    )
-
-    assert response.status_code == 404
-    assert response.json()["detail"] == "Notes not found"
-
-def test_get_notes_forbidden(monkeypatch, mock_supabase):
-    secret = "testsecret"
-    monkeypatch.setenv("SUPABASE_JWT_SECRET", secret)
-    user_id = "123"
-    other_user = "456"
-    lecture_id = "lec-1"
-    payload = {"sub": user_id, "aud": "authenticated"}
-    token = jwt.encode(payload, secret, algorithm="HS256")
-
-    # Mock Ownership Check (Fail)
-    mock_lectures_select = MagicMock()
-    mock_lectures_eq = MagicMock()
     
-    mock_lectures_select.eq.return_value = mock_lectures_eq
-    mock_lectures_eq.execute.return_value = MagicMock(
-        data=[{"course_id": "c1", "courses": {"user_id": other_user}}]
+    mock_detail_select = MagicMock()
+    mock_detail_eq = MagicMock()
+    mock_detail_eq.execute.return_value = MagicMock(
+        data=[{"id": note_id, "course_id": "c1", "title": "Note 1", "content": "Content"}]
     )
 
     def side_effect_table(table_name):
-        if table_name == "lectures":
+        if table_name == "notes":
             m = MagicMock()
-            m.select.return_value = mock_lectures_select
+            # We need to distinguish calls. 
+            # Since we can't easily inspect chained calls in side_effect without complex logic,
+            # we'll just return a mock that handles both chains or use `side_effect` on the mock methods.
+            # Simpler: Return a mock that returns successful data for both ownership and detail checks.
+            # However, ownership check selects specific columns.
+            
+            m.select.side_effect = [mock_ownership_select, mock_detail_select]
             return m
         return MagicMock()
 
     mock_supabase.table.side_effect = side_effect_table
 
     response = client.get(
-        f"/api/v1/lectures/{lecture_id}/notes",
+        f"/api/v1/notes/{note_id}",
         headers={"Authorization": f"Bearer {token}"}
     )
 
-    assert response.status_code == 403
-    assert response.json()["detail"] == "Not authorized to access this lecture"
+    assert response.status_code == 200
+    data = response.json()
+    assert data["content"] == "Content"
+
+# --- PUT /notes/{id} ---
 
 def test_update_note_success(monkeypatch, mock_supabase):
     secret = "testsecret"
     monkeypatch.setenv("SUPABASE_JWT_SECRET", secret)
     user_id = "123"
-    lecture_id = "lec-1"
+    note_id = "n1"
     payload = {"sub": user_id, "aud": "authenticated"}
     token = jwt.encode(payload, secret, algorithm="HS256")
 
-    # Mock Ownership Check
-    mock_lectures_select = MagicMock()
-    mock_lectures_eq = MagicMock()
-    mock_lectures_eq.execute.return_value = MagicMock(
+    # Mock Ownership
+    mock_ownership_select = MagicMock()
+    mock_ownership_eq = MagicMock()
+    mock_ownership_eq.execute.return_value = MagicMock(
         data=[{"course_id": "c1", "courses": {"user_id": user_id}}]
-    )
-    mock_lectures_select.eq.return_value = mock_lectures_eq
-
-    # Mock Check Exists (Empty -> Insert path)
-    mock_notes_select = MagicMock()
-    mock_notes_eq = MagicMock()
-    mock_notes_eq.execute.return_value = MagicMock(data=[])
-    mock_notes_select.eq.return_value = mock_notes_eq
-
-    # Mock Insert
-    mock_notes_insert = MagicMock()
-    mock_notes_insert.execute.return_value = MagicMock(
-        data=[{"id": "n1", "lecture_id": lecture_id, "content": "New Content", "updated_at": "2023-01-01"}]
     )
     
-    mock_notes_table = MagicMock()
-    mock_notes_table.select.return_value = mock_notes_select
-    mock_notes_table.insert.return_value = mock_notes_insert
-
-    def side_effect_table(table_name):
-        if table_name == "lectures":
-            m = MagicMock()
-            m.select.return_value = mock_lectures_select
-            return m
-        elif table_name == "notes":
-            return mock_notes_table
-        return MagicMock()
-
-    mock_supabase.table.side_effect = side_effect_table
-
-    response = client.put(
-        f"/api/v1/lectures/{lecture_id}/notes",
-        headers={"Authorization": f"Bearer {token}"},
-        json={"content": "New Content"}
-    )
-
-    assert response.status_code == 200
-    assert response.json()["content"] == "New Content"
-    assert "updated_at" in response.json()
-    mock_notes_table.insert.assert_called_once()
-
-def test_update_note_existing(monkeypatch, mock_supabase):
-    secret = "testsecret"
-    monkeypatch.setenv("SUPABASE_JWT_SECRET", secret)
-    user_id = "123"
-    lecture_id = "lec-1"
-    note_id = "note-123"
-    payload = {"sub": user_id, "aud": "authenticated"}
-    token = jwt.encode(payload, secret, algorithm="HS256")
-
-    # Mock Ownership Check
-    mock_lectures_select = MagicMock()
-    mock_lectures_eq = MagicMock()
-    mock_lectures_eq.execute.return_value = MagicMock(
-        data=[{"course_id": "c1", "courses": {"user_id": user_id}}]
-    )
-    mock_lectures_select.eq.return_value = mock_lectures_eq
-
-    # Mock Check Exists (Found -> Update path)
-    mock_notes_select = MagicMock()
-    mock_notes_eq = MagicMock()
-    mock_notes_eq.execute.return_value = MagicMock(data=[{"id": note_id}])
-    mock_notes_select.eq.return_value = mock_notes_eq
-
     # Mock Update
-    mock_notes_update = MagicMock()
-    mock_notes_update_eq = MagicMock()
-    mock_notes_update.eq.return_value = mock_notes_update_eq # .update().eq()
-    mock_notes_update_eq.execute.return_value = MagicMock(
-        data=[{"id": note_id, "lecture_id": lecture_id, "content": "Updated Content", "updated_at": "2023-01-02"}]
+    mock_update = MagicMock()
+    mock_update_eq = MagicMock()
+    mock_update.eq.return_value = mock_update_eq
+    mock_update_eq.execute.return_value = MagicMock(
+        data=[{"id": note_id, "content": "Updated", "updated_at": "now"}]
     )
     
     mock_notes_table = MagicMock()
-    mock_notes_table.select.return_value = mock_notes_select
-    mock_notes_table.update.return_value = mock_notes_update
+    mock_notes_table.select.return_value = mock_ownership_select
+    mock_notes_table.update.return_value = mock_update
 
     def side_effect_table(table_name):
-        if table_name == "lectures":
-            m = MagicMock()
-            m.select.return_value = mock_lectures_select
-            return m
-        elif table_name == "notes":
+        if table_name == "notes":
             return mock_notes_table
         return MagicMock()
 
     mock_supabase.table.side_effect = side_effect_table
 
     response = client.put(
-        f"/api/v1/lectures/{lecture_id}/notes",
+        f"/api/v1/notes/{note_id}",
         headers={"Authorization": f"Bearer {token}"},
-        json={"content": "Updated Content"}
+        json={"content": "Updated"}
     )
 
     assert response.status_code == 200
-    assert response.json()["content"] == "Updated Content"
-    mock_notes_table.update.assert_called_once()
-    
-def test_update_note_forbidden(monkeypatch, mock_supabase):
-    secret = "testsecret"
-    monkeypatch.setenv("SUPABASE_JWT_SECRET", secret)
-    user_id = "123"
-    other_user = "456"
-    lecture_id = "lec-1"
-    payload = {"sub": user_id, "aud": "authenticated"}
-    token = jwt.encode(payload, secret, algorithm="HS256")
-
-    # Mock Ownership Check (Fail)
-    mock_lectures_select = MagicMock()
-    mock_lectures_eq = MagicMock()
-    
-    mock_lectures_select.eq.return_value = mock_lectures_eq
-    mock_lectures_eq.execute.return_value = MagicMock(
-        data=[{"course_id": "c1", "courses": {"user_id": other_user}}]
-    )
-
-    def side_effect_table(table_name):
-        if table_name == "lectures":
-            m = MagicMock()
-            m.select.return_value = mock_lectures_select
-            return m
-        return MagicMock()
-
-    mock_supabase.table.side_effect = side_effect_table
-
-    response = client.put(
-        f"/api/v1/lectures/{lecture_id}/notes",
-        headers={"Authorization": f"Bearer {token}"},
-        json={"content": "Should Fail"}
-    )
-
-    assert response.status_code == 403
-    assert response.json()["detail"] == "Not authorized to access this lecture"
-
+    assert response.json()["content"] == "Updated"

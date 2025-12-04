@@ -8,108 +8,151 @@ from app.core.database import get_supabase_client
 router = APIRouter()
 logger = logging.getLogger(__name__)
 
-class Note(BaseModel):
-    id: str
-    lecture_id: str
-    content: str
-    updated_at: str
+class NoteCreate(BaseModel):
+    title: str
 
 class NoteUpdate(BaseModel):
     content: str
 
-def verify_lecture_ownership(lecture_id: str, user_id: str, supabase):
+class Note(BaseModel):
+    id: str
+    course_id: str
+    title: str
+    content: str
+    created_at: str
+    updated_at: str
+
+def verify_course_ownership(course_id: str, user_id: str, supabase):
     """
-    Verifies that the lecture exists and belongs to a course owned by the user.
+    Verifies that the course exists and belongs to the user.
     """
     try:
-        # Join with courses to check user_id
-        # Supabase-py syntax for joins: select("*, courses(*)")
-        # We select course_id from lectures and user_id from the related course
-        response = supabase.table("lectures").select("course_id, courses!inner(user_id)").eq("id", lecture_id).execute()
-        
+        response = supabase.table("courses").select("user_id").eq("id", course_id).execute()
         if not response.data:
-             raise HTTPException(status_code=404, detail="Lecture not found")
+             raise HTTPException(status_code=404, detail="Course not found")
         
-        lecture_data = response.data[0]
-        
-        # Check if courses data is present and user_id matches
-        # structure returned by Supabase join: { "course_id": "...", "courses": { "user_id": "..." } }
-        if not lecture_data.get("courses") or lecture_data["courses"]["user_id"] != user_id:
-             raise HTTPException(status_code=403, detail="Not authorized to access this lecture")
+        if response.data[0]["user_id"] != user_id:
+             raise HTTPException(status_code=403, detail="Not authorized to access this course")
              
         return True
     except HTTPException as he:
         raise he
     except Exception as e:
-        logger.error(f"Error checking lecture ownership: {e}")
-        raise HTTPException(status_code=500, detail="Internal Server Error")
+        logger.error(f"Error checking course ownership: {e}")
+        raise HTTPException(status_code=500, detail=f"Internal Server Error: {str(e)}")
 
-@router.get("/lectures/{lecture_id}/notes", response_model=Note)
-def get_lecture_notes(lecture_id: str, user: dict = Depends(get_current_user)):
-    user_id = user.get("sub")
-    if not user_id:
-        raise HTTPException(status_code=401, detail="Invalid user token")
-
-    supabase = get_supabase_client()
-    
-    verify_lecture_ownership(lecture_id, user_id, supabase)
-    
+def verify_note_ownership(note_id: str, user_id: str, supabase):
+    """
+    Verifies that the note exists and belongs to a course owned by the user.
+    """
     try:
-        response = supabase.table("notes").select("*").eq("lecture_id", lecture_id).execute()
+        # Join with courses to check user_id
+        response = supabase.table("notes").select("course_id, courses!inner(user_id)").eq("id", note_id).execute()
         
         if not response.data:
-            # AC 2.1.3: If no notes exist, return 404. Frontend handles it.
-            raise HTTPException(status_code=404, detail="Notes not found")
-            
-        return response.data[0]
+             raise HTTPException(status_code=404, detail="Note not found")
+        
+        note_data = response.data[0]
+        
+        if not note_data.get("courses") or note_data["courses"]["user_id"] != user_id:
+             raise HTTPException(status_code=403, detail="Not authorized to access this note")
+             
+        return True
     except HTTPException as he:
         raise he
     except Exception as e:
-        logger.error(f"Error fetching notes: {e}")
-        raise HTTPException(status_code=500, detail="Internal Server Error")
+        logger.error(f"Error checking note ownership: {e}")
+        raise HTTPException(status_code=500, detail=f"Internal Server Error: {str(e)}")
 
-@router.put("/lectures/{lecture_id}/notes", response_model=Note)
-def update_note(lecture_id: str, note_update: NoteUpdate, user: dict = Depends(get_current_user)):
+@router.post("/courses/{course_id}/notes", status_code=status.HTTP_201_CREATED, response_model=Note)
+def create_note(course_id: str, note: NoteCreate, user: dict = Depends(get_current_user)):
+    if not note.title.strip():
+        raise HTTPException(status_code=422, detail="Note title cannot be empty")
+    
     user_id = user.get("sub")
     if not user_id:
         raise HTTPException(status_code=401, detail="Invalid user token")
 
     supabase = get_supabase_client()
     
-    # Verify ownership
-    verify_lecture_ownership(lecture_id, user_id, supabase)
+    verify_course_ownership(course_id, user_id, supabase)
+    
+    data = {
+        "course_id": course_id,
+        "title": note.title,
+        "content": "" # Start empty
+    }
     
     try:
-        # Check if note exists
-        existing_note = supabase.table("notes").select("id").eq("lecture_id", lecture_id).execute()
-        
-        current_time = datetime.now(timezone.utc).isoformat()
-        
-        if existing_note.data:
-            # Update
-            note_id = existing_note.data[0]['id']
-            data = {
-                "content": note_update.content,
-                "updated_at": current_time
-            }
-            response = supabase.table("notes").update(data).eq("id", note_id).execute()
-        else:
-            # Insert
-            data = {
-                "lecture_id": lecture_id,
-                "content": note_update.content,
-                # updated_at will be set by DB default or we can set it
-                "updated_at": current_time 
-            }
-            response = supabase.table("notes").insert(data).execute()
-            
+        response = supabase.table("notes").insert(data).execute()
         if not response.data:
-             raise HTTPException(status_code=500, detail="Failed to save note")
+             raise HTTPException(status_code=500, detail="Failed to create note")
+        
+        return response.data[0]
+    except Exception as e:
+        logger.error(f"Error creating note: {e}")
+        raise HTTPException(status_code=500, detail=f"Internal Server Error: {str(e)}")
+
+@router.get("/courses/{course_id}/notes", response_model=list[Note])
+def get_notes(course_id: str, user: dict = Depends(get_current_user)):
+    user_id = user.get("sub")
+    if not user_id:
+        raise HTTPException(status_code=401, detail="Invalid user token")
+
+    supabase = get_supabase_client()
+    
+    verify_course_ownership(course_id, user_id, supabase)
+    
+    try:
+        response = supabase.table("notes").select("*").eq("course_id", course_id).order("created_at", desc=True).execute()
+        return response.data
+    except Exception as e:
+        logger.error(f"Error fetching notes: {e}")
+        raise HTTPException(status_code=500, detail=f"Internal Server Error: {str(e)}")
+
+@router.get("/notes/{note_id}", response_model=Note)
+def get_note(note_id: str, user: dict = Depends(get_current_user)):
+    user_id = user.get("sub")
+    if not user_id:
+        raise HTTPException(status_code=401, detail="Invalid user token")
+
+    supabase = get_supabase_client()
+    
+    verify_note_ownership(note_id, user_id, supabase)
+    
+    try:
+        response = supabase.table("notes").select("*").eq("id", note_id).execute()
+        if not response.data:
+            raise HTTPException(status_code=404, detail="Note not found")
+        return response.data[0]
+    except Exception as e:
+        logger.error(f"Error fetching note: {e}")
+        raise HTTPException(status_code=500, detail=f"Internal Server Error: {str(e)}")
+
+@router.put("/notes/{note_id}", response_model=Note)
+def update_note(note_id: str, note_update: NoteUpdate, user: dict = Depends(get_current_user)):
+    user_id = user.get("sub")
+    if not user_id:
+        raise HTTPException(status_code=401, detail="Invalid user token")
+
+    supabase = get_supabase_client()
+    
+    verify_note_ownership(note_id, user_id, supabase)
+    
+    try:
+        current_time = datetime.now(timezone.utc).isoformat()
+        data = {
+            "content": note_update.content,
+            "updated_at": current_time
+        }
+        
+        response = supabase.table("notes").update(data).eq("id", note_id).execute()
+        
+        if not response.data:
+             raise HTTPException(status_code=500, detail="Failed to update note")
              
         return response.data[0]
         
-    except HTTPException as he:
-        raise he
     except Exception as e:
-        logger.error(f"Error saving note: {e}")
-        raise HTTPException(status_code=500, detail="Internal Server Error")
+        logger.error(f"Error updating note: {e}")
+        raise HTTPException(status_code=500, detail=f"Internal Server Error: {str(e)}")

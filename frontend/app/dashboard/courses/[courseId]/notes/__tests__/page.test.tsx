@@ -1,8 +1,8 @@
 import '@testing-library/jest-dom';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { useParams, useRouter } from 'next/navigation';
-import LectureDetailsPage from '../[lectureId]/page'; // Adjust path as needed
-import { getLectures, getLectureNotes, Lecture, Note, ApiError } from '@/lib/api';
+import NoteDetailsPage from '../[noteId]/page'; 
+import { getNote, updateNote, Note, ApiError } from '@/lib/api';
 
 // Mock next/navigation
 jest.mock('next/navigation', () => ({
@@ -12,9 +12,8 @@ jest.mock('next/navigation', () => ({
 
 // Mock API functions
 jest.mock('@/lib/api', () => ({
-  getLectures: jest.fn(),
-  getLectureNotes: jest.fn(),
-  updateLectureNotes: jest.fn(),
+  getNote: jest.fn(),
+  updateNote: jest.fn(),
   ApiError: class ApiError extends Error {
     constructor(message: string) {
       super(message);
@@ -30,57 +29,39 @@ jest.mock('@/components/NoteEditor', () => {
   };
 });
 
-describe('LectureDetailsPage Integration', () => {
+describe('NoteDetailsPage Integration', () => {
   const mockCourseId = 'course-123';
-  const mockLectureId = 'lecture-456';
-  const mockLecture: Lecture = {
-    id: mockLectureId,
+  const mockNoteId = 'note-456';
+  const mockNote: Note = {
+    id: mockNoteId,
     course_id: mockCourseId,
-    title: 'Test Lecture Title',
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
-  };
-  const mockNoteWithContent: Note = {
-    id: 'note-789',
-    lecture_id: mockLectureId,
+    title: 'Test Note Title',
     content: 'Some notes content for the test.',
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
-  };
-  const mockNoteWithoutContent: Note = {
-    id: 'note-empty',
-    lecture_id: mockLectureId,
-    content: null,
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
   };
 
   beforeEach(() => {
-    (useParams as jest.Mock).mockReturnValue({ courseId: mockCourseId, lectureId: mockLectureId });
+    (useParams as jest.Mock).mockReturnValue({ courseId: mockCourseId, noteId: mockNoteId });
     (useRouter as jest.Mock).mockReturnValue({
       push: jest.fn(),
       replace: jest.fn(),
       prefetch: jest.fn(),
     });
-    (getLectures as jest.Mock).mockResolvedValue([mockLecture]);
-    (getLectureNotes as jest.Mock).mockResolvedValue(mockNoteWithContent);
+    (getNote as jest.Mock).mockResolvedValue(mockNote);
     // Reset all mocks before each test to ensure isolation
     jest.clearAllMocks();
   });
 
-  it('renders lecture details and Generate Quiz button when notes exist', async () => {
-    (getLectureNotes as jest.Mock).mockResolvedValue(mockNoteWithContent);
+  it('renders note details and Generate Quiz button when note exists', async () => {
+    render(<NoteDetailsPage />);
 
-    render(<LectureDetailsPage />);
-
-    expect(await screen.findByText('Test Lecture Title')).toBeInTheDocument();
+    expect(await screen.findByText('Test Note Title')).toBeInTheDocument();
     expect(screen.getByText('Generate Quiz')).toBeInTheDocument();
   });
 
   it('opens QuizConfigModal when "Generate Quiz" button is clicked', async () => {
-    (getLectureNotes as jest.Mock).mockResolvedValue(mockNoteWithContent);
-
-    render(<LectureDetailsPage />);
+    render(<NoteDetailsPage />);
 
     const generateQuizButton = await screen.findByText('Generate Quiz');
     fireEvent.click(generateQuizButton);
@@ -88,21 +69,16 @@ describe('LectureDetailsPage Integration', () => {
     expect(await screen.findByText('Configure Quiz')).toBeInTheDocument();
     expect(screen.getByText('Cancel')).toBeInTheDocument();
     
-    // There are two "Generate Quiz" texts now: the open button (hidden by modal overlay?) and the submit button inside modal.
-    // screen.getAllByText('Generate Quiz') should return > 1
     const buttons = screen.getAllByText('Generate Quiz');
     expect(buttons.length).toBeGreaterThan(1);
   });
 
   it('closes QuizConfigModal when close button is clicked', async () => {
-    (getLectureNotes as jest.Mock).mockResolvedValue(mockNoteWithContent);
-
-    render(<LectureDetailsPage />);
+    render(<NoteDetailsPage />);
 
     const generateQuizButton = await screen.findByText('Generate Quiz');
     fireEvent.click(generateQuizButton);
 
-    // Find the close button (SVG inside button)
     const buttons = await screen.findAllByRole('button');
     const closeButton = buttons.find(b => !b.textContent);
     
@@ -118,9 +94,7 @@ describe('LectureDetailsPage Integration', () => {
   });
 
   it('closes QuizConfigModal when Cancel button is clicked', async () => {
-    (getLectureNotes as jest.Mock).mockResolvedValue(mockNoteWithContent);
-
-    render(<LectureDetailsPage />);
+    render(<NoteDetailsPage />);
 
     const generateQuizButton = await screen.findByText('Generate Quiz');
     fireEvent.click(generateQuizButton);

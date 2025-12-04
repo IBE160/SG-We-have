@@ -1,16 +1,16 @@
 'use client';
 
 import { useState } from 'react';
-import { createLecture } from '@/lib/api';
+import { createNote } from '@/lib/api';
 
-interface CreateLectureModalProps {
+interface CreateNoteModalProps {
   isOpen: boolean;
   onClose: () => void;
   courseId: string;
-  onLectureCreated: () => void;
+  onNoteCreated: () => void;
 }
 
-export default function CreateLectureModal({ isOpen, onClose, courseId, onLectureCreated }: CreateLectureModalProps) {
+export default function CreateNoteModal({ isOpen, onClose, courseId, onNoteCreated }: CreateNoteModalProps) {
   const [title, setTitle] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -28,9 +28,9 @@ export default function CreateLectureModal({ isOpen, onClose, courseId, onLectur
     setError(null);
 
     try {
-      await createLecture(courseId, title);
+      await createNote(courseId, title);
       setTitle('');
-      onLectureCreated();
+      onNoteCreated();
       onClose();
     } catch (err) {
       if (err instanceof Error) {
