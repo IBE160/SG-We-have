@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import CreateCourseModal from '@/components/CreateCourseModal';
 import { getCourses, Course, ApiError } from '@/lib/api';
+import { useAuth } from '@/components/SupabaseClientProvider';
 
 export default function DashboardPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -11,6 +12,7 @@ export default function DashboardPage() {
   const [courses, setCourses] = useState<Course[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const { user, signOut } = useAuth();
 
   const fetchCourses = async () => {
     setIsLoading(true);
@@ -37,65 +39,168 @@ export default function DashboardPage() {
 
   const handleCourseCreated = () => {
     setSuccessMessage('Course created successfully!');
-    setTimeout(() => setSuccessMessage(null), 3000); // Clear after 3 seconds
+    setTimeout(() => setSuccessMessage(null), 3000);
     fetchCourses();
   };
 
+  const sidebarItemClass = "flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-text-secondary transition-colors hover:bg-background-light hover:text-text-primary text-left";
+  const activeSidebarItemClass = "flex w-full items-center gap-3 rounded-lg bg-background-light px-3 py-2.5 text-text-primary transition-colors";
+
   return (
-    <div className="min-h-screen bg-gray-100 py-10">
-      <header className="bg-white shadow">
-        <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 flex justify-between items-center">
-          <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
-          <button
-            onClick={() => setIsModalOpen(true)}
-            className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors"
-          >
-            Create Course
-          </button>
+    <div className="relative flex h-auto min-h-screen w-full flex-row bg-background-light font-display text-text-primary">
+      {/* SideNavBar */}
+      <aside className="flex h-screen w-64 flex-col border-r border-border-light bg-white p-4 sticky top-0">
+        <div className="flex h-full flex-col justify-between">
+          <div className="flex flex-col gap-8">
+            <div className="flex items-center gap-3 px-3">
+              <div className="flex items-center justify-center rounded-lg bg-accent-blue size-10">
+                <span className="material-symbols-outlined text-white" style={{fontSize: '24px'}}>school</span>
+              </div>
+              <h1 className="text-text-primary text-xl font-bold">StudyTool</h1>
+            </div>
+            <nav className="flex flex-col gap-2">
+              <button onClick={() => setIsModalOpen(true)} className={sidebarItemClass}>
+                <span className="material-symbols-outlined" style={{fontSize: '24px'}}>add_circle</span>
+                <p className="text-sm font-medium">New Course</p>
+              </button>
+              <Link href="/notes" className={sidebarItemClass}>
+                <span className="material-symbols-outlined" style={{fontSize: '24px'}}>note_add</span>
+                <p className="text-sm font-medium">New Note</p>
+              </Link>
+              <Link href="/quiz" className={sidebarItemClass}>
+                <span className="material-symbols-outlined" style={{fontSize: '24px'}}>quiz</span>
+                <p className="text-sm font-medium">New Quiz</p>
+              </Link>
+              <Link href="/dashboard" className={activeSidebarItemClass}>
+                <span className="material-symbols-outlined" style={{fontSize: '24px', fontVariationSettings: "'FILL' 1"}}>collections_bookmark</span>
+                <p className="text-sm font-medium">My Courses</p>
+              </Link>
+            </nav>
+          </div>
+          <div className="flex flex-col gap-2">
+            <div className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-text-secondary transition-colors hover:bg-background-light hover:text-text-primary cursor-pointer">
+              <span className="material-symbols-outlined" style={{fontSize: '24px'}}>settings</span>
+              <p className="text-sm font-medium">Settings</p>
+            </div>
+            <div className="flex items-center gap-4 rounded-lg p-2">
+              <div className="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10 bg-gray-200 flex items-center justify-center text-gray-500 font-bold">
+                  {user?.email?.[0].toUpperCase()}
+              </div>
+              <div className="flex flex-col overflow-hidden">
+                <p className="text-text-primary text-sm font-semibold leading-normal truncate">{user?.email?.split('@')[0] || 'User'}</p>
+                <p className="text-text-secondary text-xs font-normal leading-normal truncate">{user?.email}</p>
+              </div>
+              <button onClick={() => signOut()} className="material-symbols-outlined text-text-secondary ml-auto hover:text-red-500 transition-colors" style={{fontSize: '20px'}}>logout</button>
+            </div>
+          </div>
         </div>
-      </header>
-      <main>
-        <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+      </aside>
+
+      {/* Main Content */}
+      <main className="flex-1 p-10">
+        <div className="mx-auto max-w-5xl">
+          {/* PageHeading */}
+          <div className="flex flex-wrap justify-between gap-3 pb-8">
+            <div className="flex min-w-72 flex-col gap-2">
+              <h1 className="text-text-primary text-4xl font-black leading-tight tracking-[-0.033em]">Welcome back, {user?.email?.split('@')[0] || 'Student'}!</h1>
+              <p className="text-text-secondary text-lg font-normal leading-normal">Ready to dive back into your studies?</p>
+            </div>
+          </div>
+
           {successMessage && (
-            <div className="mb-4 p-4 bg-green-100 text-green-700 rounded-md">
+            <div className="mb-8 p-4 bg-green-100 text-green-700 rounded-md border border-green-200">
               {successMessage}
             </div>
           )}
           {error && (
-             <div className="mb-4 p-4 bg-red-100 text-red-700 rounded-md">
+             <div className="mb-8 p-4 bg-red-100 text-red-700 rounded-md border border-red-200">
               {error}
             </div>
           )}
-          
-          <div className="px-4 py-6 sm:px-0">
-            {isLoading ? (
-               <div className="text-center py-10">Loading courses...</div>
-            ) : courses.length === 0 ? (
-              <div className="border-4 border-dashed border-gray-200 rounded-lg h-96 flex items-center justify-center">
-                 <div className="text-center">
-                    <p className="text-gray-500 mb-2">No courses found.</p>
-                    <button onClick={() => setIsModalOpen(true)} className="text-blue-600 hover:underline">Create your first course</button>
-                 </div>
+
+          {/* Action Cards */}
+          <div className="relative grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3 mb-12">
+            <div className="absolute inset-x-0 top-1/2 h-64 -translate-y-1/2 transform">
+              <div className="absolute left-[5%] h-full w-2/5 rounded-full bg-accent-blue/10 blur-3xl"></div>
+              <div className="absolute right-[5%] h-full w-2/5 rounded-full bg-accent-purple/10 blur-3xl"></div>
+            </div>
+            
+            {/* Card 1: Create New Course */}
+            <div className="relative flex flex-col justify-between gap-6 rounded-xl border border-border-light bg-white/70 p-6 shadow-soft backdrop-blur-md transition-shadow hover:shadow-soft-hover">
+              <div className="flex flex-col gap-3">
+                <div className="flex size-12 items-center justify-center rounded-lg bg-accent-blue/10">
+                  <span className="material-symbols-outlined text-accent-blue" style={{fontSize: '28px'}}>add_circle</span>
+                </div>
+                <h2 className="text-text-primary text-xl font-bold leading-normal">Create a New Course</h2>
+                <p className="text-text-secondary text-sm font-normal leading-normal">Start by organizing your notes into a new subject.</p>
               </div>
-            ) : (
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                {courses.map((course) => (
-                  <Link key={course.id} href={`/dashboard/courses/${course.id}`} className="block">
-                    <div className="bg-white overflow-hidden shadow rounded-lg hover:shadow-md transition-shadow h-full">
-                      <div className="px-4 py-5 sm:p-6">
-                        <h3 className="text-lg font-medium leading-6 text-gray-900 truncate">
-                          {course.name}
-                        </h3>
-                        <p className="mt-1 text-sm text-gray-500">
-                          Created: {new Date(course.created_at).toLocaleDateString()}
-                        </p>
-                      </div>
-                    </div>
-                  </Link>
-                ))}
+              <button onClick={() => setIsModalOpen(true)} className="w-full rounded-lg bg-accent-blue py-2.5 text-sm font-bold text-white shadow-md transition-all hover:shadow-lg hover:bg-accent-blue/90">Get Started</button>
+            </div>
+
+            {/* Card 2: Continue Last Note (Static for now) */}
+            <div className="relative flex flex-col justify-between gap-6 rounded-xl border border-border-light bg-white/70 p-6 shadow-soft backdrop-blur-md transition-shadow hover:shadow-soft-hover">
+              <div className="flex flex-col gap-3">
+                <div className="flex size-12 items-center justify-center rounded-lg bg-accent-purple/10">
+                  <span className="material-symbols-outlined text-accent-purple" style={{fontSize: '28px'}}>history_edu</span>
+                </div>
+                <h2 className="text-text-primary text-xl font-bold leading-normal">Pick Up Where You Left Off</h2>
+                <p className="text-text-secondary text-sm font-normal leading-normal">Lecture 3: Quantum Physics</p>
               </div>
-            )}
+              <button className="w-full rounded-lg bg-accent-purple py-2.5 text-sm font-bold text-white shadow-md transition-all hover:shadow-lg hover:bg-accent-purple/90">Continue Writing</button>
+            </div>
+
+            {/* Card 3: Create a Quiz */}
+            <div className="relative flex flex-col justify-between gap-6 rounded-xl border border-border-light bg-white/70 p-6 shadow-soft backdrop-blur-md transition-shadow hover:shadow-soft-hover">
+              <div className="flex flex-col gap-3">
+                <div className="flex size-12 items-center justify-center rounded-lg bg-accent-green/10">
+                  <span className="material-symbols-outlined text-accent-green" style={{fontSize: '28px'}}>quiz</span>
+                </div>
+                <h2 className="text-text-primary text-xl font-bold leading-normal">Test Your Knowledge</h2>
+                <p className="text-text-secondary text-sm font-normal leading-normal">Generate a practice quiz from any of your existing notes.</p>
+              </div>
+              <Link href="/quiz" className="w-full block text-center rounded-lg bg-accent-green py-2.5 text-sm font-bold text-white shadow-md transition-all hover:shadow-lg hover:bg-accent-green/90">Create Quiz</Link>
+            </div>
           </div>
+
+          {/* Your Courses Section */}
+          <div>
+            <h2 className="text-text-primary text-2xl font-bold mb-6">Your Courses</h2>
+             <div className="px-0">
+              {isLoading ? (
+                 <div className="text-center py-10 text-text-secondary">Loading courses...</div>
+              ) : courses.length === 0 ? (
+                <div className="border-2 border-dashed border-border-light rounded-lg h-48 flex items-center justify-center bg-white/50">
+                   <div className="text-center">
+                      <p className="text-text-secondary mb-2">No courses found.</p>
+                      <button onClick={() => setIsModalOpen(true)} className="text-accent-blue hover:underline font-medium">Create your first course</button>
+                   </div>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                  {courses.map((course) => (
+                    <Link key={course.id} href={`/dashboard/courses/${course.id}`} className="block">
+                      <div className="bg-white border border-border-light rounded-xl p-6 shadow-soft hover:shadow-soft-hover transition-all h-full flex flex-col">
+                        <div className="flex items-center gap-3 mb-4">
+                           <div className="flex items-center justify-center rounded-lg bg-primary/10 size-10 text-primary">
+                             <span className="material-symbols-outlined">book</span>
+                           </div>
+                           <h3 className="text-lg font-bold text-text-primary truncate">
+                             {course.name}
+                           </h3>
+                        </div>
+                        <div className="mt-auto">
+                           <p className="text-xs text-text-secondary">
+                             Created: {new Date(course.created_at).toLocaleDateString()}
+                           </p>
+                        </div>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+
         </div>
       </main>
 
