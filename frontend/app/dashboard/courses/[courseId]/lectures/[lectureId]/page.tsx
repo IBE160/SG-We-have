@@ -34,7 +34,7 @@ export default function LectureDetailsPage() {
         const foundLecture = lectures.find(l => l.id === lectureId);
 
         if (!foundLecture) {
-          setError('Lecture not found or access denied.');
+          setError('Note not found or access denied.');
           return;
         }
         setLecture(foundLecture);
@@ -49,7 +49,7 @@ export default function LectureDetailsPage() {
           } else if (err instanceof Error) {
             setError(err.message);
           } else {
-            setError('Failed to load lecture details');
+            setError('Failed to load note details');
           }
       } finally {
         setIsLoading(false);
@@ -95,7 +95,7 @@ export default function LectureDetailsPage() {
   }
 
   if (!lecture) {
-      return <div className="p-10 text-center">Lecture not found.</div>;
+      return <div className="p-10 text-center">Note not found.</div>;
   }
 
   return (
@@ -121,7 +121,7 @@ export default function LectureDetailsPage() {
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="bg-white shadow sm:rounded-md p-6">
-            <h2 className="text-lg font-medium text-gray-900 mb-4">Lecture Notes</h2>
+            <h2 className="text-lg font-medium text-gray-900 mb-4">Notes</h2>
             <NoteEditor 
                 initialContent={note?.content || null} 
                 onSave={handleSave} 

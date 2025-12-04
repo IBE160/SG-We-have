@@ -60,7 +60,7 @@ export default function CourseDetailsPage() {
   }, [id]);
 
   const handleLectureCreated = () => {
-    setSuccessMessage('Lecture added successfully!');
+    setSuccessMessage('Note added successfully!');
     setTimeout(() => setSuccessMessage(null), 3000);
     fetchData(); // Refresh list
   };
@@ -96,7 +96,7 @@ export default function CourseDetailsPage() {
                onClick={() => setIsModalOpen(true)}
                className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors"
              >
-               Add Lecture
+               Add notes
              </button>
             </div>
           )}
@@ -124,7 +124,7 @@ export default function CourseDetailsPage() {
           <div className="bg-white shadow overflow-hidden sm:rounded-md">
             {lectures.length === 0 ? (
                <div className="p-6 text-center text-gray-500">
-                 No lectures yet. Click "Add Lecture" to get started.
+                 No notes yet. Click "Add notes" to get started.
                </div>
             ) : (
               <ul className="divide-y divide-gray-200">

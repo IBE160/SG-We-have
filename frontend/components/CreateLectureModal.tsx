@@ -36,7 +36,7 @@ export default function CreateLectureModal({ isOpen, onClose, courseId, onLectur
       if (err instanceof Error) {
         setError(err.message);
       } else {
-        setError('Failed to create lecture');
+        setError('Failed to create note');
       }
     } finally {
       setIsLoading(false);
@@ -46,7 +46,7 @@ export default function CreateLectureModal({ isOpen, onClose, courseId, onLectur
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white rounded-lg p-6 w-full max-w-md">
-        <h2 className="text-xl font-bold mb-4">Add New Lecture</h2>
+        <h2 className="text-xl font-bold mb-4">Add New Note</h2>
         
         {error && (
           <div className="mb-4 p-3 bg-red-100 text-red-700 rounded-md text-sm">
@@ -57,7 +57,7 @@ export default function CreateLectureModal({ isOpen, onClose, courseId, onLectur
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
             <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-1">
-              Lecture Title
+              Note Title
             </label>
             <input
               type="text"
@@ -84,7 +84,7 @@ export default function CreateLectureModal({ isOpen, onClose, courseId, onLectur
               className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50"
               disabled={isLoading}
             >
-              {isLoading ? 'Adding...' : 'Add Lecture'}
+              {isLoading ? 'Adding...' : 'Add Note'}
             </button>
           </div>
         </form>

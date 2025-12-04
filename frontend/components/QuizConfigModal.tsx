@@ -61,7 +61,7 @@ export default function QuizConfigModal({ isOpen, onClose, lectures, onGenerate 
         
         <form onSubmit={handleSubmit} className="flex flex-col flex-1 overflow-hidden">
            <div className="flex justify-between items-center mb-2">
-              <label className="block text-sm font-medium text-gray-700">Select Lectures</label>
+              <label className="block text-sm font-medium text-gray-700">Select Notes</label>
               <button 
                 type="button" 
                 onClick={handleSelectAll}
@@ -74,7 +74,7 @@ export default function QuizConfigModal({ isOpen, onClose, lectures, onGenerate 
 
            <div className="flex-1 overflow-y-auto border border-gray-200 rounded-md mb-4 p-2">
              {lectures.length === 0 ? (
-                <p className="text-center text-gray-500 py-4">No lectures available.</p>
+                <p className="text-center text-gray-500 py-4">No notes available.</p>
              ) : (
                <div className="space-y-2">
                  {lectures.map(lecture => (
