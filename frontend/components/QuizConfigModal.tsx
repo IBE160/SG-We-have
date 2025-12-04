@@ -1,47 +1,45 @@
 'use client';
 
 import { FormEvent, useState } from 'react';
-import { Lecture } from '@/lib/api';
+import { Note } from '@/lib/api';
 
 interface QuizConfigModalProps {
   isOpen: boolean;
   onClose: () => void;
-  lectures: Lecture[];
-  onGenerate: (selectedLectureIds: string[], quizLength: number) => void;
+  notes: Note[];
+  onGenerate: (selectedNoteIds: string[], quizLength: number) => void;
 }
 
-export default function QuizConfigModal({ isOpen, onClose, lectures, onGenerate }: QuizConfigModalProps) {
-  const [selectedLectureIds, setSelectedLectureIds] = useState<string[]>([]);
+export default function QuizConfigModal({ isOpen, onClose, notes, onGenerate }: QuizConfigModalProps) {
+  const [selectedNoteIds, setSelectedNoteIds] = useState<string[]>([]);
   const [quizLength, setQuizLength] = useState<number>(10);
 
-  const availableLectures = lectures.filter(l => l.has_notes);
-
-  const handleCheckboxChange = (lectureId: string) => {
-    setSelectedLectureIds(prev => {
-      if (prev.includes(lectureId)) {
-        return prev.filter(id => id !== lectureId);
+  const handleCheckboxChange = (noteId: string) => {
+    setSelectedNoteIds(prev => {
+      if (prev.includes(noteId)) {
+        return prev.filter(id => id !== noteId);
       } else {
-        return [...prev, lectureId];
+        return [...prev, noteId];
       }
     });
   };
 
   const handleSelectAll = () => {
-    if (selectedLectureIds.length === availableLectures.length) {
+    if (selectedNoteIds.length === notes.length) {
       // Deselect all
-      setSelectedLectureIds([]);
+      setSelectedNoteIds([]);
     } else {
-      // Select all available
-      setSelectedLectureIds(availableLectures.map(l => l.id));
+      // Select all
+      setSelectedNoteIds(notes.map(n => n.id));
     }
   };
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
-    if (selectedLectureIds.length === 0) return;
+    if (selectedNoteIds.length === 0) return;
     
-    console.log("Quiz generation initiated with lectures:", selectedLectureIds, "Length:", quizLength);
-    onGenerate(selectedLectureIds, quizLength);
+    console.log("Quiz generation initiated with notes:", selectedNoteIds, "Length:", quizLength);
+    onGenerate(selectedNoteIds, quizLength);
     onClose();
   };
 
@@ -66,37 +64,33 @@ export default function QuizConfigModal({ isOpen, onClose, lectures, onGenerate 
                 type="button" 
                 onClick={handleSelectAll}
                 className="text-sm text-blue-600 hover:text-blue-800"
-                disabled={availableLectures.length === 0}
+                disabled={notes.length === 0}
               >
-                {selectedLectureIds.length === availableLectures.length && availableLectures.length > 0 ? 'Deselect All' : 'Select All'}
+                {selectedNoteIds.length === notes.length && notes.length > 0 ? 'Deselect All' : 'Select All'}
               </button>
            </div>
 
            <div className="flex-1 overflow-y-auto border border-gray-200 rounded-md mb-4 p-2">
-             {lectures.length === 0 ? (
+             {notes.length === 0 ? (
                 <p className="text-center text-gray-500 py-4">No notes available.</p>
              ) : (
                <div className="space-y-2">
-                 {lectures.map(lecture => (
-                   <div key={lecture.id} className={`flex items-start p-2 rounded hover:bg-gray-50 ${!lecture.has_notes ? 'opacity-50 bg-gray-100' : ''}`}>
+                 {notes.map(note => (
+                   <div key={note.id} className="flex items-start p-2 rounded hover:bg-gray-50">
                      <div className="flex items-center h-5">
                        <input
-                         id={`lecture-${lecture.id}`}
-                         name={`lecture-${lecture.id}`}
+                         id={`note-${note.id}`}
+                         name={`note-${note.id}`}
                          type="checkbox"
                          className="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300 rounded"
-                         checked={selectedLectureIds.includes(lecture.id)}
-                         onChange={() => handleCheckboxChange(lecture.id)}
-                         disabled={!lecture.has_notes}
+                         checked={selectedNoteIds.includes(note.id)}
+                         onChange={() => handleCheckboxChange(note.id)}
                        />
                      </div>
                      <div className="ml-3 text-sm">
-                       <label htmlFor={`lecture-${lecture.id}`} className={`font-medium text-gray-700 ${!lecture.has_notes ? 'cursor-not-allowed' : 'cursor-pointer'}`}>
-                         {lecture.title}
+                       <label htmlFor={`note-${note.id}`} className="font-medium text-gray-700 cursor-pointer">
+                         {note.title}
                        </label>
-                       {!lecture.has_notes && (
-                         <p className="text-gray-500 text-xs">No notes saved. Add notes to include in quiz.</p>
-                       )}
                      </div>
                    </div>
                  ))}
@@ -132,8 +126,8 @@ export default function QuizConfigModal({ isOpen, onClose, lectures, onGenerate 
             </button>
             <button
               type="submit"
-              disabled={selectedLectureIds.length === 0}
-              className={`px-4 py-2 text-white rounded-md ${selectedLectureIds.length === 0 ? 'bg-blue-300 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'}`}
+              disabled={selectedNoteIds.length === 0}
+              className={`px-4 py-2 text-white rounded-md ${selectedNoteIds.length === 0 ? 'bg-blue-300 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'}`}
             >
               Generate Quiz
             </button>

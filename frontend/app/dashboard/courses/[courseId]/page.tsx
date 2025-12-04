@@ -3,8 +3,8 @@
 import { useState, useEffect, use } from 'react';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
-import { getCourses, getLectures, Course, Lecture, ApiError } from '@/lib/api';
-import CreateLectureModal from '@/components/CreateLectureModal';
+import { getCourses, getNotes, Course, Note, ApiError } from '@/lib/api';
+import CreateNoteModal from '@/components/CreateNoteModal';
 import QuizConfigModal from '@/components/QuizConfigModal';
 
 export default function CourseDetailsPage() {
@@ -15,7 +15,7 @@ export default function CourseDetailsPage() {
   const id = Array.isArray(params.courseId) ? params.courseId[0] : params.courseId;
 
   const [course, setCourse] = useState<Course | null>(null);
-  const [lectures, setLectures] = useState<Lecture[]>([]);
+  const [notes, setNotes] = useState<Note[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -38,9 +38,9 @@ export default function CourseDetailsPage() {
       }
       setCourse(foundCourse);
 
-      // Fetch lectures
-      const lectureData = await getLectures(id);
-      setLectures(lectureData);
+      // Fetch notes
+      const notesData = await getNotes(id);
+      setNotes(notesData);
       
     } catch (err) {
       if (err instanceof ApiError) {
@@ -59,15 +59,15 @@ export default function CourseDetailsPage() {
     fetchData();
   }, [id]);
 
-  const handleLectureCreated = () => {
+  const handleNoteCreated = () => {
     setSuccessMessage('Note added successfully!');
     setTimeout(() => setSuccessMessage(null), 3000);
     fetchData(); // Refresh list
   };
 
-  const handleGenerateQuiz = (selectedLectureIds: string[], quizLength: number) => {
+  const handleGenerateQuiz = (selectedNoteIds: string[], quizLength: number) => {
     // Future: Implement quiz generation logic
-    console.log('Generating quiz for lectures:', selectedLectureIds, 'Length:', quizLength);
+    console.log('Generating quiz for notes:', selectedNoteIds, 'Length:', quizLength);
   };
 
   if (!id) return <div className="p-10 text-center">Invalid Course ID</div>;
@@ -122,27 +122,22 @@ export default function CourseDetailsPage() {
             <div className="text-center py-10">Course not found.</div>
         ) : (
           <div className="bg-white shadow overflow-hidden sm:rounded-md">
-            {lectures.length === 0 ? (
+            {notes.length === 0 ? (
                <div className="p-6 text-center text-gray-500">
                  No notes yet. Click "Add notes" to get started.
                </div>
             ) : (
               <ul className="divide-y divide-gray-200">
-                {lectures.map((lecture) => (
-                  <li key={lecture.id} className="px-4 py-4 sm:px-6 hover:bg-gray-50">
-                    <Link href={`/dashboard/courses/${id}/lectures/${lecture.id}`} className="block">
+                {notes.map((note) => (
+                  <li key={note.id} className="px-4 py-4 sm:px-6 hover:bg-gray-50">
+                    <Link href={`/dashboard/courses/${id}/notes/${note.id}`} className="block">
                         <div className="flex items-center justify-between">
                         <div className="flex items-center">
-                          <p className="text-lg font-medium text-blue-600 truncate">{lecture.title}</p>
-                          {lecture.has_notes && (
-                            <span className="ml-2 px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                              Notes
-                            </span>
-                          )}
+                          <p className="text-lg font-medium text-blue-600 truncate">{note.title}</p>
                         </div>
                         <div className="ml-2 flex-shrink-0 flex">
                             <p className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
-                            {new Date(lecture.created_at).toLocaleDateString()}
+                            {new Date(note.created_at).toLocaleDateString()}
                             </p>
                         </div>
                         </div>
@@ -157,16 +152,16 @@ export default function CourseDetailsPage() {
 
       {course && (
         <>
-          <CreateLectureModal
+          <CreateNoteModal
             isOpen={isModalOpen}
             onClose={() => setIsModalOpen(false)}
             courseId={course.id}
-            onLectureCreated={handleLectureCreated}
+            onNoteCreated={handleNoteCreated}
           />
           <QuizConfigModal
             isOpen={isQuizModalOpen}
             onClose={() => setIsQuizModalOpen(false)}
-            lectures={lectures}
+            notes={notes}
             onGenerate={handleGenerateQuiz}
           />
         </>

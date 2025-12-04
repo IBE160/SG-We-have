@@ -1,13 +1,13 @@
 import '@testing-library/jest-dom';
 import { render, screen, fireEvent } from '@testing-library/react';
 import QuizConfigModal from '../QuizConfigModal';
-import { Lecture } from '@/lib/api';
+import { Note } from '@/lib/api';
 
 describe('QuizConfigModal', () => {
-  const mockLectures: Lecture[] = [
-    { id: '1', title: 'Lecture 1', course_id: 'c1', created_at: '2023-01-01', has_notes: true },
-    { id: '2', title: 'Lecture 2', course_id: 'c1', created_at: '2023-01-02', has_notes: false },
-    { id: '3', title: 'Lecture 3', course_id: 'c1', created_at: '2023-01-03', has_notes: true },
+  const mockNotes: Note[] = [
+    { id: '1', title: 'Note 1', course_id: 'c1', created_at: '2023-01-01', content: 'Content', updated_at: '2023-01-01' },
+    { id: '2', title: 'Note 2', course_id: 'c1', created_at: '2023-01-02', content: 'Content', updated_at: '2023-01-02' },
+    { id: '3', title: 'Note 3', course_id: 'c1', created_at: '2023-01-03', content: 'Content', updated_at: '2023-01-03' },
   ];
 
   const mockOnGenerate = jest.fn();
@@ -19,33 +19,22 @@ describe('QuizConfigModal', () => {
   });
 
   it('renders nothing when not open', () => {
-    render(<QuizConfigModal isOpen={false} onClose={mockOnClose} lectures={mockLectures} onGenerate={mockOnGenerate} />);
+    render(<QuizConfigModal isOpen={false} onClose={mockOnClose} notes={mockNotes} onGenerate={mockOnGenerate} />);
     expect(screen.queryByText('Configure Quiz')).not.toBeInTheDocument();
   });
 
   it('renders correctly when open', () => {
-    render(<QuizConfigModal isOpen={true} onClose={mockOnClose} lectures={mockLectures} onGenerate={mockOnGenerate} />);
+    render(<QuizConfigModal isOpen={true} onClose={mockOnClose} notes={mockNotes} onGenerate={mockOnGenerate} />);
     expect(screen.getByText('Configure Quiz')).toBeInTheDocument();
-    expect(screen.getByText('Lecture 1')).toBeInTheDocument();
-    expect(screen.getByText('Lecture 2')).toBeInTheDocument();
-    expect(screen.getByText('Lecture 3')).toBeInTheDocument();
+    expect(screen.getByText('Note 1')).toBeInTheDocument();
+    expect(screen.getByText('Note 2')).toBeInTheDocument();
+    expect(screen.getByText('Note 3')).toBeInTheDocument();
   });
 
-  it('disables lectures without notes', () => {
-    render(<QuizConfigModal isOpen={true} onClose={mockOnClose} lectures={mockLectures} onGenerate={mockOnGenerate} />);
+  it('allows selecting notes', () => {
+    render(<QuizConfigModal isOpen={true} onClose={mockOnClose} notes={mockNotes} onGenerate={mockOnGenerate} />);
     
-    const checkbox1 = screen.getByRole('checkbox', { name: 'Lecture 1' });
-    const checkbox2 = screen.getByRole('checkbox', { name: 'Lecture 2' });
-    
-    expect(checkbox1).toBeEnabled();
-    expect(checkbox2).toBeDisabled();
-    expect(screen.getByText('No notes saved. Add notes to include in quiz.')).toBeInTheDocument();
-  });
-
-  it('allows selecting lectures', () => {
-    render(<QuizConfigModal isOpen={true} onClose={mockOnClose} lectures={mockLectures} onGenerate={mockOnGenerate} />);
-    
-    const checkbox1 = screen.getByRole('checkbox', { name: 'Lecture 1' });
+    const checkbox1 = screen.getByRole('checkbox', { name: 'Note 1' });
     fireEvent.click(checkbox1);
     expect(checkbox1).toBeChecked();
     
@@ -54,13 +43,13 @@ describe('QuizConfigModal', () => {
   });
 
   it('handles Select All and Deselect All', () => {
-    render(<QuizConfigModal isOpen={true} onClose={mockOnClose} lectures={mockLectures} onGenerate={mockOnGenerate} />);
+    render(<QuizConfigModal isOpen={true} onClose={mockOnClose} notes={mockNotes} onGenerate={mockOnGenerate} />);
     
     const selectAllBtn = screen.getByText('Select All');
     fireEvent.click(selectAllBtn);
     
-    const checkbox1 = screen.getByRole('checkbox', { name: 'Lecture 1' });
-    const checkbox3 = screen.getByRole('checkbox', { name: 'Lecture 3' });
+    const checkbox1 = screen.getByRole('checkbox', { name: 'Note 1' });
+    const checkbox3 = screen.getByRole('checkbox', { name: 'Note 3' });
     
     expect(checkbox1).toBeChecked();
     expect(checkbox3).toBeChecked();
@@ -75,9 +64,9 @@ describe('QuizConfigModal', () => {
   });
 
   it('calls onGenerate with selected IDs', () => {
-    render(<QuizConfigModal isOpen={true} onClose={mockOnClose} lectures={mockLectures} onGenerate={mockOnGenerate} />);
+    render(<QuizConfigModal isOpen={true} onClose={mockOnClose} notes={mockNotes} onGenerate={mockOnGenerate} />);
     
-    const checkbox1 = screen.getByRole('checkbox', { name: 'Lecture 1' });
+    const checkbox1 = screen.getByRole('checkbox', { name: 'Note 1' });
     fireEvent.click(checkbox1);
     
     const generateBtn = screen.getByText('Generate Quiz');
