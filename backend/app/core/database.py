@@ -2,18 +2,16 @@ from supabase import create_client, Client
 import os
 from . import config
 
-_supabase_client: Client = None # Make it a private module-level variable, initialized lazily
-
 def get_supabase_client() -> Client:
-    global _supabase_client
-    if _supabase_client is None:
-        SUPABASE_URL = os.environ.get("SUPABASE_URL")
-        SUPABASE_SERVICE_ROLE_KEY = os.environ.get("SUPABASE_SERVICE_ROLE_KEY")
+    # Re-instantiating the client for each request to avoid potential socket/threading issues on Windows (WinError 10035)
+    # In a production environment with high concurrency, a connection pool or singleton with thread-local storage might be better.
+    SUPABASE_URL = os.environ.get("SUPABASE_URL")
+    SUPABASE_SERVICE_ROLE_KEY = os.environ.get("SUPABASE_SERVICE_ROLE_KEY")
 
-        if not SUPABASE_URL or not SUPABASE_SERVICE_ROLE_KEY:
-            raise ValueError("Supabase URL and Service Role Key must be set in environment variables.")
-        _supabase_client = create_client(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY)
-    return _supabase_client
+    if not SUPABASE_URL or not SUPABASE_SERVICE_ROLE_KEY:
+        raise ValueError("Supabase URL and Service Role Key must be set in environment variables.")
+    
+    return create_client(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY)
 
 def verify_supabase_connection():
     try:
