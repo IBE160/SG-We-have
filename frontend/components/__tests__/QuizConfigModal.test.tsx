@@ -83,7 +83,7 @@ describe('QuizConfigModal', () => {
     const generateBtn = screen.getByText('Generate Quiz');
     fireEvent.click(generateBtn);
     
-    expect(mockOnGenerate).toHaveBeenCalledWith(['1']);
+    expect(mockOnGenerate).toHaveBeenCalledWith(['1'], 10);
     expect(mockOnClose).toHaveBeenCalled();
   });
 });

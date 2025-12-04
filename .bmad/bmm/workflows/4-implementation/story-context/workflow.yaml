@@ -56,6 +56,6 @@ input_file_patterns:
 
 # Output configuration
 # Uses story_key from sprint-status.yaml (e.g., "1-2-user-authentication")
-default_output_file: "{story_path}/{{story_key}}.context.xml"
+default_output_file: "{sprint_artifacts}/epic-{{epic_id}}/story-{{story_key}}/{{story_key}}.context.xml"
 
 standalone: true
