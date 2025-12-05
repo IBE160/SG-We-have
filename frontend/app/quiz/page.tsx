@@ -125,7 +125,7 @@ export default function GenerateQuizPage() {
                         <div className="h-14 bg-gray-100 rounded-xl animate-pulse"></div>
                       ) : (
                         <select 
-                          className="form-select flex w-full min-w-0 flex-1 resize-none appearance-none overflow-hidden rounded-xl border border-border-light bg-white px-4 py-3 text-base font-medium text-text-primary placeholder:text-text-secondary/60 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 h-14"
+                          className="form-select flex w-full min-w-0 flex-1 resize-none appearance-none overflow-hidden rounded-xl border border-border-light bg-white px-4 py-3 text-base font-medium text-text-primary placeholder:text-text-secondary/60 focus:border-accent-blue focus:outline-none focus:ring-2 focus:ring-accent-blue/20 h-14"
                           value={selectedCourseId}
                           onChange={(e) => setSelectedCourseId(e.target.value)}
                         >
@@ -142,8 +142,8 @@ export default function GenerateQuizPage() {
                   <div className="flex items-center justify-between">
                     <h3 className="text-text-primary text-lg font-bold leading-tight tracking-[-0.015em]">2. Choose notes to include</h3>
                     <div className="flex gap-4">
-                      <button onClick={handleDeselectAll} className="text-sm font-medium text-text-secondary hover:text-primary">Deselect All</button>
-                      <button onClick={handleSelectAll} className="text-sm font-medium text-primary hover:text-primary/80">Select All</button>
+                      <button onClick={handleDeselectAll} className="text-sm font-medium text-text-secondary hover:text-accent-blue">Deselect All</button>
+                      <button onClick={handleSelectAll} className="text-sm font-medium text-accent-blue hover:text-accent-blue/80">Select All</button>
                     </div>
                   </div>
                   
@@ -156,11 +156,11 @@ export default function GenerateQuizPage() {
                       notes.map(note => {
                         const hasContent = !!note.content;
                         return (
-                          <label key={note.id} className="flex cursor-pointer items-center justify-between gap-4 rounded-lg p-4 transition-colors hover:bg-primary/10 has-[:checked]:bg-primary/10">
+                          <label key={note.id} className="flex cursor-pointer items-center justify-between gap-4 rounded-lg p-4 transition-colors hover:bg-accent-blue/10 has-[:checked]:bg-accent-blue/10">
                             <div className="flex items-center gap-4">
                               <input 
                                 type="checkbox"
-                                className="h-5 w-5 rounded border-gray-300 text-primary focus:ring-primary/50"
+                                className="h-5 w-5 rounded border-gray-300 text-accent-blue focus:ring-accent-blue/50"
                                 checked={selectedNoteIds.includes(note.id)}
                                 onChange={() => handleToggleNote(note.id)}
                                 disabled={!hasContent}
@@ -183,7 +183,7 @@ export default function GenerateQuizPage() {
                   <div className="flex max-w-[480px]">
                     <label className="flex w-full flex-col">
                       <select 
-                        className="form-select flex w-full min-w-0 flex-1 resize-none appearance-none overflow-hidden rounded-xl border border-border-light bg-white px-4 py-3 text-base font-medium text-text-primary placeholder:text-text-secondary/60 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 h-14"
+                        className="form-select flex w-full min-w-0 flex-1 resize-none appearance-none overflow-hidden rounded-xl border border-border-light bg-white px-4 py-3 text-base font-medium text-text-primary placeholder:text-text-secondary/60 focus:border-accent-blue focus:outline-none focus:ring-2 focus:ring-accent-blue/20 h-14"
                         value={quizLength}
                         onChange={(e) => setQuizLength(Number(e.target.value))}
                       >
@@ -199,7 +199,7 @@ export default function GenerateQuizPage() {
                   <button 
                     onClick={handleGenerateQuiz}
                     disabled={isGenerating || selectedNoteIds.length === 0}
-                    className={`flex w-full max-w-sm cursor-pointer items-center justify-center gap-2 overflow-hidden rounded-xl bg-primary px-6 py-4 text-base font-bold text-white transition-opacity hover:opacity-90 ${isGenerating || selectedNoteIds.length === 0 ? 'opacity-50 cursor-not-allowed' : ''}`}
+                    className={`flex w-full max-w-sm cursor-pointer items-center justify-center gap-2 overflow-hidden rounded-xl bg-accent-blue px-6 py-4 text-base font-bold text-white transition-opacity hover:opacity-90 ${isGenerating || selectedNoteIds.length === 0 ? 'opacity-50 cursor-not-allowed' : ''}`}
                   >
                     {isGenerating ? 'Generating Quiz...' : 'Generate Quiz'}
                   </button>
