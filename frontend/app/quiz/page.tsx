@@ -96,13 +96,12 @@ export default function GenerateQuizPage() {
 
   return (
     <div className="relative flex min-h-screen w-full flex-col bg-background-light font-display group/design-root overflow-x-hidden">
+      {/* Header */}
+      <AppHeader />
+      
       <div className="layout-container flex h-full grow flex-col">
         <div className="flex flex-1 justify-center py-5">
           <div className="layout-content-container flex w-full flex-col max-w-[960px] flex-1">
-            
-            {/* Header */}
-            <AppHeader />
-
             <main className="p-10 flex flex-col gap-12">
               <div className="flex flex-wrap justify-between gap-4">
                 <div className="flex flex-col gap-2">
