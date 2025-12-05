@@ -7,6 +7,7 @@ import NoteEditor from '@/components/NoteEditor';
 import { useAuth } from '@/components/SupabaseClientProvider';
 import EditableTitle from '@/components/EditableTitle';
 import { Trash2 } from 'lucide-react';
+import CreateNoteModal from '@/components/CreateNoteModal';
 
 export default function NotesPage() {
   const [courses, setCourses] = useState<Course[]>([]);
@@ -16,6 +17,7 @@ export default function NotesPage() {
   const [noteContent, setNoteContent] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [lastSaved, setLastSaved] = useState<string | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const { user } = useAuth();
 
   // Fetch courses on load
@@ -74,18 +76,28 @@ export default function NotesPage() {
     fetchNotes();
   }, [selectedLecture]);
 
-  const handleCreateLecture = async () => {
+  const handleNoteCreated = async () => {
     if (!selectedCourse) return;
-    const title = prompt('Enter note title:');
-    if (!title) return;
-
+    // Re-fetch lectures to get the new one, or ideally the modal would return the new note object.
+    // For simplicity, let's re-fetch or handle optimistic update if CreateNoteModal supports returning the object.
+    // Looking at CreateNoteModal, it calls onNoteCreated() with no args.
+    // So we should re-fetch lectures.
     try {
-      const newLecture = await createLecture(selectedCourse.id, title);
-      setLectures([...lectures, newLecture]);
-      setSelectedLecture(newLecture);
+        const data = await getLectures(selectedCourse.id);
+        setLectures(data);
+        // Select the newest one? Or just list it.
+        // Assuming the newest is last or sorted by date.
+        if (data.length > 0) {
+             // Ideally select the one just created.
+             // Since we don't get the ID back from the modal callback, we'll just pick the last one for now or let user select.
+             // Actually, let's fetch and select the most recent one.
+             // Simple approach: re-fetch list.
+             // Better UX: Modal returns created note. But modal props are `onNoteCreated: () => void`.
+             // I will stick to re-fetching for now as per existing patterns.
+             // To be safe, I'll just refresh the list.
+        }
     } catch (err) {
-      console.error('Failed to create lecture', err);
-      alert('Failed to create lecture');
+        console.error('Failed to refresh lectures', err);
     }
   };
 
@@ -197,8 +209,9 @@ export default function NotesPage() {
 
         <div className="mt-auto pt-4 border-t border-border-light">
           <button 
-            onClick={handleCreateLecture}
-            className="flex w-full items-center justify-center gap-2 rounded-xl bg-accent-blue py-3 text-sm font-bold text-white shadow-md transition-all hover:shadow-lg hover:bg-accent-blue/90"
+            onClick={() => setIsModalOpen(true)}
+            disabled={!selectedCourse}
+            className="flex w-full items-center justify-center gap-2 rounded-xl bg-accent-blue py-3 text-sm font-bold text-white shadow-md transition-all hover:shadow-lg hover:bg-accent-blue/90 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <span className="material-symbols-outlined">add</span>
             <span>New Note</span>
@@ -256,6 +269,15 @@ export default function NotesPage() {
           )}
         </div>
       </main>
+
+      {selectedCourse && (
+        <CreateNoteModal 
+            isOpen={isModalOpen}
+            onClose={() => setIsModalOpen(false)}
+            courseId={selectedCourse.id}
+            onNoteCreated={handleNoteCreated}
+        />
+      )}
     </div>
   );
 }
