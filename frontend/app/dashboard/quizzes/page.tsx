@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useAuth } from '@/components/SupabaseClientProvider';
-import { getQuizHistory, QuizHistoryItem, ApiError, deleteQuiz, updateQuiz } from '@/lib/api';
+import { getQuizHistory, QuizHistoryItem, ApiError, deleteQuiz, updateQuiz, getCourses, Course } from '@/lib/api';
 import { Trash2 } from 'lucide-react';
 import DeleteConfirmationModal from '@/components/DeleteConfirmationModal';
 import AppHeader from '@/components/AppHeader';
@@ -12,6 +12,8 @@ import EditableTitle from '@/components/EditableTitle';
 export default function QuizHistoryPage() {
   const { user } = useAuth();
   const [quizzes, setQuizzes] = useState<QuizHistoryItem[]>([]);
+  const [courses, setCourses] = useState<Course[]>([]);
+  const [selectedCourseId, setSelectedCourseId] = useState<string>('all');
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
@@ -19,27 +21,31 @@ export default function QuizHistoryPage() {
   const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
-    const fetchQuizHistory = async () => {
+    const fetchData = async () => {
       if (!user) return;
       setIsLoading(true);
       setError(null);
       try {
-        const data = await getQuizHistory();
-        setQuizzes(data);
+        const [quizzesData, coursesData] = await Promise.all([
+          getQuizHistory(),
+          getCourses()
+        ]);
+        setQuizzes(quizzesData);
+        setCourses(coursesData);
       } catch (err) {
         if (err instanceof ApiError) {
           setError(err.message);
         } else if (err instanceof Error) {
           setError(err.message);
         } else {
-          setError('Failed to load quiz history');
+          setError('Failed to load data');
         }
       } finally {
         setIsLoading(false);
       }
     };
 
-    fetchQuizHistory();
+    fetchData();
   }, [user]);
 
   const handleUpdateQuiz = async (quizId: string, newTitle: string) => {
@@ -74,6 +80,10 @@ export default function QuizHistoryPage() {
     }
   };
 
+  const filteredQuizzes = selectedCourseId === 'all' 
+    ? quizzes 
+    : quizzes.filter(q => q.course_id === selectedCourseId);
+
   return (
     <div className="relative flex h-auto min-h-screen w-full flex-col bg-background-light font-display text-text-primary">
       {/* AppHeader */}
@@ -87,10 +97,25 @@ export default function QuizHistoryPage() {
           </Link>
 
           {/* PageHeading */}
-          <div className="flex flex-wrap justify-between gap-3 pb-8">
+          <div className="flex flex-wrap justify-between gap-3 pb-8 items-end">
             <div className="flex min-w-72 flex-col gap-2">
               <h1 className="text-text-primary text-4xl font-black leading-tight tracking-[-0.033em]">Quiz History</h1>
               <p className="text-text-secondary text-lg font-normal leading-normal">Review your past quizzes and results.</p>
+            </div>
+            
+            <div className="w-full md:w-64">
+                <label htmlFor="course-filter" className="block text-sm font-medium text-text-secondary mb-1">Filter by Course</label>
+                <select
+                    id="course-filter"
+                    value={selectedCourseId}
+                    onChange={(e) => setSelectedCourseId(e.target.value)}
+                    className="block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-accent-blue focus:border-accent-blue sm:text-sm rounded-md border bg-white"
+                >
+                    <option value="all">All Courses</option>
+                    {courses.map(course => (
+                        <option key={course.id} value={course.id}>{course.name}</option>
+                    ))}
+                </select>
             </div>
           </div>
 
@@ -100,7 +125,7 @@ export default function QuizHistoryPage() {
             <div className="mb-8 p-4 bg-red-100 text-red-700 rounded-md border border-red-200">
               {error}
             </div>
-          ) : quizzes.length === 0 ? (
+          ) : filteredQuizzes.length === 0 ? (
             <div className="border-2 border-dashed border-border-light rounded-lg h-48 flex items-center justify-center bg-white/50">
               <div className="text-center">
                 <p className="text-text-secondary mb-2">No quiz history found.</p>
@@ -111,7 +136,7 @@ export default function QuizHistoryPage() {
             </div>
           ) : (
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {quizzes.map((quiz) => (
+              {filteredQuizzes.map((quiz) => (
                 <div key={quiz.id} className="bg-white border border-border-light rounded-xl p-6 shadow-soft hover:shadow-soft-hover transition-all h-full flex flex-col group relative">
                   <Link href={`/quiz/${quiz.id}`} className="flex flex-col h-full">
                     <div className="flex items-start justify-between mb-4">
@@ -130,6 +155,9 @@ export default function QuizHistoryPage() {
                       </div>
                     </div>
                     <div className="mt-auto">
+                      <p className="text-xs text-text-secondary mb-1">
+                        {courses.find(c => c.id === quiz.course_id)?.name || 'Unknown Course'}
+                      </p>
                       <p className="text-xs text-text-secondary">
                         Taken on: {new Date(quiz.created_at).toLocaleDateString()}
                       </p>
