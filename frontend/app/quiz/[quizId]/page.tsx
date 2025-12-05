@@ -203,6 +203,16 @@ export default function QuizPage() {
   return (
     <main className="flex min-h-screen flex-col items-center p-4 md:p-24 bg-gray-50 dark:bg-gray-900">
       <div className="w-full max-w-3xl">
+        <div className="mb-6">
+          <button 
+            onClick={() => router.push('/dashboard')}
+            className="text-gray-500 hover:text-gray-700 transition-colors flex items-center gap-2 text-lg font-medium"
+          >
+            <span className="material-symbols-outlined" style={{fontSize: '24px'}}>arrow_back</span>
+            Exit Quiz
+          </button>
+        </div>
+
         <div className="mb-8">
           <h1 className="text-2xl font-bold mb-4">{quizState.quiz_title}</h1>
           <QuizProgressBar 
