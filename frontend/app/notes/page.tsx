@@ -76,7 +76,7 @@ export default function NotesPage() {
 
   const handleCreateLecture = async () => {
     if (!selectedCourse) return;
-    const title = prompt('Enter lecture title:');
+    const title = prompt('Enter note title:');
     if (!title) return;
 
     try {
