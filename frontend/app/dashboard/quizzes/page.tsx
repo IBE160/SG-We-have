@@ -3,7 +3,8 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useAuth } from '@/components/SupabaseClientProvider';
-import { getQuizHistory, QuizHistoryItem, ApiError } from '@/lib/api';
+import { getQuizHistory, QuizHistoryItem, ApiError, deleteQuiz } from '@/lib/api';
+import { Trash2 } from 'lucide-react';
 
 export default function QuizHistoryPage() {
   const { user } = useAuth();
@@ -34,6 +35,18 @@ export default function QuizHistoryPage() {
 
     fetchQuizHistory();
   }, [user]);
+
+  const handleDeleteQuiz = async (quizId: string) => {
+    if (!confirm("Are you sure you want to delete this quiz?")) return;
+
+    try {
+      await deleteQuiz(quizId);
+      setQuizzes(prev => prev.filter(q => q.id !== quizId));
+    } catch (err) {
+      console.error('Failed to delete quiz', err);
+      alert('Failed to delete quiz.');
+    }
+  };
 
   return (
     <div className="relative flex h-auto min-h-screen w-full flex-row bg-background-light font-display text-text-primary">
@@ -70,7 +83,8 @@ export default function QuizHistoryPage() {
           ) : (
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {quizzes.map((quiz) => (
-                <Link key={quiz.id} href={`/quiz/${quiz.id}`} className="bg-white border border-border-light rounded-xl p-6 shadow-soft hover:shadow-soft-hover transition-all h-full flex flex-col cursor-pointer group">
+                <div key={quiz.id} className="bg-white border border-border-light rounded-xl p-6 shadow-soft hover:shadow-soft-hover transition-all h-full flex flex-col group relative">
+                  <Link href={`/quiz/${quiz.id}`} className="flex flex-col h-full">
                     <div className="flex items-start justify-between mb-4">
                       <div className="flex items-center gap-3 flex-1 min-w-0">
                         <div className="flex items-center justify-center rounded-lg bg-primary/10 size-10 text-primary shrink-0">
@@ -86,7 +100,18 @@ export default function QuizHistoryPage() {
                         Taken on: {new Date(quiz.created_at).toLocaleDateString()}
                       </p>
                     </div>
-                </Link>
+                  </Link>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDeleteQuiz(quiz.id);
+                    }}
+                    className="absolute top-4 right-4 text-gray-400 hover:text-red-600 p-1 rounded-md hover:bg-red-50 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity"
+                    title="Delete Quiz"
+                  >
+                    <Trash2 size={20} />
+                  </button>
+                </div>
               ))}
             </div>
           )}

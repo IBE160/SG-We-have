@@ -277,6 +277,30 @@ export const getQuizHistory = async (): Promise<QuizHistoryItem[]> => {
   return response.json();
 };
 
+export const deleteQuiz = async (quizId: string): Promise<void> => {
+  const { data: { session } } = await supabase.auth.getSession();
+  const token = session?.access_token;
+
+  if (!token) {
+    throw new ApiError('Not authenticated', 401);
+  }
+
+  const response = await fetch(`${API_BASE_URL}/quiz/${quizId}`, {
+    method: 'DELETE',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+    },
+  });
+
+  console.log('deleteQuiz response status:', response.status);
+  console.log('deleteQuiz response ok:', response.ok);
+
+  if (!response.ok && response.status !== 204) {
+     const errorData = await response.json().catch(() => ({}));
+    throw new ApiError(errorData.detail || 'Failed to delete quiz', response.status);
+  }
+};
+
 export const generateQuiz = async (noteIds: string[], quizLength: number): Promise<any> => {
   const { data: { session } } = await supabase.auth.getSession();
   const token = session?.access_token;
