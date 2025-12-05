@@ -1,0 +1,133 @@
+<story-context id="docs/sprint-artifacts/epic-4/story-4-5-retake-new-quiz-options/story.context.xml" v="1.0">
+  <metadata>
+    <epicId>4</epicId>
+    <storyId>5</storyId>
+    <title>Retake/New Quiz Options &amp; Final Result Fix</title>
+    <status>drafted</status>
+    <generatedAt>2025-12-05</generatedAt>
+    <generator>BMAD Story Context Workflow</generator>
+    <sourceStoryPath>docs/sprint-artifacts/epic-4/story-4-5-retake-new-quiz-options/story.md</sourceStoryPath>
+  </metadata>
+
+  <story>
+    <asA>student</asA>
+    <iWant>options to retake the same quiz or generate a new one from the same notes, and reliable access to my final score,</iWant>
+    <soThat>I can continue practicing effectively and seamlessly manage my study sessions.</soThat>
+    <tasks>
+      - Fix (Critical): Debug and fix the "Final Score Display" error. (AC: #1)
+      - Backend: Implement POST /api/v1/quiz/{quiz_id}/retake endpoint. (AC: #2)
+      - Frontend: Update ScoreCard with "Retake" and "New Quiz" buttons. (AC: #2, #3)
+      - Frontend: Implement handleRetake logic in QuizPage (reset state/fetch new attempt). (AC: #2)
+      - Frontend: Implement handleNewQuiz navigation. (AC: #3)
+      - Tests: Unit test for Backend retake logic. (AC: #2)
+      - Tests: Manual/E2E verification of the "Finish -> Summary -> Retake" flow. (AC: #1, #2)
+    </tasks>
+  </story>
+
+  <acceptanceCriteria>
+    1. Fix Final Score Display (Critical): Completing a quiz must reliably load and display the Final Score Summary. No console errors or UI freezes.
+    2. Retake Same Quiz: "Retake Same Quiz" button on score summary. Clicking starts new attempt for same quiz_id. State resets.
+    3. Generate New Quiz: "Generate New Quiz" button on summary screen. Clicking redirects to Quiz Generation options.
+  </acceptanceCriteria>
+
+  <artifacts>
+    <docs>
+      <doc>
+        <path>docs/sprint-artifacts/tech-spec-epic-4.md</path>
+        <title>Tech Spec Epic 4: Interactive Quiz Experience</title>
+        <section>6. Epic to Architecture Mapping</section>
+        <snippet>Maps Epic 4 components to QuizPlayer, ScoreCard, and backend services like quiz_submission.py.</snippet>
+      </doc>
+      <doc>
+        <path>docs/PRD.md</path>
+        <title>Product Requirements Document</title>
+        <section>Functional Requirements</section>
+        <snippet>FR013: Final Score Summary. FR014: Post-Quiz Options (Retake same quiz, Generate new quiz).</snippet>
+      </doc>
+      <doc>
+        <path>docs/architecture.md</path>
+        <title>Architecture</title>
+        <section>5. API Contract &amp; Type Sharing</section>
+        <snippet>Defines response format { data: ..., meta: ... } and error format. Requires manual type sync between Backend and Frontend.</snippet>
+      </doc>
+    </docs>
+    <code>
+      <item>
+        <path>backend/app/api/routers/quiz.py</path>
+        <kind>controller</kind>
+        <symbol>get_quiz_results_endpoint</symbol>
+        <lines>83-96</lines>
+        <reason>Existing endpoint for fetching results; needs debugging for the display error.</reason>
+      </item>
+      <item>
+        <path>backend/app/services/quiz_submission.py</path>
+        <kind>service</kind>
+        <symbol>start_quiz_attempt</symbol>
+        <lines>N/A</lines>
+        <reason>Core logic for starting a quiz; likely reused or wrapped by the new retake logic.</reason>
+      </item>
+      <item>
+        <path>frontend/lib/services/quiz.ts</path>
+        <kind>client-service</kind>
+        <symbol>getQuizResults</symbol>
+        <lines>47-69</lines>
+        <reason>Frontend service call that is failing or being misused in the critical bug.</reason>
+      </item>
+      <item>
+        <path>frontend/components/ScoreCard.tsx</path>
+        <kind>component</kind>
+        <symbol>ScoreCard</symbol>
+        <lines>N/A</lines>
+        <reason>UI component needing the new Retake/New Quiz buttons.</reason>
+      </item>
+      <item>
+        <path>frontend/app/quiz/[quizId]/page.tsx</path>
+        <kind>page</kind>
+        <symbol>QuizPage</symbol>
+        <lines>N/A</lines>
+        <reason>Main quiz container handling state transitions (Question -> Results -> Retake).</reason>
+      </item>
+    </code>
+    <dependencies>
+      <dep>fastapi</dep>
+      <dep>pydantic</dep>
+      <dep>supabase</dep>
+      <dep>next.js</dep>
+      <dep>react-query</dep>
+    </dependencies>
+  </artifacts>
+
+  <constraints>
+    - Strict separation of Auth flows (Frontend->Supabase) and Data flows (Frontend->Backend).
+    - Backend must validate Supabase JWT in Authorization header.
+    - Frontend must never query the Database directly.
+    - State Management: Ensure old attempt data is cleared when retaking.
+    - API Pattern: Use manual type sync; update TypeScript interfaces if Python models change.
+  </constraints>
+
+  <interfaces>
+    <interface>
+      <name>Get Quiz Results</name>
+      <kind>REST Endpoint</kind>
+      <signature>GET /api/v1/quiz/{quiz_id}/results?attempt_id={attempt_id}</signature>
+      <path>backend/app/api/routers/quiz.py</path>
+    </interface>
+    <interface>
+      <name>Retake Quiz (New)</name>
+      <kind>REST Endpoint</kind>
+      <signature>POST /api/v1/quiz/{quiz_id}/retake</signature>
+      <path>backend/app/api/routers/quiz.py</path>
+    </interface>
+  </interfaces>
+
+  <tests>
+    <standards>Backend tests use pytest. Frontend tests are manual for MVP, focusing on critical user flows. All API changes require corresponding backend unit tests.</standards>
+    <locations>backend/tests/</locations>
+    <ideas>
+      - Test retake endpoint creates a NEW attempt ID but links to same quiz.
+      - Test that retake endpoint returns 200 OK and QuizStartResponse structure.
+      - Verify UI handles "Finish" click without crashing (Fix Verification).
+      - Verify "Retake" button resets local state (currentQuestionIndex = 0).
+    </ideas>
+  </tests>
+</story-context>

@@ -1,0 +1,81 @@
+<story-context id=".bmad/bmm/workflows/4-implementation/story-context/template" v="1.0">
+  <metadata>
+    <epicId>epic-4</epicId>
+    <storyId>4-4</storyId>
+    <title>Final Score Summary</title>
+    <status>drafted</status>
+    <generatedAt>2025-12-05</generatedAt>
+    <generator>BMAD Story Context Workflow</generator>
+    <sourceStoryPath>docs/sprint-artifacts/epic-4/story-4-4-final-score-summary/4-4-final-score-summary.md</sourceStoryPath>
+  </metadata>
+
+  <story>
+    <asA>student</asA>
+    <iWant>see a summary of my performance after completing a quiz</iWant>
+    <soThat>I can assess my understanding of the material</soThat>
+    <tasks>
+- [ ] Backend: Implement `get_quiz_results` service logic.
+- [ ] Backend: Create `GET /quiz/{id}/results` endpoint.
+- [ ] Frontend: Create `ScoreCard` component.
+- [ ] Frontend: Integrate `ScoreCard` into `QuizPlayer` or routing flow.
+- [ ] Testing: Write backend unit tests and frontend component tests.
+    </tasks>
+  </story>
+
+  <acceptanceCriteria>
+1.  **Score Display:** Upon quiz completion, the screen displays the total score (e.g., "8/10 correct") and a percentage (e.g., "80%").
+2.  **Completion Summary:** A visual indication that the quiz is finished is shown.
+3.  **Action Options:** Options to "Review Answers" (visual placeholder or link), "Retake Same Quiz", and "Generate New Quiz" are presented to the user.
+4.  **Navigation:** The user cannot navigate back to the active quiz questions once the summary is shown (quiz state is 'completed').
+  </acceptanceCriteria>
+
+  <artifacts>
+    <docs>
+      <doc path="docs/PRD.md" title="Product Requirements Document" section="Functional Requirements" snippet="FR013: Final Score Summary: The system shall display a final score summary upon quiz completion. FR014: Post-Quiz Options: The system shall provide options to 'Retake same quiz' or 'Generate new quiz'"/>
+      <doc path="docs/sprint-artifacts/tech-spec-epic-4.md" title="Epic 4 Technical Specification" section="Detailed Design" snippet="Frontend calls GET /api/v1/quiz/{quiz_id}/results. Backend calculates final score and returns. Frontend displays ScoreCard with post-quiz options."/>
+      <doc path="docs/design-specification.md" title="Design Specification" section="Components" snippet="Cards: Rounded corners (rounded-xl), Soft shadow (shadow-soft), Light border (border-border-light). Buttons: Primary (bg-primary), Secondary (white bg, border)."/>
+    </docs>
+    <code>
+      <item path="backend/app/services/quiz_submission.py" kind="service" symbol="submit_answer" lines="14-106" reason="Existing submission logic, new get_quiz_results will be similar or adjacent"/>
+      <item path="backend/app/models/quiz_submission.py" kind="model" symbol="QuizAttempt" lines="19-26" reason="Data model for storing attempt status and score"/>
+      <item path="frontend/components/QuizProgressBar.tsx" kind="component" symbol="QuizProgressBar" reason="Existing quiz component, might be useful for reference"/>
+      <item path="frontend/components/QuizQuestionDisplay.tsx" kind="component" symbol="QuizQuestionDisplay" reason="Existing quiz component"/>
+    </code>
+    <dependencies>
+      <dep ecosystem="python" package="fastapi" />
+      <dep ecosystem="python" package="supabase" />
+      <dep ecosystem="python" package="pydantic" />
+      <dep ecosystem="node" package="lucide-react" reason="For icons in the summary card" />
+      <dep ecosystem="node" package="@tanstack/react-query" reason="For fetching results" />
+    </dependencies>
+  </artifacts>
+
+  <constraints>
+    - Frontend must not calculate the score itself; it must rely on the backend.
+    - Results should only be accessible to the user who took the quiz (Security).
+    - UI must match the design system (Tailwind CSS).
+    - State management should handle the transition from "last question answered" to "summary view".
+  </constraints>
+
+  <interfaces>
+    <interface name="GET /api/v1/quiz/{quiz_id}/results" kind="REST endpoint" signature="GET /api/v1/quiz/{quiz_id}/results -> QuizResultResponse" path="backend/app/api/routers/quiz.py" />
+    <interface name="QuizResultResponse" kind="Pydantic Model" signature="score: int, total_questions: int, percentage: float, completed_at: datetime" path="backend/app/models/quiz_submission.py" />
+  </interfaces>
+
+  <tests>
+    <standards>
+      Backend tests using pytest and httpx. Frontend tests using Jest and React Testing Library. Component tests should mock API responses.
+    </standards>
+    <locations>
+      backend/tests/
+      frontend/tests/
+      frontend/components/__tests__/
+    </locations>
+    <ideas>
+      - Verify score calculation logic (correct/total).
+      - Test permission denied for accessing other users' results.
+      - Test rounding logic for percentage (e.g., 1/3 is 33.3%).
+      - Visual test: ScoreCard displays correct info and buttons.
+    </ideas>
+  </tests>
+</story-context>

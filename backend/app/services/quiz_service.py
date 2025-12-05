@@ -182,5 +182,9 @@ async def generate_quiz(request: QuizGenerateRequest, user_id: str, supabase: Cl
     except Exception as e:
         # Log error
         logger.error(f"Error generating quiz: {e}", exc_info=True)
+        error_str = str(e)
+        if "503" in error_str or "overloaded" in error_str.lower():
+            raise HTTPException(status_code=503, detail="The AI model is currently overloaded. Please try again in a few moments.")
+        
         # Sanitize error for client
         raise HTTPException(status_code=500, detail=f"An unexpected error occurred while generating the quiz: {str(e)}")

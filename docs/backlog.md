@@ -16,3 +16,4 @@ Routing guidance:
 | 2025-12-02 | 2.3 | 2 | Bug | High | dev | Open | Add missing UI state tests in `NoteEditor.test.tsx`. |
 | 2025-12-02 | 2.3 | 2 | Bug | High | dev | Open | Add missing security test (PUT 403) in `test_notes.py`. |
 | 2025-12-02 | 2.3 | 2 | TechDebt | Med | dev | Open | Add explicit UPDATE path test in `test_notes.py`. |
+| 2025-12-05 | 4.5 | 4 | Enhancement | Low | TBD | Open | Persist previous_attempt_id in QuizAttempt table for analytics. [file: backend/app/services/quiz_submission.py] |

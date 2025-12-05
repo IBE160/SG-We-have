@@ -2,9 +2,10 @@
 
 import React, { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { startQuiz, submitAnswer, fetchNextQuestion, QuizStartResponse, QuizSubmissionResponse, QuestionDisplay } from '../../../lib/services/quiz';
+import { startQuiz, submitAnswer, fetchNextQuestion, getQuizResults, retakeQuiz, QuizStartResponse, QuizSubmissionResponse, QuestionDisplay, QuizResultResponse } from '../../../lib/services/quiz';
 import { QuizQuestionDisplay } from '../../../components/QuizQuestionDisplay';
 import { QuizProgressBar } from '../../../components/QuizProgressBar';
+import { ScoreCard } from '../../../components/ScoreCard';
 
 export default function QuizPage() {
   const params = useParams();
@@ -19,6 +20,7 @@ export default function QuizPage() {
   const [currentQuestion, setCurrentQuestion] = useState<QuestionDisplay | null>(null);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [isComplete, setIsComplete] = useState(false);
+  const [quizResults, setQuizResults] = useState<QuizResultResponse | null>(null);
 
   const [selectedOptionId, setSelectedOptionId] = useState<string | null>(null);
   const [submissionResult, setSubmissionResult] = useState<QuizSubmissionResponse | null>(null);
@@ -70,7 +72,18 @@ export default function QuizPage() {
       const nextData = await fetchNextQuestion(quizId, { attempt_id: quizState.attempt_id });
       
       if (nextData.is_complete) {
-        setIsComplete(true);
+        // Fetch results
+        setLoading(true); // Show loading while fetching results
+        try {
+            const results = await getQuizResults(quizId, quizState.attempt_id);
+            setQuizResults(results);
+            setIsComplete(true);
+        } catch (resErr: any) {
+            console.error('Failed to fetch results:', resErr);
+            setError('Failed to load quiz results. ' + (resErr.message || ''));
+        } finally {
+            setLoading(false);
+        }
       } else if (nextData.next_question) {
         setCurrentQuestion(nextData.next_question);
         setCurrentQuestionIndex(nextData.current_question_index);
@@ -84,10 +97,45 @@ export default function QuizPage() {
     }
   };
 
+  const handleRetake = async () => {
+      if (!quizState) return;
+      setLoading(true);
+      setError(null);
+      try {
+          const data = await retakeQuiz(quizId, quizState.attempt_id);
+          setQuizState(data);
+          setCurrentQuestion(data.first_question);
+          setCurrentQuestionIndex(data.current_question_index);
+          
+          // Reset states
+          setIsComplete(false);
+          setQuizResults(null);
+          setSelectedOptionId(null);
+          setSubmissionResult(null);
+          setIsSubmitting(false);
+      } catch (err: any) {
+          console.error('Failed to retake quiz:', err);
+          setError(err.message || 'Failed to retake quiz');
+      } finally {
+          setLoading(false);
+      }
+  };
+
+  const handleNewQuiz = () => {
+      // MVP: Redirect to course or lecture page to generate new.
+      // Ideally we would have a "Generation Config" page.
+      // For now, go to dashboard/courses as per spec MVP.
+      router.push('/dashboard');
+  };
+
+  const handleBackToCourses = () => {
+      router.push('/dashboard');
+  };
+
   if (loading) {
     return (
       <div className="flex min-h-screen items-center justify-center">
-        <p>Loading quiz...</p>
+        <p>Loading...</p>
       </div>
     );
   }
@@ -106,17 +154,15 @@ export default function QuizPage() {
     );
   }
 
-  if (isComplete) {
+  if (isComplete && quizResults) {
       return (
-        <div className="flex min-h-screen items-center justify-center flex-col bg-gray-50 dark:bg-gray-900">
-            <h1 className="text-3xl font-bold mb-4">Quiz Completed!</h1>
-            <p className="mb-6">You have finished the quiz.</p>
-            <button 
-            onClick={() => router.push(`/courses`)}
-            className="px-6 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors"
-            >
-            Back to Courses
-            </button>
+        <div className="flex min-h-screen items-center justify-center p-4 bg-gray-50 dark:bg-gray-900">
+            <ScoreCard 
+                results={quizResults}
+                onRetake={handleRetake}
+                onNewQuiz={handleNewQuiz}
+                onBackToCourses={handleBackToCourses}
+            />
         </div>
       );
   }
@@ -150,7 +196,7 @@ export default function QuizPage() {
             onClick={handleNextQuestion}
             disabled={!submissionResult}
           >
-            Next Question
+            {currentQuestionIndex + 1 === quizState.total_questions ? 'Finish Quiz' : 'Next Question'}
           </button>
         </div>
       </div>

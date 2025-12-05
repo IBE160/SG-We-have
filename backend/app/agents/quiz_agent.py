@@ -1,8 +1,12 @@
 import os
 import httpx
-from pydantic_ai import Agent, RunContext
+from tenacity import retry, stop_after_attempt, wait_exponential, retry_if_exception_type, before_sleep_log
+import logging
+from pydantic_ai import Agent, RunContext, UnexpectedModelBehavior
 from pydantic_ai.models.google import GoogleModel
 from app.models.quiz import QuizGenerated
+
+logger = logging.getLogger(__name__)
 
 # Get API key from environment
 api_key = os.getenv("GEMINI_API_KEY")
@@ -72,9 +76,16 @@ async def search_web(ctx: RunContext[None], query: str) -> str:
         except Exception as e:
             return f"Error performing search: {str(e)}"
 
+@retry(
+    stop=stop_after_attempt(5),
+    wait=wait_exponential(multiplier=1, min=4, max=10),
+    before_sleep=before_sleep_log(logger, logging.WARNING),
+    reraise=True
+)
 async def generate_quiz_content(prompt: str) -> QuizGenerated:
     """
     Generates a quiz using the provided prompt.
+    Retries on failure (e.g., 503 Model Overloaded).
     """
     # Run the agent
     result = await quiz_agent.run(prompt)

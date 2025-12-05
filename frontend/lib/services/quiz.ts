@@ -48,12 +48,45 @@ export interface QuizNextResponse {
   next_question?: QuestionDisplay;
 }
 
+export interface QuizResultResponse {
+  score: number;
+  total_questions: number;
+  percentage: number;
+  completed_at: string;
+}
+
 export class ApiError extends Error {
   constructor(public message: string, public status?: number) {
     super(message);
     this.name = 'ApiError';
   }
 }
+
+export const getQuizResults = async (quizId: string, attemptId: string): Promise<QuizResultResponse> => {
+  const { data: { session } } = await supabase.auth.getSession();
+  const token = session?.access_token;
+
+  if (!token) {
+    throw new ApiError('Not authenticated', 401);
+  }
+
+  // Construct query params
+  const queryParams = new URLSearchParams({ attempt_id: attemptId });
+
+  const response = await fetch(`${API_BASE_URL}/quiz/${quizId}/results?${queryParams}`, {
+    method: 'GET',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+    },
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new ApiError(errorData.detail || 'Failed to fetch quiz results', response.status);
+  }
+
+  return response.json();
+};
 
 export const fetchNextQuestion = async (quizId: string, request: QuizNextRequest): Promise<QuizNextResponse> => {
   const { data: { session } } = await supabase.auth.getSession();
@@ -123,6 +156,31 @@ export const startQuiz = async (quizId: string): Promise<QuizStartResponse> => {
   if (!response.ok) {
     const errorData = await response.json();
     throw new ApiError(errorData.detail || 'Failed to start quiz', response.status);
+  }
+
+  return response.json();
+};
+
+export const retakeQuiz = async (quizId: string, attemptId?: string): Promise<QuizStartResponse> => {
+  const { data: { session } } = await supabase.auth.getSession();
+  const token = session?.access_token;
+
+  if (!token) {
+    throw new ApiError('Not authenticated', 401);
+  }
+
+  const response = await fetch(`${API_BASE_URL}/quiz/${quizId}/retake`, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ attempt_id: attemptId }),
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new ApiError(errorData.detail || 'Failed to retake quiz', response.status);
   }
 
   return response.json();

@@ -50,3 +50,12 @@ class QuizNextResponse(BaseModel):
     total_questions: int
     is_complete: bool
     next_question: Optional[QuestionDisplay] = None
+
+class QuizRetakeRequest(BaseModel):
+    attempt_id: Optional[str] = None
+
+class QuizResultResponse(BaseModel):
+    score: int
+    total_questions: int
+    percentage: float
+    completed_at: datetime
