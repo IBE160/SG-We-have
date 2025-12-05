@@ -5,7 +5,6 @@ import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { getNote, updateNote, Note, ApiError } from '@/lib/api';
 import NoteEditor from '@/components/NoteEditor';
-import QuizConfigModal from '@/components/QuizConfigModal';
 import EditableTitle from '@/components/EditableTitle';
 import AppHeader from '@/components/AppHeader';
 
@@ -18,7 +17,6 @@ export default function NoteDetailsPage() {
   const [note, setNote] = useState<Note | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [isQuizModalOpen, setIsQuizModalOpen] = useState(false);
 
   const fetchData = async () => {
     if (!courseId || !noteId) return;
@@ -67,10 +65,6 @@ export default function NoteDetailsPage() {
     }
   };
 
-  const handleGenerateQuiz = (selectedNoteIds: string[], quizLength: number) => {
-      console.log('Generating quiz for notes:', selectedNoteIds, 'Length:', quizLength);
-  };
-
   if (isLoading) {
       return <div className="p-10 text-center">Loading...</div>;
   }
@@ -107,12 +101,6 @@ export default function NoteDetailsPage() {
                     className="text-3xl font-bold text-gray-900"
                 />
             </div>
-            <button
-                onClick={() => setIsQuizModalOpen(true)}
-                className="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition-colors"
-            >
-                Generate Quiz
-            </button>
         </div>
       </div>
 
@@ -126,14 +114,6 @@ export default function NoteDetailsPage() {
             />
         </div>
       </main>
-
-      <QuizConfigModal
-        isOpen={isQuizModalOpen}
-        onClose={() => setIsQuizModalOpen(false)}
-        notes={[note]} // Pass only current note for context-specific quiz? Or fetch all? 
-        // Current UI button implies generating quiz from THIS note.
-        onGenerate={handleGenerateQuiz}
-      />
     </div>
   );
 }

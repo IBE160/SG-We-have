@@ -58,59 +58,9 @@ describe('NoteDetailsPage Integration', () => {
     jest.clearAllMocks();
   });
 
-  it('renders note details and Generate Quiz button when note exists', async () => {
+  it('renders note details when note exists', async () => {
     render(<NoteDetailsPage />);
 
     expect(await screen.findByText('Test Note Title')).toBeInTheDocument();
-    expect(screen.getByText('Generate Quiz')).toBeInTheDocument();
-  });
-
-  it('opens QuizConfigModal when "Generate Quiz" button is clicked', async () => {
-    render(<NoteDetailsPage />);
-
-    const generateQuizButton = await screen.findByText('Generate Quiz');
-    fireEvent.click(generateQuizButton);
-
-    expect(await screen.findByText('Configure Quiz')).toBeInTheDocument();
-    expect(screen.getByText('Cancel')).toBeInTheDocument();
-    
-    const buttons = screen.getAllByText('Generate Quiz');
-    expect(buttons.length).toBeGreaterThan(1);
-  });
-
-  it('closes QuizConfigModal when close button is clicked', async () => {
-    render(<NoteDetailsPage />);
-
-    const generateQuizButton = await screen.findByText('Generate Quiz');
-    fireEvent.click(generateQuizButton);
-
-    const buttons = await screen.findAllByRole('button');
-    // Filter out buttons that have text or a title (like the edit pencil button)
-    // The modal close button has an SVG and no title attribute in the current implementation
-    const closeButton = buttons.find(b => !b.textContent && !b.getAttribute('title'));
-    
-    if (closeButton) {
-        fireEvent.click(closeButton);
-    } else {
-        throw new Error("Close button not found");
-    }
-
-    await waitFor(() => {
-      expect(screen.queryByText('Configure Quiz')).not.toBeInTheDocument();
-    });
-  });
-
-  it('closes QuizConfigModal when Cancel button is clicked', async () => {
-    render(<NoteDetailsPage />);
-
-    const generateQuizButton = await screen.findByText('Generate Quiz');
-    fireEvent.click(generateQuizButton);
-
-    const cancelButton = await screen.findByText('Cancel');
-    fireEvent.click(cancelButton);
-
-    await waitFor(() => {
-      expect(screen.queryByText('Configure Quiz')).not.toBeInTheDocument();
-    });
   });
 });
