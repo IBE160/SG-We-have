@@ -14,12 +14,15 @@ async def generate_quiz(request: QuizGenerateRequest, user_id: str, supabase: Cl
     try:
         # 1. Fetch Notes
         # request.note_ids is List[str]
-        response = supabase.table("notes").select("content").in_("id", request.note_ids).execute()
+        response = supabase.table("notes").select("content, course_id").in_("id", request.note_ids).execute()
         notes_data = response.data
         
         if not notes_data:
             raise HTTPException(status_code=400, detail="No notes found for selected items.")
         
+        # Determine Course ID from the first note (assuming single-course selection)
+        course_id = notes_data[0].get('course_id') if notes_data else None
+
         # Concatenate notes
         # filter out empty notes
         valid_notes = [note['content'] for note in notes_data if note.get('content')]
@@ -66,7 +69,7 @@ async def generate_quiz(request: QuizGenerateRequest, user_id: str, supabase: Cl
             quiz_data = {
                 "user_id": user_id,
                 "title": generated_quiz.title,
-                # course_id left null for now
+                "course_id": course_id
             }
             
             quiz_insert = supabase.table("quizzes").insert(quiz_data).execute()
