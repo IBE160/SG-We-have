@@ -40,3 +40,13 @@ class QuizSubmissionResponse(BaseModel):
     correct_answer_id: str
     feedback_text: str
     explanation: Optional[str] = None
+
+class QuizNextRequest(BaseModel):
+    attempt_id: str
+
+class QuizNextResponse(BaseModel):
+    attempt_id: str
+    current_question_index: int
+    total_questions: int
+    is_complete: bool
+    next_question: Optional[QuestionDisplay] = None
