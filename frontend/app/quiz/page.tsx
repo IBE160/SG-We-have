@@ -11,6 +11,7 @@ export default function GenerateQuizPage() {
   const [selectedCourseId, setSelectedCourseId] = useState<string>('');
   const [notes, setNotes] = useState<Note[]>([]);
   const [selectedNoteIds, setSelectedNoteIds] = useState<string[]>([]);
+  const [quizLength, setQuizLength] = useState<number>(10);
   const [isLoadingCourses, setIsLoadingCourses] = useState(true);
   const [isLoadingNotes, setIsLoadingNotes] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
@@ -83,7 +84,7 @@ export default function GenerateQuizPage() {
     setIsGenerating(true);
     setError(null);
     try {
-      const quiz = await generateQuiz(selectedNoteIds, 10); // Default to 10 questions
+      const quiz = await generateQuiz(selectedNoteIds, quizLength);
       router.push(`/quiz/${quiz.id}`);
     } catch (err) {
       console.error('Failed to generate quiz:', err);
@@ -201,6 +202,23 @@ export default function GenerateQuizPage() {
                         );
                       })
                     )}
+                  </div>
+                </section>
+
+                <section className="flex flex-col gap-4">
+                  <h3 className="text-text-primary text-lg font-bold leading-tight tracking-[-0.015em]">3. Number of Questions</h3>
+                  <div className="flex max-w-[480px]">
+                    <label className="flex w-full flex-col">
+                      <select 
+                        className="form-select flex w-full min-w-0 flex-1 resize-none appearance-none overflow-hidden rounded-xl border border-border-light bg-white px-4 py-3 text-base font-medium text-text-primary placeholder:text-text-secondary/60 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 h-14"
+                        value={quizLength}
+                        onChange={(e) => setQuizLength(Number(e.target.value))}
+                      >
+                         {[5, 10, 15, 20, 25, 30].map((length) => (
+                           <option key={length} value={length}>{length} Questions</option>
+                         ))}
+                      </select>
+                    </label>
                   </div>
                 </section>
 
