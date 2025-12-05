@@ -122,10 +122,8 @@ export default function QuizPage() {
   };
 
   const handleNewQuiz = () => {
-      // MVP: Redirect to course or lecture page to generate new.
-      // Ideally we would have a "Generation Config" page.
-      // For now, go to dashboard/courses as per spec MVP.
-      router.push('/dashboard');
+      // Redirect to the quiz generation page
+      router.push('/quiz');
   };
 
   const handleBackToCourses = () => {
