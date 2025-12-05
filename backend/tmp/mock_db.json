@@ -340,6 +340,18 @@
       "user_id": "7242cc71-d9c4-465b-9dae-acb19295bdf7",
       "quiz_id": "1584e59e-9825-4262-8430-2bfb72648491",
       "status": "in_progress"
+    },
+    "d32af8d1-aeeb-4168-a069-cac4c8e17675": {
+      "id": "d32af8d1-aeeb-4168-a069-cac4c8e17675",
+      "user_id": "7242cc71-d9c4-465b-9dae-acb19295bdf7",
+      "quiz_id": "eb2ac57b-08db-4a42-9423-b21c7d51a773",
+      "status": "in_progress"
+    },
+    "3f1b5135-70cb-4aba-a7e0-74cf60cd41ca": {
+      "id": "3f1b5135-70cb-4aba-a7e0-74cf60cd41ca",
+      "user_id": "7242cc71-d9c4-465b-9dae-acb19295bdf7",
+      "quiz_id": "eb2ac57b-08db-4a42-9423-b21c7d51a773",
+      "status": "in_progress"
     }
   }
 }
