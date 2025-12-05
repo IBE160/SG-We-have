@@ -33,6 +33,12 @@ body {
   font-family: var(--font-display);
 }
 
+/* Custom Prose Overrides for Tiptap Editor */
+.prose {
+  --tw-prose-bullets: #000000; /* Black bullets */
+  --tw-prose-counters: #000000; /* Black numbers */
+}
+
 .material-symbols-outlined {
   font-family: 'Material Symbols Outlined';
   font-weight: normal;
