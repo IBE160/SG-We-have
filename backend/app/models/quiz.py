@@ -52,3 +52,6 @@ class QuizHistoryItem(BaseModel):
     course_id: str | None
 
 QuizHistoryResponse = List[QuizHistoryItem]
+
+class QuizUpdateRequest(BaseModel):
+    title: str

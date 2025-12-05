@@ -3,10 +3,11 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useAuth } from '@/components/SupabaseClientProvider';
-import { getQuizHistory, QuizHistoryItem, ApiError, deleteQuiz } from '@/lib/api';
+import { getQuizHistory, QuizHistoryItem, ApiError, deleteQuiz, updateQuiz } from '@/lib/api';
 import { Trash2 } from 'lucide-react';
 import DeleteConfirmationModal from '@/components/DeleteConfirmationModal';
 import AppHeader from '@/components/AppHeader';
+import EditableTitle from '@/components/EditableTitle';
 
 export default function QuizHistoryPage() {
   const { user } = useAuth();
@@ -40,6 +41,16 @@ export default function QuizHistoryPage() {
 
     fetchQuizHistory();
   }, [user]);
+
+  const handleUpdateQuiz = async (quizId: string, newTitle: string) => {
+    try {
+      await updateQuiz(quizId, newTitle);
+      setQuizzes(prev => prev.map(q => q.id === quizId ? { ...q, title: newTitle } : q));
+    } catch (err) {
+      console.error('Failed to update quiz title', err);
+      alert('Failed to update quiz title.');
+    }
+  };
 
   const handleDeleteQuiz = (quizId: string) => {
     setQuizToDelete(quizId);
@@ -108,8 +119,13 @@ export default function QuizHistoryPage() {
                         <div className="flex items-center justify-center rounded-lg bg-primary/10 size-10 text-primary shrink-0">
                           <span className="material-symbols-outlined">quiz</span>
                         </div>
-                        <div className="flex-1 min-w-0">
-                          <p className="text-lg font-bold text-text-primary truncate block">{quiz.title}</p>
+                        <div className="flex-1 min-w-0" onClick={(e) => e.preventDefault()}>
+                           <EditableTitle
+                              initialTitle={quiz.title}
+                              onSave={async (newTitle) => handleUpdateQuiz(quiz.id, newTitle)}
+                              className="text-lg font-bold text-text-primary truncate block hover:text-accent-blue transition-colors"
+                              inputClassName="text-lg font-bold w-full"
+                            />
                         </div>
                       </div>
                     </div>
@@ -124,7 +140,7 @@ export default function QuizHistoryPage() {
                       e.stopPropagation();
                       handleDeleteQuiz(quiz.id);
                     }}
-                    className="absolute top-4 right-4 text-gray-400 hover:text-red-600 p-1 rounded-md hover:bg-red-50 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity"
+                    className="absolute bottom-4 right-4 text-gray-400 hover:text-red-600 p-1 rounded-md hover:bg-red-50 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity"
                     title="Delete Quiz"
                   >
                     <Trash2 size={20} />

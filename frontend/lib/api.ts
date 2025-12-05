@@ -301,6 +301,29 @@ export const deleteQuiz = async (quizId: string): Promise<void> => {
   }
 };
 
+export const updateQuiz = async (quizId: string, title: string): Promise<void> => {
+  const { data: { session } } = await supabase.auth.getSession();
+  const token = session?.access_token;
+
+  if (!token) {
+    throw new ApiError('Not authenticated', 401);
+  }
+
+  const response = await fetch(`${API_BASE_URL}/quiz/${quizId}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+    },
+    body: JSON.stringify({ title }),
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new ApiError(errorData.detail || 'Failed to update quiz', response.status);
+  }
+};
+
 export const generateQuiz = async (noteIds: string[], quizLength: number): Promise<any> => {
   const { data: { session } } = await supabase.auth.getSession();
   const token = session?.access_token;
