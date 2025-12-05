@@ -7,6 +7,7 @@ import { getCourses, getNotes, generateQuiz, updateCourse, updateNote, deleteNot
 import CreateNoteModal from '@/components/CreateNoteModal';
 import QuizConfigModal from '@/components/QuizConfigModal';
 import EditableTitle from '@/components/EditableTitle';
+import AppHeader from '@/components/AppHeader';
 import { Trash2 } from 'lucide-react';
 
 export default function CourseDetailsPage() {
@@ -117,8 +118,9 @@ export default function CourseDetailsPage() {
   if (!id) return <div className="p-10 text-center">Invalid Course ID</div>;
 
   return (
-    <div className="min-h-screen bg-gray-100 py-10">
-       <header className="bg-white shadow mb-6">
+    <div className="min-h-screen bg-gray-100">
+       <AppHeader />
+       <div className="bg-white shadow mb-6">
         <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 flex justify-between items-center">
             <div className="flex items-center gap-4">
                 <Link href="/dashboard" className="text-blue-600 hover:text-blue-800">
@@ -151,7 +153,7 @@ export default function CourseDetailsPage() {
             </div>
           )}
         </div>
-      </header>
+      </div>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {successMessage && (

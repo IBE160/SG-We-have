@@ -29,6 +29,11 @@ jest.mock('@/components/NoteEditor', () => {
   };
 });
 
+// Mock SupabaseClientProvider for AppHeader
+jest.mock('@/components/SupabaseClientProvider', () => ({
+  useAuth: jest.fn().mockReturnValue({ user: { email: 'test@example.com' } }),
+}));
+
 describe('NoteDetailsPage Integration', () => {
   const mockCourseId = 'course-123';
   const mockNoteId = 'note-456';
@@ -80,7 +85,9 @@ describe('NoteDetailsPage Integration', () => {
     fireEvent.click(generateQuizButton);
 
     const buttons = await screen.findAllByRole('button');
-    const closeButton = buttons.find(b => !b.textContent);
+    // Filter out buttons that have text or a title (like the edit pencil button)
+    // The modal close button has an SVG and no title attribute in the current implementation
+    const closeButton = buttons.find(b => !b.textContent && !b.getAttribute('title'));
     
     if (closeButton) {
         fireEvent.click(closeButton);

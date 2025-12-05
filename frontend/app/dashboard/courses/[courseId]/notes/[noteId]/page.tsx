@@ -7,6 +7,7 @@ import { getNote, updateNote, Note, ApiError } from '@/lib/api';
 import NoteEditor from '@/components/NoteEditor';
 import QuizConfigModal from '@/components/QuizConfigModal';
 import EditableTitle from '@/components/EditableTitle';
+import AppHeader from '@/components/AppHeader';
 
 export default function NoteDetailsPage() {
   const params = useParams();
@@ -92,8 +93,9 @@ export default function NoteDetailsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 py-10">
-       <header className="bg-white shadow mb-6">
+    <div className="min-h-screen bg-gray-100">
+       <AppHeader />
+       <div className="bg-white shadow mb-6">
         <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 flex justify-between items-center">
             <div className="flex items-center gap-4">
                 <Link href={`/dashboard/courses/${courseId}`} className="text-blue-600 hover:text-blue-800">
@@ -105,8 +107,14 @@ export default function NoteDetailsPage() {
                     className="text-3xl font-bold text-gray-900"
                 />
             </div>
+            <button
+                onClick={() => setIsQuizModalOpen(true)}
+                className="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition-colors"
+            >
+                Generate Quiz
+            </button>
         </div>
-      </header>
+      </div>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="bg-white shadow sm:rounded-md p-6">

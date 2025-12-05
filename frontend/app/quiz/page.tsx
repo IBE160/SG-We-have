@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { getCourses, getNotes, generateQuiz, Course, Note } from '@/lib/api';
-import { useAuth } from '@/components/SupabaseClientProvider';
+import AppHeader from '@/components/AppHeader';
 
 export default function GenerateQuizPage() {
   const [courses, setCourses] = useState<Course[]>([]);
@@ -17,7 +17,6 @@ export default function GenerateQuizPage() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
-  const { user } = useAuth();
 
   useEffect(() => {
     const fetchCourses = async () => {
@@ -102,32 +101,7 @@ export default function GenerateQuizPage() {
           <div className="layout-content-container flex w-full flex-col max-w-[960px] flex-1">
             
             {/* Header */}
-            <header className="flex items-center justify-between whitespace-nowrap border-b border-solid border-border-light px-10 py-4">
-              <div className="flex items-center gap-3">
-                <div className="flex items-center justify-center rounded-lg bg-accent-blue size-10">
-                  <span className="material-symbols-outlined text-white" style={{fontSize: '24px'}}>school</span>
-                </div>
-                <h2 className="text-text-primary text-xl font-bold leading-tight">StudyTool</h2>
-              </div>
-              <div className="flex flex-1 justify-end gap-8">
-                <nav className="flex items-center gap-9">
-                  <Link className="text-text-primary text-sm font-medium leading-normal hover:text-accent-blue transition-colors" href="/dashboard">Dashboard</Link>
-                  <Link className="text-text-primary text-sm font-medium leading-normal hover:text-accent-blue transition-colors" href="/notes">Notes</Link>
-                  <Link className="text-accent-blue text-sm font-medium leading-normal" href="/quiz">Quizzes</Link>
-                </nav>
-                <div className="flex items-center gap-2">
-                  <button className="flex h-10 w-10 cursor-pointer items-center justify-center overflow-hidden rounded-full bg-border-light/50 text-text-primary hover:bg-border-light">
-                    <span className="material-symbols-outlined text-xl">settings</span>
-                  </button>
-                  <button className="flex h-10 w-10 cursor-pointer items-center justify-center overflow-hidden rounded-full bg-border-light/50 text-text-primary hover:bg-border-light">
-                    <span className="material-symbols-outlined text-xl">notifications</span>
-                  </button>
-                  <div className="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10 bg-gray-200 flex items-center justify-center text-gray-500 font-bold">
-                    {user?.email?.[0].toUpperCase()}
-                  </div>
-                </div>
-              </div>
-            </header>
+            <AppHeader />
 
             <main className="p-10 flex flex-col gap-12">
               <div className="flex flex-wrap justify-between gap-4">
