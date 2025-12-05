@@ -220,8 +220,34 @@ async def delete_quiz(quiz_id: str, user_id: str, supabase: Client):
         if not response.data:
             raise HTTPException(status_code=404, detail="Quiz not found or you don't have permission to delete it.")
 
-        # Call the RPC
-        await supabase.rpc('delete_quiz', {'quiz_id_to_delete': quiz_id}).execute()
+        # Manual Cascade Delete (safest fallback if RPC/Cascade missing)
+        # 1. Get Attempts to delete answers
+        attempts_res = supabase.table("quiz_attempts").select("id").eq("quiz_id", quiz_id).execute()
+        if attempts_res.data:
+            attempt_ids = [a['id'] for a in attempts_res.data]
+            # 2. Delete Answers
+            supabase.table("quiz_answers").delete().in_("attempt_id", attempt_ids).execute()
+            # 3. Delete Attempts
+            supabase.table("quiz_attempts").delete().eq("quiz_id", quiz_id).execute()
+
+        # 4. Get Questions to delete options
+        questions_res = supabase.table("quiz_questions").select("id").eq("quiz_id", quiz_id).execute()
+        if questions_res.data:
+            question_ids = [q['id'] for q in questions_res.data]
+            # 5. Delete Options
+            supabase.table("quiz_options").delete().in_("question_id", question_ids).execute()
+            # 6. Delete Questions
+            supabase.table("quiz_questions").delete().eq("quiz_id", quiz_id).execute()
+
+        # 7. Delete Quiz
+        del_res = supabase.table("quizzes").delete().eq("id", quiz_id).execute()
+        
+        if not del_res.data:
+             # Check if it was actually deleted (Supabase sometimes returns data on delete, sometimes not depending on headers)
+             # Verify deletion
+             check = supabase.table("quizzes").select("id").eq("id", quiz_id).execute()
+             if check.data:
+                 raise Exception("Failed to delete quiz record")
 
     except Exception as e:
         logger.error(f"Error deleting quiz {quiz_id} for user {user_id}: {e}")

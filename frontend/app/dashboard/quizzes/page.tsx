@@ -5,12 +5,17 @@ import Link from 'next/link';
 import { useAuth } from '@/components/SupabaseClientProvider';
 import { getQuizHistory, QuizHistoryItem, ApiError, deleteQuiz } from '@/lib/api';
 import { Trash2 } from 'lucide-react';
+import DeleteConfirmationModal from '@/components/DeleteConfirmationModal';
+import AppHeader from '@/components/AppHeader';
 
 export default function QuizHistoryPage() {
   const { user } = useAuth();
   const [quizzes, setQuizzes] = useState<QuizHistoryItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [quizToDelete, setQuizToDelete] = useState<string | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
     const fetchQuizHistory = async () => {
@@ -36,20 +41,33 @@ export default function QuizHistoryPage() {
     fetchQuizHistory();
   }, [user]);
 
-  const handleDeleteQuiz = async (quizId: string) => {
-    if (!confirm("Are you sure you want to delete this quiz?")) return;
+  const handleDeleteQuiz = (quizId: string) => {
+    setQuizToDelete(quizId);
+    setDeleteModalOpen(true);
+  };
 
+  const confirmDeleteQuiz = async () => {
+    if (!quizToDelete) return;
+
+    setIsDeleting(true);
     try {
-      await deleteQuiz(quizId);
-      setQuizzes(prev => prev.filter(q => q.id !== quizId));
+      await deleteQuiz(quizToDelete);
+      setQuizzes(prev => prev.filter(q => q.id !== quizToDelete));
+      setDeleteModalOpen(false);
+      setQuizToDelete(null);
     } catch (err) {
       console.error('Failed to delete quiz', err);
       alert('Failed to delete quiz.');
+    } finally {
+      setIsDeleting(false);
     }
   };
 
   return (
-    <div className="relative flex h-auto min-h-screen w-full flex-row bg-background-light font-display text-text-primary">
+    <div className="relative flex h-auto min-h-screen w-full flex-col bg-background-light font-display text-text-primary">
+      {/* AppHeader */}
+      <AppHeader />
+
       {/* Main Content */}
       <main className="flex-1 p-10">
         <div className="mx-auto max-w-5xl">
@@ -117,6 +135,15 @@ export default function QuizHistoryPage() {
           )}
         </div>
       </main>
+
+      <DeleteConfirmationModal
+        isOpen={deleteModalOpen}
+        onClose={() => setDeleteModalOpen(false)}
+        onConfirm={confirmDeleteQuiz}
+        title="Delete Quiz"
+        message="Are you sure you want to delete this quiz?"
+        isLoading={isDeleting}
+      />
     </div>
   );
 }
