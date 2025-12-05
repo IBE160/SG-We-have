@@ -327,12 +327,47 @@ async def get_next_question(quiz_id: str, request: QuizNextRequest, user_id: str
                     options=options
                 )
                 
+                # Check for existing answer
+                existing_answer = None
+                selected_option_id = None
+                
+                answer_res = supabase.table("quiz_answers").select("*").eq("attempt_id", request.attempt_id).eq("question_id", next_q_data['id']).order("created_at", desc=True).limit(1).execute()
+                
+                if answer_res.data and len(answer_res.data) > 0:
+                    ans_data = answer_res.data[0]
+                    
+                    explanation = next_q_data.get('explanation')
+                    correct_index = next_q_data.get('correct_answer_index')
+                    is_correct = ans_data['is_correct']
+                    
+                    correct_answer_id = ""
+                    correct_opt = next((o for o in options if o.option_index == correct_index), None)
+                    if correct_opt:
+                        correct_answer_id = correct_opt.id
+                    
+                    selected_opt = next((o for o in options if o.option_index == ans_data['selected_option_index']), None)
+                    if selected_opt:
+                        selected_option_id = selected_opt.id
+
+                    feedback_text = "Correct!" if is_correct else "Incorrect."
+                    if explanation:
+                        feedback_text += f" {explanation}"
+
+                    existing_answer = QuizSubmissionResponse(
+                        is_correct=is_correct,
+                        correct_answer_id=correct_answer_id,
+                        feedback_text=feedback_text,
+                        explanation=explanation
+                    )
+                
                 return QuizNextResponse(
                     attempt_id=request.attempt_id,
                     current_question_index=next_index,
                     total_questions=total_questions,
                     is_complete=False,
-                    next_question=next_question
+                    next_question=next_question,
+                    existing_answer=existing_answer,
+                    selected_option_id=selected_option_id
                 )
 
         else:
@@ -375,7 +410,9 @@ async def get_next_question(quiz_id: str, request: QuizNextRequest, user_id: str
                     current_question_index=next_index,
                     total_questions=total_questions,
                     is_complete=False,
-                    next_question=next_question
+                    next_question=next_question,
+                    existing_answer=None,
+                    selected_option_id=None
                 )
 
     except Exception as e:

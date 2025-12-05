@@ -53,6 +53,8 @@ class QuizNextResponse(BaseModel):
     total_questions: int
     is_complete: bool
     next_question: Optional[QuestionDisplay] = None
+    existing_answer: Optional[QuizSubmissionResponse] = None
+    selected_option_id: Optional[str] = None
 
 class QuizPreviousResponse(BaseModel):
     attempt_id: str

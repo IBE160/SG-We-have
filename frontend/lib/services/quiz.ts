@@ -46,6 +46,8 @@ export interface QuizNextResponse {
   total_questions: number;
   is_complete: boolean;
   next_question?: QuestionDisplay;
+  existing_answer?: QuizSubmissionResponse;
+  selected_option_id?: string;
 }
 
 export interface QuizPreviousRequest {

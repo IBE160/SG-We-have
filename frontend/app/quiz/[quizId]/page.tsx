@@ -87,9 +87,16 @@ export default function QuizPage() {
       } else if (nextData.next_question) {
         setCurrentQuestion(nextData.next_question);
         setCurrentQuestionIndex(nextData.current_question_index);
-        // Reset for next question
-        setSelectedOptionId(null);
-        setSubmissionResult(null);
+        
+        // Check if this question was already answered
+        if (nextData.existing_answer) {
+            setSubmissionResult(nextData.existing_answer);
+            setSelectedOptionId(nextData.selected_option_id || null);
+        } else {
+            // Reset for next question
+            setSelectedOptionId(null);
+            setSubmissionResult(null);
+        }
       }
     } catch (err) {
       console.error('Failed to fetch next question:', err);
