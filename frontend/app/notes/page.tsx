@@ -8,6 +8,7 @@ import { useAuth } from '@/components/SupabaseClientProvider';
 import EditableTitle from '@/components/EditableTitle';
 import { Trash2 } from 'lucide-react';
 import CreateNoteModal from '@/components/CreateNoteModal';
+import DeleteConfirmationModal from '@/components/DeleteConfirmationModal';
 
 export default function NotesPage() {
   const [courses, setCourses] = useState<Course[]>([]);
@@ -18,6 +19,9 @@ export default function NotesPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [lastSaved, setLastSaved] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [noteToDelete, setNoteToDelete] = useState<string | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
   const { user } = useAuth();
 
   // Fetch courses on load
@@ -101,19 +105,29 @@ export default function NotesPage() {
     }
   };
 
-  const handleDeleteNote = async (noteId: string) => {
-    if (!confirm("Are you sure you want to delete this note?")) return;
+  const handleDeleteNote = (noteId: string) => {
+      setNoteToDelete(noteId);
+      setDeleteModalOpen(true);
+  };
 
+  const confirmDeleteNote = async () => {
+    if (!noteToDelete) return;
+
+    setIsDeleting(true);
     try {
-      await deleteNote(noteId);
-      setLectures(prev => prev.filter(l => l.id !== noteId));
-      if (selectedLecture?.id === noteId) {
+      await deleteNote(noteToDelete);
+      setLectures(prev => prev.filter(l => l.id !== noteToDelete));
+      if (selectedLecture?.id === noteToDelete) {
         setSelectedLecture(null);
         setNoteContent(null);
       }
+      setDeleteModalOpen(false);
+      setNoteToDelete(null);
     } catch (err) {
       console.error('Failed to delete note', err);
-      alert('Failed to delete note');
+      alert('Failed to delete note'); // Can use a toast here if available, sticking to alert for error fallback or could add error state
+    } finally {
+        setIsDeleting(false);
     }
   };
 
@@ -278,6 +292,15 @@ export default function NotesPage() {
             onNoteCreated={handleNoteCreated}
         />
       )}
+
+      <DeleteConfirmationModal
+        isOpen={deleteModalOpen}
+        onClose={() => setDeleteModalOpen(false)}
+        onConfirm={confirmDeleteNote}
+        title="Delete Note"
+        message="Are you sure you want to delete this note?"
+        isLoading={isDeleting}
+      />
     </div>
   );
 }

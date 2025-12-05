@@ -6,6 +6,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { getCourses, getNotes, generateQuiz, updateCourse, updateNote, deleteNote, Course, Note, ApiError } from '@/lib/api';
 import CreateNoteModal from '@/components/CreateNoteModal';
 import QuizConfigModal from '@/components/QuizConfigModal';
+import DeleteConfirmationModal from '@/components/DeleteConfirmationModal';
 import EditableTitle from '@/components/EditableTitle';
 import AppHeader from '@/components/AppHeader';
 import { Trash2 } from 'lucide-react';
@@ -23,6 +24,9 @@ export default function CourseDetailsPage() {
   const [error, setError] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isQuizModalOpen, setIsQuizModalOpen] = useState(false);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [noteToDelete, setNoteToDelete] = useState<string | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   const fetchData = async () => {
@@ -91,17 +95,27 @@ export default function CourseDetailsPage() {
     }
   };
 
-  const handleDeleteNote = async (noteId: string) => {
-    if (!confirm("Are you sure you want to delete this note?")) return;
+  const handleDeleteNote = (noteId: string) => {
+      setNoteToDelete(noteId);
+      setDeleteModalOpen(true);
+  };
 
+  const confirmDeleteNote = async () => {
+    if (!noteToDelete) return;
+    
+    setIsDeleting(true);
     try {
-      await deleteNote(noteId);
-      setNotes(prevNotes => prevNotes.filter(note => note.id !== noteId));
+      await deleteNote(noteToDelete);
+      setNotes(prevNotes => prevNotes.filter(note => note.id !== noteToDelete));
       setSuccessMessage('Note deleted successfully.');
       setTimeout(() => setSuccessMessage(null), 3000);
+      setDeleteModalOpen(false);
+      setNoteToDelete(null);
     } catch (err) {
       console.error('Failed to delete note:', err);
-      alert('Failed to delete note.');
+      setError('Failed to delete note.');
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -233,6 +247,15 @@ export default function CourseDetailsPage() {
             onClose={() => setIsQuizModalOpen(false)}
             notes={notes}
             onGenerate={handleGenerateQuiz}
+          />
+          
+          <DeleteConfirmationModal
+            isOpen={deleteModalOpen}
+            onClose={() => setDeleteModalOpen(false)}
+            onConfirm={confirmDeleteNote}
+            title="Delete Note"
+            message="Are you sure you want to delete this note?"
+            isLoading={isDeleting}
           />
         </>
       )}

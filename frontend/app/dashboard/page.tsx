@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import CreateCourseModal from '@/components/CreateCourseModal';
+import DeleteConfirmationModal from '@/components/DeleteConfirmationModal';
 import { getCourses, updateCourse, deleteCourse, Course, ApiError } from '@/lib/api';
 import { useAuth } from '@/components/SupabaseClientProvider';
 import EditableTitle from '@/components/EditableTitle';
@@ -15,6 +16,9 @@ export default function DashboardPage() {
   const [courses, setCourses] = useState<Course[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [courseToDelete, setCourseToDelete] = useState<string | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
   const { user, signOut } = useAuth();
   const router = useRouter();
 
@@ -57,17 +61,27 @@ export default function DashboardPage() {
     }
   };
 
-  const handleDeleteCourse = async (courseId: string) => {
-      if (!confirm("Are you sure you want to delete this course? All notes related to this course will be deleted too.")) return;
+  const handleDeleteCourse = (courseId: string) => {
+      setCourseToDelete(courseId);
+      setDeleteModalOpen(true);
+  };
 
+  const confirmDeleteCourse = async () => {
+      if (!courseToDelete) return;
+      
+      setIsDeleting(true);
       try {
-          await deleteCourse(courseId);
-          setCourses(prev => prev.filter(c => c.id !== courseId));
+          await deleteCourse(courseToDelete);
+          setCourses(prev => prev.filter(c => c.id !== courseToDelete));
           setSuccessMessage('Course deleted successfully.');
           setTimeout(() => setSuccessMessage(null), 3000);
+          setDeleteModalOpen(false);
+          setCourseToDelete(null);
       } catch (err) {
           console.error('Failed to delete course', err);
-          alert('Failed to delete course.');
+          setError('Failed to delete course.'); // Show error in UI instead of alert
+      } finally {
+          setIsDeleting(false);
       }
   };
 
@@ -255,6 +269,15 @@ export default function DashboardPage() {
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         onCourseCreated={handleCourseCreated}
+      />
+      
+      <DeleteConfirmationModal
+        isOpen={deleteModalOpen}
+        onClose={() => setDeleteModalOpen(false)}
+        onConfirm={confirmDeleteCourse}
+        title="Delete Course"
+        message="Are you sure you want to delete this course? All notes related to this course will be deleted too."
+        isLoading={isDeleting}
       />
     </div>
   );
