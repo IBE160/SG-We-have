@@ -2,9 +2,11 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { getCourses, getLectures, getLectureNotes, updateLectureNotes, createLecture, Course, Lecture } from '@/lib/api';
+import { getCourses, getLectures, getLectureNotes, updateLectureNotes, createLecture, updateNote, deleteNote, Course, Lecture } from '@/lib/api';
 import NoteEditor from '@/components/NoteEditor';
 import { useAuth } from '@/components/SupabaseClientProvider';
+import EditableTitle from '@/components/EditableTitle';
+import { Trash2 } from 'lucide-react';
 
 export default function NotesPage() {
   const [courses, setCourses] = useState<Course[]>([]);
@@ -87,6 +89,35 @@ export default function NotesPage() {
     }
   };
 
+  const handleDeleteNote = async (noteId: string) => {
+    if (!confirm("Are you sure you want to delete this note?")) return;
+
+    try {
+      await deleteNote(noteId);
+      setLectures(prev => prev.filter(l => l.id !== noteId));
+      if (selectedLecture?.id === noteId) {
+        setSelectedLecture(null);
+        setNoteContent(null);
+      }
+    } catch (err) {
+      console.error('Failed to delete note', err);
+      alert('Failed to delete note');
+    }
+  };
+
+  const handleUpdateNoteTitle = async (noteId: string, newTitle: string) => {
+    try {
+      const updatedNote = await updateNote(noteId, undefined, newTitle);
+      setLectures(prev => prev.map(l => l.id === noteId ? updatedNote : l));
+      if (selectedLecture?.id === noteId) {
+        setSelectedLecture(updatedNote);
+      }
+    } catch (err) {
+      console.error('Failed to update note title', err);
+      throw err; // Propagate to EditableTitle
+    }
+  };
+
   const handleSaveNote = async (content: string) => {
     if (!selectedLecture) return;
     try {
@@ -128,14 +159,33 @@ export default function NotesPage() {
 
              <div className="flex flex-col gap-1 mt-2">
                {lectures.map(lecture => (
-                 <button 
+                 <div 
                    key={lecture.id}
                    onClick={() => setSelectedLecture(lecture)}
-                   className={`flex items-center gap-3 px-3 py-2.5 rounded-lg w-full text-left transition-colors ${selectedLecture?.id === lecture.id ? 'bg-accent-blue/10 text-accent-blue font-medium' : 'text-text-secondary hover:bg-background-light hover:text-text-primary'}`}
+                   className={`flex items-center justify-between px-3 py-2.5 rounded-lg w-full text-left transition-colors cursor-pointer ${selectedLecture?.id === lecture.id ? 'bg-accent-blue/10 text-accent-blue font-medium' : 'text-text-secondary hover:bg-background-light hover:text-text-primary'}`}
                  >
-                   <span className="material-symbols-outlined text-[20px]">{selectedLecture?.id === lecture.id ? 'draft' : 'article'}</span>
-                   <p className="text-sm leading-normal truncate">{lecture.title}</p>
-                 </button>
+                   <div className="flex items-center gap-3 overflow-hidden flex-grow">
+                        <span className="material-symbols-outlined text-[20px] shrink-0">{selectedLecture?.id === lecture.id ? 'draft' : 'article'}</span>
+                        <div className="min-w-0 flex-1">
+                            <EditableTitle
+                                initialTitle={lecture.title}
+                                onSave={async (newTitle) => handleUpdateNoteTitle(lecture.id, newTitle)}
+                                className="text-sm leading-normal truncate block"
+                                inputClassName="text-sm w-full"
+                            />
+                        </div>
+                   </div>
+                   <button
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            handleDeleteNote(lecture.id);
+                        }}
+                        className="text-gray-400 hover:text-red-600 p-1 rounded-md hover:bg-red-50 shrink-0 ml-2"
+                        title="Delete Note"
+                    >
+                        <Trash2 size={16} />
+                    </button>
+                 </div>
                ))}
                
                {lectures.length === 0 && !isLoading && (

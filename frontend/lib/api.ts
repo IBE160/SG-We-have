@@ -98,6 +98,52 @@ export const createNote = async (courseId: string, title: string): Promise<Note>
   return response.json();
 };
 
+export const updateCourse = async (courseId: string, name: string): Promise<Course> => {
+  const { data: { session } } = await supabase.auth.getSession();
+  const token = session?.access_token;
+
+  if (!token) {
+    throw new ApiError('Not authenticated', 401);
+  }
+
+  const response = await fetch(`${API_BASE_URL}/courses/${courseId}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+    },
+    body: JSON.stringify({ name }),
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new ApiError(errorData.detail || 'Failed to update course', response.status);
+  }
+
+  return response.json();
+};
+
+export const deleteCourse = async (courseId: string): Promise<void> => {
+  const { data: { session } } = await supabase.auth.getSession();
+  const token = session?.access_token;
+
+  if (!token) {
+    throw new ApiError('Not authenticated', 401);
+  }
+
+  const response = await fetch(`${API_BASE_URL}/courses/${courseId}`, {
+    method: 'DELETE',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+    },
+  });
+
+  if (!response.ok) {
+     const errorData = await response.json().catch(() => ({}));
+    throw new ApiError(errorData.detail || 'Failed to delete course', response.status);
+  }
+};
+
 export const getNotes = async (courseId: string): Promise<Note[]> => {
   const { data: { session } } = await supabase.auth.getSession();
   const token = session?.access_token;
@@ -144,7 +190,7 @@ export const getNote = async (noteId: string): Promise<Note> => {
   return response.json();
 };
 
-export const updateNote = async (noteId: string, content: string): Promise<Note> => {
+export const updateNote = async (noteId: string, content?: string, title?: string): Promise<Note> => {
   const { data: { session } } = await supabase.auth.getSession();
   const token = session?.access_token;
 
@@ -152,13 +198,17 @@ export const updateNote = async (noteId: string, content: string): Promise<Note>
     throw new ApiError('Not authenticated', 401);
   }
 
+  const body: { content?: string; title?: string } = {};
+  if (content !== undefined) body.content = content;
+  if (title !== undefined) body.title = title;
+
   const response = await fetch(`${API_BASE_URL}/notes/${noteId}`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${token}`,
     },
-    body: JSON.stringify({ content }),
+    body: JSON.stringify(body),
   });
 
   if (!response.ok) {
@@ -167,6 +217,27 @@ export const updateNote = async (noteId: string, content: string): Promise<Note>
   }
 
   return response.json();
+};
+
+export const deleteNote = async (noteId: string): Promise<void> => {
+  const { data: { session } } = await supabase.auth.getSession();
+  const token = session?.access_token;
+
+  if (!token) {
+    throw new ApiError('Not authenticated', 401);
+  }
+
+  const response = await fetch(`${API_BASE_URL}/notes/${noteId}`, {
+    method: 'DELETE',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+    },
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new ApiError(errorData.detail || 'Failed to delete note', response.status);
+  }
 };
 
 // Aliases for domain mapping (Lectures are Notes)

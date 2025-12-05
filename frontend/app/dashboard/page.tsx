@@ -2,9 +2,12 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import CreateCourseModal from '@/components/CreateCourseModal';
-import { getCourses, Course, ApiError } from '@/lib/api';
+import { getCourses, updateCourse, deleteCourse, Course, ApiError } from '@/lib/api';
 import { useAuth } from '@/components/SupabaseClientProvider';
+import EditableTitle from '@/components/EditableTitle';
+import { Trash2 } from 'lucide-react';
 
 export default function DashboardPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -13,6 +16,7 @@ export default function DashboardPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const { user, signOut } = useAuth();
+  const router = useRouter();
 
   const fetchCourses = async () => {
     setIsLoading(true);
@@ -41,6 +45,30 @@ export default function DashboardPage() {
     setSuccessMessage('Course created successfully!');
     setTimeout(() => setSuccessMessage(null), 3000);
     fetchCourses();
+  };
+
+  const handleUpdateCourse = async (courseId: string, newName: string) => {
+    try {
+      const updatedCourse = await updateCourse(courseId, newName);
+      setCourses(prev => prev.map(c => c.id === courseId ? updatedCourse : c));
+    } catch (err) {
+      console.error('Failed to update course name', err);
+      alert('Failed to update course name');
+    }
+  };
+
+  const handleDeleteCourse = async (courseId: string) => {
+      if (!confirm("Are you sure you want to delete this course? All notes related to this course will be deleted too.")) return;
+
+      try {
+          await deleteCourse(courseId);
+          setCourses(prev => prev.filter(c => c.id !== courseId));
+          setSuccessMessage('Course deleted successfully.');
+          setTimeout(() => setSuccessMessage(null), 3000);
+      } catch (err) {
+          console.error('Failed to delete course', err);
+          alert('Failed to delete course.');
+      }
   };
 
   const sidebarItemClass = "flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-text-secondary transition-colors hover:bg-background-light hover:text-text-primary text-left";
@@ -178,23 +206,42 @@ export default function DashboardPage() {
               ) : (
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
                   {courses.map((course) => (
-                    <Link key={course.id} href={`/dashboard/courses/${course.id}`} className="block">
-                      <div className="bg-white border border-border-light rounded-xl p-6 shadow-soft hover:shadow-soft-hover transition-all h-full flex flex-col">
-                        <div className="flex items-center gap-3 mb-4">
-                           <div className="flex items-center justify-center rounded-lg bg-primary/10 size-10 text-primary">
-                             <span className="material-symbols-outlined">book</span>
+                    <div 
+                        key={course.id} 
+                        onClick={() => router.push(`/dashboard/courses/${course.id}`)}
+                        className="bg-white border border-border-light rounded-xl p-6 shadow-soft hover:shadow-soft-hover transition-all h-full flex flex-col cursor-pointer group"
+                    >
+                        <div className="flex items-start justify-between mb-4">
+                           <div className="flex items-center gap-3 flex-1 min-w-0">
+                             <div className="flex items-center justify-center rounded-lg bg-primary/10 size-10 text-primary shrink-0">
+                               <span className="material-symbols-outlined">book</span>
+                             </div>
+                             <div className="flex-1 min-w-0">
+                                <EditableTitle 
+                                    initialTitle={course.name} 
+                                    onSave={async (newName) => handleUpdateCourse(course.id, newName)} 
+                                    className="text-lg font-bold text-text-primary truncate block"
+                                    inputClassName="text-lg font-bold w-full"
+                                />
+                             </div>
                            </div>
-                           <h3 className="text-lg font-bold text-text-primary truncate">
-                             {course.name}
-                           </h3>
+                           <button
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleDeleteCourse(course.id);
+                                }}
+                                className="text-gray-400 hover:text-red-600 p-1 rounded-md hover:bg-red-50 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity ml-2"
+                                title="Delete Course"
+                           >
+                                <Trash2 size={20} />
+                           </button>
                         </div>
                         <div className="mt-auto">
                            <p className="text-xs text-text-secondary">
                              Created: {new Date(course.created_at).toLocaleDateString()}
                            </p>
                         </div>
-                      </div>
-                    </Link>
+                    </div>
                   ))}
                 </div>
               )}

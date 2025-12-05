@@ -8,11 +8,14 @@ from app.core.database import get_supabase_client
 router = APIRouter()
 logger = logging.getLogger(__name__)
 
+from typing import Optional
+
 class NoteCreate(BaseModel):
     title: str
 
 class NoteUpdate(BaseModel):
-    content: str
+    content: Optional[str] = None
+    title: Optional[str] = None
 
 class Note(BaseModel):
     id: str
@@ -142,9 +145,14 @@ def update_note(note_id: str, note_update: NoteUpdate, user: dict = Depends(get_
     try:
         current_time = datetime.now(timezone.utc).isoformat()
         data = {
-            "content": note_update.content,
             "updated_at": current_time
         }
+        if note_update.content is not None:
+            data["content"] = note_update.content
+        if note_update.title is not None:
+            if not note_update.title.strip():
+                 raise HTTPException(status_code=422, detail="Note title cannot be empty")
+            data["title"] = note_update.title
         
         response = supabase.table("notes").update(data).eq("id", note_id).execute()
         
@@ -153,6 +161,24 @@ def update_note(note_id: str, note_update: NoteUpdate, user: dict = Depends(get_
              
         return response.data[0]
         
+    except HTTPException as he:
+        raise he
     except Exception as e:
         logger.error(f"Error updating note: {e}")
+        raise HTTPException(status_code=500, detail=f"Internal Server Error: {str(e)}")
+
+@router.delete("/notes/{note_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_note(note_id: str, user: dict = Depends(get_current_user)):
+    user_id = user.get("sub")
+    if not user_id:
+        raise HTTPException(status_code=401, detail="Invalid user token")
+
+    supabase = get_supabase_client()
+    
+    verify_note_ownership(note_id, user_id, supabase)
+    
+    try:
+        supabase.table("notes").delete().eq("id", note_id).execute()
+    except Exception as e:
+        logger.error(f"Error deleting note: {e}")
         raise HTTPException(status_code=500, detail=f"Internal Server Error: {str(e)}")

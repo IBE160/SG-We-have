@@ -3,9 +3,11 @@
 import { useState, useEffect, use } from 'react';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
-import { getCourses, getNotes, generateQuiz, Course, Note, ApiError } from '@/lib/api';
+import { getCourses, getNotes, generateQuiz, updateCourse, updateNote, deleteNote, Course, Note, ApiError } from '@/lib/api';
 import CreateNoteModal from '@/components/CreateNoteModal';
 import QuizConfigModal from '@/components/QuizConfigModal';
+import EditableTitle from '@/components/EditableTitle';
+import { Trash2 } from 'lucide-react';
 
 export default function CourseDetailsPage() {
   const params = useParams();
@@ -65,6 +67,43 @@ export default function CourseDetailsPage() {
     fetchData(); // Refresh list
   };
 
+  const handleUpdateCourse = async (newName: string) => {
+    if (!course) return;
+    try {
+      const updatedCourse = await updateCourse(course.id, newName);
+      setCourse(updatedCourse);
+    } catch (err) {
+      console.error('Failed to update course:', err);
+      throw err;
+    }
+  };
+
+  const handleUpdateNoteTitle = async (noteIdToUpdate: string, newTitle: string) => {
+    try {
+      const updatedNote = await updateNote(noteIdToUpdate, undefined, newTitle);
+      setNotes(prevNotes => 
+        prevNotes.map(note => note.id === noteIdToUpdate ? updatedNote : note)
+      );
+    } catch (err) {
+      console.error('Failed to update note title:', err);
+      throw err;
+    }
+  };
+
+  const handleDeleteNote = async (noteId: string) => {
+    if (!confirm("Are you sure you want to delete this note?")) return;
+
+    try {
+      await deleteNote(noteId);
+      setNotes(prevNotes => prevNotes.filter(note => note.id !== noteId));
+      setSuccessMessage('Note deleted successfully.');
+      setTimeout(() => setSuccessMessage(null), 3000);
+    } catch (err) {
+      console.error('Failed to delete note:', err);
+      alert('Failed to delete note.');
+    }
+  };
+
   const handleGenerateQuiz = async (selectedNoteIds: string[], quizLength: number) => {
     try {
       const quiz = await generateQuiz(selectedNoteIds, quizLength);
@@ -81,22 +120,28 @@ export default function CourseDetailsPage() {
     <div className="min-h-screen bg-gray-100 py-10">
        <header className="bg-white shadow mb-6">
         <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 flex justify-between items-center">
-            <div className="flex items-center">
-                <Link href="/dashboard" className="text-blue-600 hover:text-blue-800 mr-4">
+            <div className="flex items-center gap-4">
+                <Link href="/dashboard" className="text-blue-600 hover:text-blue-800">
                     &larr; Back to Dashboard
                 </Link>
-                <h1 className="text-3xl font-bold text-gray-900">
-                    {course ? course.name : 'Loading...'}
-                </h1>
+                {course ? (
+                    <EditableTitle 
+                        initialTitle={course.name} 
+                        onSave={handleUpdateCourse} 
+                        className="text-3xl font-bold text-gray-900"
+                    />
+                ) : (
+                    <h1 className="text-3xl font-bold text-gray-900">Loading...</h1>
+                )}
             </div>
           {course && (
             <div className="flex space-x-4">
-             <button
-                onClick={() => setIsQuizModalOpen(true)}
+             <Link
+                href="/quiz"
                 className="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition-colors"
              >
                Generate Quiz
-             </button>
+             </Link>
              <button
                onClick={() => setIsModalOpen(true)}
                className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors"
@@ -134,19 +179,37 @@ export default function CourseDetailsPage() {
             ) : (
               <ul className="divide-y divide-gray-200">
                 {notes.map((note) => (
-                  <li key={note.id} className="px-4 py-4 sm:px-6 hover:bg-gray-50">
-                    <Link href={`/dashboard/courses/${id}/notes/${note.id}`} className="block">
+                  <li key={note.id}>
+                    <div 
+                        onClick={() => router.push(`/dashboard/courses/${id}/notes/${note.id}`)}
+                        className="block px-4 py-4 sm:px-6 hover:bg-gray-50 cursor-pointer"
+                    >
                         <div className="flex items-center justify-between">
-                        <div className="flex items-center">
-                          <p className="text-lg font-medium text-blue-600 truncate">{note.title}</p>
+                            <div className="flex items-center flex-grow">
+                                <EditableTitle
+                                    initialTitle={note.title}
+                                    onSave={async (newTitle) => handleUpdateNoteTitle(note.id, newTitle)}
+                                    className="text-lg font-medium text-blue-600 truncate"
+                                    inputClassName="text-lg"
+                                />
+                            </div>
+                            <div className="ml-2 flex-shrink-0 flex items-center gap-4">
+                                <p className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
+                                    {new Date(note.created_at).toLocaleDateString()}
+                                </p>
+                                <button
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        handleDeleteNote(note.id);
+                                    }}
+                                    className="text-gray-400 hover:text-red-600 transition-colors p-1 rounded-md hover:bg-red-50"
+                                    title="Delete Note"
+                                >
+                                    <Trash2 size={18} />
+                                </button>
+                            </div>
                         </div>
-                        <div className="ml-2 flex-shrink-0 flex">
-                            <p className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
-                            {new Date(note.created_at).toLocaleDateString()}
-                            </p>
-                        </div>
-                        </div>
-                    </Link>
+                    </div>
                   </li>
                 ))}
               </ul>
