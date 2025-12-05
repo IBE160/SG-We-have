@@ -1,5 +1,6 @@
 import os
 import httpx
+import random
 from tenacity import retry, stop_after_attempt, wait_exponential, retry_if_exception_type, before_sleep_log
 import logging
 from pydantic_ai import Agent, RunContext, UnexpectedModelBehavior
@@ -89,4 +90,18 @@ async def generate_quiz_content(prompt: str) -> QuizGenerated:
     """
     # Run the agent
     result = await quiz_agent.run(prompt)
-    return result.output
+    quiz = result.output
+
+    # Post-process to shuffle options and mitigate LLM positional bias
+    for question in quiz.questions:
+        # Store the text of the correct answer before shuffling
+        correct_option_text = question.options[question.correct_answer_index]
+        
+        # Shuffle the options
+        random.shuffle(question.options)
+        
+        # Find the new index of the correct answer
+        new_correct_index = question.options.index(correct_option_text)
+        question.correct_answer_index = new_correct_index
+
+    return quiz
