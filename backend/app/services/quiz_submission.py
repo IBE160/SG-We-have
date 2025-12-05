@@ -458,10 +458,11 @@ async def get_previous_question(quiz_id: str, request: QuizPreviousRequest, user
             selected_option_id = None
             
             # We need to find if there's an answer for this question and attempt
-            answer_res = supabase.table("quiz_answers").select("*").eq("attempt_id", request.attempt_id).eq("question_id", prev_q_data['id']).single().execute()
+            # Use limit(1) and maybe_single() or just check list to avoid PGRST116 on duplicates
+            answer_res = supabase.table("quiz_answers").select("*").eq("attempt_id", request.attempt_id).eq("question_id", prev_q_data['id']).order("created_at", desc=True).limit(1).execute()
             
-            if answer_res.data:
-                ans_data = answer_res.data
+            if answer_res.data and len(answer_res.data) > 0:
+                ans_data = answer_res.data[0]
                 
                 # Get explanation and correct answer ID from question/options
                 explanation = prev_q_data.get('explanation')
