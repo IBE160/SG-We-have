@@ -19,7 +19,6 @@ Epic 4 focuses on delivering an engaging and feedback-rich interface for student
 -   Implementing a quiz progress indicator (FR015).
 -   Displaying a final score summary (FR013).
 -   Offering options to retake the same quiz or generate a new quiz from the same notes (FR014).
--   Displaying micro-learning content for correct answers (FR016).
 
 **Out-of-Scope:**
 -   Advanced analytics beyond final score.
@@ -117,9 +116,6 @@ This epic primarily impacts the frontend's `QuizPlayer` and `ScoreCard` componen
     1.  After completing a quiz, buttons for "Retake same quiz" and "Generate new quiz" are available.
     2.  Clicking "Retake same quiz" starts a new quiz with the identical questions.
     3.  Clicking "Generate new quiz" starts a new quiz with different questions from the same source notes. (FR014)
-6.  **Story 4.6: Micro-learning Content**
-    1.  When an answer is marked as correct, a "Want to learn more?" option is displayed.
-    2.  This option reveals 1-3 factual sentences related to the correct answer. (FR016)
 
 ## Traceability Mapping
 
@@ -130,13 +126,11 @@ This epic primarily impacts the frontend's `QuizPlayer` and `ScoreCard` componen
 | FR015 (4.3) | Workflows | `QuizPlayer` | UI test: progress bar update |
 | FR013 (4.4) | Workflows, APIs | `ScoreCard` / `GET /quiz/results` | UI test: score summary display |
 | FR014 (4.5) | Workflows, APIs | `ScoreCard` / `POST /quiz/retake` | UI test: retake/new quiz options |
-| FR016 (4.6) | Workflows | `QuizPlayer` | UI test: micro-learning content |
 
 ## Risks, Assumptions, Open Questions
 
 -   **Risk:** Performance of complex UI updates for feedback on low-spec devices. (Mitigation: Optimize React component rendering).
 -   **Risk:** Complexity of "Retake same quiz" vs "Generate new quiz" logic, especially with dynamic question generation vs static set. (Mitigation: For "Retake same quiz", simply reuse the same `quiz_id` and questions; for "Generate new quiz", call Epic 3's quiz generation again).
--   **Assumption:** Quiz question generation from Epic 3 provides sufficient data for micro-learning explanations.
 -   **Open Question:** How will "Skip Question" (FR017 from PRD) be handled in the UI and backend logic, specifically regarding scoring and progress? This functionality is defined in the PRD (FR017) but not yet associated with a story in Epic 4.
 
 ## Test Strategy Summary
