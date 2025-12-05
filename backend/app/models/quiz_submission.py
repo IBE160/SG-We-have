@@ -44,12 +44,23 @@ class QuizSubmissionResponse(BaseModel):
 class QuizNextRequest(BaseModel):
     attempt_id: str
 
+class QuizPreviousRequest(BaseModel):
+    attempt_id: str
+
 class QuizNextResponse(BaseModel):
     attempt_id: str
     current_question_index: int
     total_questions: int
     is_complete: bool
     next_question: Optional[QuestionDisplay] = None
+
+class QuizPreviousResponse(BaseModel):
+    attempt_id: str
+    current_question_index: int
+    total_questions: int
+    previous_question: Optional[QuestionDisplay] = None
+    existing_answer: Optional[QuizSubmissionResponse] = None
+    selected_option_id: Optional[str] = None
 
 class QuizRetakeRequest(BaseModel):
     attempt_id: Optional[str] = None

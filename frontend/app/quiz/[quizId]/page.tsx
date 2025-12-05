@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { startQuiz, submitAnswer, fetchNextQuestion, getQuizResults, retakeQuiz, QuizStartResponse, QuizSubmissionResponse, QuestionDisplay, QuizResultResponse } from '../../../lib/services/quiz';
+import { startQuiz, submitAnswer, fetchNextQuestion, fetchPreviousQuestion, getQuizResults, retakeQuiz, QuizStartResponse, QuizSubmissionResponse, QuestionDisplay, QuizResultResponse } from '../../../lib/services/quiz';
 import { QuizQuestionDisplay } from '../../../components/QuizQuestionDisplay';
 import { QuizProgressBar } from '../../../components/QuizProgressBar';
 import { ScoreCard } from '../../../components/ScoreCard';
@@ -97,6 +97,30 @@ export default function QuizPage() {
     }
   };
 
+  const handlePreviousQuestion = async () => {
+    if (!quizState || currentQuestionIndex <= 0) return;
+
+    try {
+      const prevData = await fetchPreviousQuestion(quizId, { attempt_id: quizState.attempt_id });
+      
+      setCurrentQuestion(prevData.previous_question);
+      setCurrentQuestionIndex(prevData.current_question_index);
+      
+      // Restore state if answered
+      if (prevData.existing_answer) {
+          setSubmissionResult(prevData.existing_answer);
+          setSelectedOptionId(prevData.selected_option_id || null);
+      } else {
+          setSubmissionResult(null);
+          setSelectedOptionId(null);
+      }
+
+    } catch (err) {
+      console.error('Failed to fetch previous question:', err);
+      alert('Failed to load previous question.');
+    }
+  };
+
   const handleRetake = async () => {
       if (!quizState) return;
       setLoading(true);
@@ -188,7 +212,14 @@ export default function QuizPage() {
           submissionResult={submissionResult}
         />
 
-        <div className="mt-8 flex justify-end">
+        <div className="mt-8 flex justify-between">
+          <button
+            className="px-6 py-3 bg-gray-200 text-gray-800 rounded-lg font-medium hover:bg-gray-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            onClick={handlePreviousQuestion}
+            disabled={currentQuestionIndex === 0}
+          >
+            Previous
+          </button>
           <button
             className="px-6 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             onClick={handleNextQuestion}

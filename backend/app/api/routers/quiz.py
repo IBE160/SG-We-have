@@ -4,8 +4,8 @@ from app.core.security import get_current_user
 from app.core.database import get_supabase_client
 from app.models.quiz import QuizGenerateRequest, QuizResponse
 from app.services.quiz_service import generate_quiz
-from app.models.quiz_submission import QuizStartResponse, QuizSubmissionRequest, QuizSubmissionResponse, QuizNextRequest, QuizNextResponse, QuizResultResponse, QuizRetakeRequest
-from app.services.quiz_submission import start_quiz_attempt, submit_answer, get_next_question, get_quiz_results, retake_quiz
+from app.models.quiz_submission import QuizStartResponse, QuizSubmissionRequest, QuizSubmissionResponse, QuizNextRequest, QuizNextResponse, QuizPreviousRequest, QuizPreviousResponse, QuizResultResponse, QuizRetakeRequest
+from app.services.quiz_submission import start_quiz_attempt, submit_answer, get_next_question, get_previous_question, get_quiz_results, retake_quiz
 
 router = APIRouter()
 logger = logging.getLogger(__name__)
@@ -83,6 +83,26 @@ async def next_question_endpoint(
         return await get_next_question(quiz_id, request, user_id, supabase)
     except Exception as e:
         logger.error(f"Error getting next question: {e}")
+        if isinstance(e, HTTPException):
+            raise e
+        raise HTTPException(status_code=500, detail="Internal Server Error")
+
+@router.post("/quiz/{quiz_id}/previous", response_model=QuizPreviousResponse)
+async def previous_question_endpoint(
+    quiz_id: str,
+    request: QuizPreviousRequest,
+    user: dict = Depends(get_current_user)
+):
+    user_id = user.get("sub")
+    if not user_id:
+        raise HTTPException(status_code=401, detail="Invalid user token")
+        
+    supabase = get_supabase_client()
+    
+    try:
+        return await get_previous_question(quiz_id, request, user_id, supabase)
+    except Exception as e:
+        logger.error(f"Error getting previous question: {e}")
         if isinstance(e, HTTPException):
             raise e
         raise HTTPException(status_code=500, detail="Internal Server Error")

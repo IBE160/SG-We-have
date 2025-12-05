@@ -48,6 +48,19 @@ export interface QuizNextResponse {
   next_question?: QuestionDisplay;
 }
 
+export interface QuizPreviousRequest {
+  attempt_id: string;
+}
+
+export interface QuizPreviousResponse {
+  attempt_id: string;
+  current_question_index: number;
+  total_questions: number;
+  previous_question: QuestionDisplay;
+  existing_answer?: QuizSubmissionResponse;
+  selected_option_id?: string;
+}
+
 export interface QuizResultResponse {
   score: number;
   total_questions: number;
@@ -108,6 +121,31 @@ export const fetchNextQuestion = async (quizId: string, request: QuizNextRequest
   if (!response.ok) {
     const errorData = await response.json();
     throw new ApiError(errorData.detail || 'Failed to fetch next question', response.status);
+  }
+
+  return response.json();
+};
+
+export const fetchPreviousQuestion = async (quizId: string, request: QuizPreviousRequest): Promise<QuizPreviousResponse> => {
+  const { data: { session } } = await supabase.auth.getSession();
+  const token = session?.access_token;
+
+  if (!token) {
+    throw new ApiError('Not authenticated', 401);
+  }
+
+  const response = await fetch(`${API_BASE_URL}/quiz/${quizId}/previous`, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(request),
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new ApiError(errorData.detail || 'Failed to fetch previous question', response.status);
   }
 
   return response.json();
