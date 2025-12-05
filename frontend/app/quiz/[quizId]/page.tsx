@@ -185,7 +185,7 @@ export default function QuizPage() {
 
   if (isComplete && quizResults) {
       return (
-        <div className="flex min-h-screen items-center justify-center p-4 bg-gray-50 dark:bg-gray-900">
+        <div className="flex min-h-screen items-center justify-center p-4 bg-background-light">
             <ScoreCard 
                 results={quizResults}
                 onRetake={handleRetake}
@@ -201,7 +201,7 @@ export default function QuizPage() {
   }
 
   return (
-    <main className="flex min-h-screen flex-col items-center p-4 md:p-24 bg-gray-50 dark:bg-gray-900">
+    <main className="flex min-h-screen flex-col items-center p-4 md:p-24 bg-background-light">
       <div className="w-full max-w-3xl">
         <div className="mb-6">
           <button 

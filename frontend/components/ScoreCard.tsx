@@ -18,19 +18,19 @@ export const ScoreCard: React.FC<ScoreCardProps> = ({ results, onRetake, onNewQu
   else if (percentage < 80) scoreColor = 'text-yellow-600';
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-soft border border-gray-200 dark:border-gray-700 p-8 max-w-lg w-full mx-auto text-center">
+    <div className="bg-white rounded-xl shadow-soft border border-border-light p-8 max-w-lg w-full mx-auto text-center">
       <div className="mb-6 flex justify-center">
         <CheckCircle className="w-16 h-16 text-green-500" />
       </div>
       
-      <h2 className="text-2xl font-bold mb-2 text-gray-900 dark:text-white">Quiz Completed!</h2>
-      <p className="text-gray-500 dark:text-gray-400 mb-8">Here is how you performed</p>
+      <h2 className="text-2xl font-bold mb-2 text-text-primary">Quiz Completed!</h2>
+      <p className="text-text-secondary mb-8">Here is how you performed</p>
 
-      <div className="mb-8 p-6 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+      <div className="mb-8 p-6 bg-gray-50 rounded-lg">
         <div className={`text-5xl font-extrabold mb-2 ${scoreColor}`}>
           {percentage}%
         </div>
-        <p className="text-lg text-gray-700 dark:text-gray-300">
+        <p className="text-lg text-text-primary">
           You got <span className="font-semibold">{score}</span> out of <span className="font-semibold">{total_questions}</span> correct
         </p>
       </div>

@@ -29,20 +29,20 @@ export const QuizQuestionDisplay: React.FC<QuizQuestionDisplayProps> = ({
     if (isAnswered) {
       if (isCorrect) {
         // Correct answer (Green)
-        classes += "border-green-500 bg-green-50 dark:bg-green-900/20 dark:border-green-600";
+        classes += "border-green-500 bg-green-50";
       } else if (isSelected && !submissionResult?.is_correct) {
         // Wrong selection (Red)
-        classes += "border-red-500 bg-red-50 dark:bg-red-900/20 dark:border-red-600";
+        classes += "border-red-500 bg-red-50";
       } else {
         // Other options
-        classes += "border-gray-200 dark:border-gray-700 opacity-50";
+        classes += "border-gray-200 opacity-50";
       }
     } else {
       // Interactive state
       if (isSelected) {
-        classes += "border-blue-500 bg-blue-50 dark:bg-blue-900/20";
+        classes += "border-blue-500 bg-blue-50";
       } else {
-        classes += "border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700";
+        classes += "border-gray-200 hover:bg-gray-50";
       }
     }
     
@@ -50,8 +50,8 @@ export const QuizQuestionDisplay: React.FC<QuizQuestionDisplayProps> = ({
   };
 
   return (
-    <div className="w-full max-w-2xl mx-auto p-6 bg-white dark:bg-gray-800 rounded-lg shadow-md">
-      <h2 className="text-xl font-semibold mb-6 text-gray-900 dark:text-white">
+    <div className="w-full max-w-2xl mx-auto p-6 bg-white rounded-lg shadow-md">
+      <h2 className="text-xl font-semibold mb-6 text-text-primary">
         {question.question_text}
       </h2>
       
@@ -65,14 +65,14 @@ export const QuizQuestionDisplay: React.FC<QuizQuestionDisplayProps> = ({
           >
             <div className="flex items-center">
               <span className={`w-8 h-8 flex items-center justify-center rounded-full text-sm font-medium mr-3
-                ${isAnswered && submissionResult?.correct_answer_id === option.id ? 'bg-green-200 text-green-800 dark:bg-green-800 dark:text-green-100' : 
-                  isAnswered && selectedOptionId === option.id && !submissionResult?.is_correct ? 'bg-red-200 text-red-800 dark:bg-red-800 dark:text-red-100' :
-                  'bg-gray-100 dark:bg-gray-700'
+                ${isAnswered && submissionResult?.correct_answer_id === option.id ? 'bg-green-200 text-green-800' : 
+                  isAnswered && selectedOptionId === option.id && !submissionResult?.is_correct ? 'bg-red-200 text-red-800' :
+                  'bg-gray-100 text-text-primary'
                 }
               `}>
                 {String.fromCharCode(65 + option.option_index)}
               </span>
-              <span className="text-gray-800 dark:text-gray-200">
+              <span className="text-text-primary">
                 {option.option_text}
               </span>
             </div>
@@ -81,7 +81,7 @@ export const QuizQuestionDisplay: React.FC<QuizQuestionDisplayProps> = ({
       </div>
 
       {isAnswered && submissionResult && (
-        <div className={`mt-6 p-4 rounded-md ${submissionResult.is_correct ? 'bg-green-50 dark:bg-green-900/10 text-green-800 dark:text-green-200' : 'bg-red-50 dark:bg-red-900/10 text-red-800 dark:text-red-200'}`}>
+        <div className={`mt-6 p-4 rounded-md ${submissionResult.is_correct ? 'bg-green-50 text-green-800' : 'bg-red-50 text-red-800'}`}>
           <p className="font-medium mb-1">
             {submissionResult.is_correct ? 'Correct!' : 'Incorrect'}
           </p>
