@@ -4,7 +4,7 @@ from typing import List
 from fastapi import HTTPException
 from supabase import Client
 from app.agents.quiz_agent import generate_quiz_content
-from app.models.quiz import QuizGenerateRequest, QuizResponse, QuestionResponse, OptionResponse
+from app.models.quiz import QuizGenerateRequest, QuizResponse, QuestionResponse, OptionResponse, QuizHistoryItem
 
 logger = logging.getLogger(__name__)
 
@@ -188,3 +188,26 @@ async def generate_quiz(request: QuizGenerateRequest, user_id: str, supabase: Cl
         
         # Sanitize error for client
         raise HTTPException(status_code=500, detail=f"An unexpected error occurred while generating the quiz: {str(e)}")
+
+async def get_quiz_history(user_id: str, supabase: Client) -> List[QuizHistoryItem]:
+    try:
+        response = supabase.table("quizzes").select("id, title, created_at, course_id").eq("user_id", user_id).order("created_at", desc=True).execute()
+        
+        if not response.data:
+            return []
+            
+        quiz_history = [
+            QuizHistoryItem(
+                id=item['id'],
+                title=item['title'],
+                created_at=item['created_at'],
+                course_id=item.get('course_id')
+            ) 
+            for item in response.data
+        ]
+        
+        return quiz_history
+        
+    except Exception as e:
+        logger.error(f"Error fetching quiz history for user {user_id}: {e}")
+        raise HTTPException(status_code=500, detail="Failed to fetch quiz history.")

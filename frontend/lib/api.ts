@@ -247,7 +247,35 @@ export const getLectureNotes = getNote;
 export const createLecture = createNote;
 export const updateLectureNotes = updateNote;
 
+export interface QuizHistoryItem {
+  id: string;
+  title: string;
+  created_at: string;
+  course_id: string | null;
+}
 
+export const getQuizHistory = async (): Promise<QuizHistoryItem[]> => {
+  const { data: { session } } = await supabase.auth.getSession();
+  const token = session?.access_token;
+
+  if (!token) {
+    throw new ApiError('Not authenticated', 401);
+  }
+
+  const response = await fetch(`${API_BASE_URL}/quizzes`, {
+    method: 'GET',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+    },
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new ApiError(errorData.detail || 'Failed to fetch quiz history', response.status);
+  }
+
+  return response.json();
+};
 
 export const generateQuiz = async (noteIds: string[], quizLength: number): Promise<any> => {
   const { data: { session } } = await supabase.auth.getSession();
