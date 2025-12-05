@@ -48,7 +48,7 @@ const EditorToolbar = ({ editor, onSave, isSaving, lastSavedAt }: { editor: Edit
   if (!editor) return null
 
   return (
-    <div className="border-b p-2 flex gap-1 items-center flex-wrap bg-gray-50 rounded-t-md">
+    <div className="sticky top-0 z-10 border-b p-2 flex gap-1 items-center flex-wrap bg-gray-50 rounded-t-md">
       <ToolbarButton
         onClick={() => editor.chain().focus().toggleBold().run()}
         isActive={editor.isActive('bold')}
@@ -143,7 +143,7 @@ const NoteEditor = ({ initialContent, onUpdate, onSave, lastSavedAt }: NoteEdito
     content: initialContent || '',
     editorProps: {
       attributes: {
-        class: 'prose prose-sm sm:prose lg:prose-lg xl:prose-2xl m-5 focus:outline-none max-w-none',
+        class: 'prose-sm m-5 focus:outline-none max-w-none',
       },
     },
     onUpdate: ({ editor }) => {
