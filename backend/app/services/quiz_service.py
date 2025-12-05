@@ -211,3 +211,18 @@ async def get_quiz_history(user_id: str, supabase: Client) -> List[QuizHistoryIt
     except Exception as e:
         logger.error(f"Error fetching quiz history for user {user_id}: {e}")
         raise HTTPException(status_code=500, detail="Failed to fetch quiz history.")
+
+async def delete_quiz(quiz_id: str, user_id: str, supabase: Client):
+    try:
+        # First, verify the quiz belongs to the user
+        response = supabase.table("quizzes").select("id").eq("id", quiz_id).eq("user_id", user_id).single().execute()
+        
+        if not response.data:
+            raise HTTPException(status_code=404, detail="Quiz not found or you don't have permission to delete it.")
+
+        # Call the RPC
+        await supabase.rpc('delete_quiz', {'quiz_id_to_delete': quiz_id}).execute()
+
+    except Exception as e:
+        logger.error(f"Error deleting quiz {quiz_id} for user {user_id}: {e}")
+        raise HTTPException(status_code=500, detail="Failed to delete quiz.")
