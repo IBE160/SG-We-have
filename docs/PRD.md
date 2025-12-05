@@ -43,7 +43,6 @@ Motivated university students frequently struggle with fragmented study processe
 *   FR013: Final Score Summary: The system shall display a final score summary upon quiz completion.
 *   FR014: Post-Quiz Options: The system shall provide options to "Retake same quiz" or "Generate new quiz from same notes" after quiz completion.
 *   FR015: Quiz Progress Bar: The quiz interface shall include a progress bar for user orientation.
-*   FR016: Micro-learning: The system shall offer a "Want to learn more?" option with 1-3 factual sentences for correct answers.
 *   FR017: Skip Question: The system shall allow users to skip irrelevant questions without affecting the score.
 *   FR018: AI Robustness: The AI must generate quizzes effectively from free-form notes, minimizing student effort in structuring.
 *   FR019: Seamless Quiz Connection: The system shall provide clear "Generate Quiz" buttons on both single lecture page and lecture notes overview page.

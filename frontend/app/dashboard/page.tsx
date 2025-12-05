@@ -117,6 +117,10 @@ export default function DashboardPage() {
                 <span className="material-symbols-outlined" style={{fontSize: '24px', fontVariationSettings: "'FILL' 1"}}>collections_bookmark</span>
                 <p className="text-sm font-medium">My Courses</p>
               </Link>
+              <Link href="/dashboard/quizzes" className={sidebarItemClass}>
+                <span className="material-symbols-outlined" style={{fontSize: '24px'}}>history</span>
+                <p className="text-sm font-medium">Quiz History</p>
+              </Link>
             </nav>
           </div>
           <div className="flex flex-col gap-2">

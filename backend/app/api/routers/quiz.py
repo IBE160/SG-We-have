@@ -2,8 +2,8 @@ import logging
 from fastapi import APIRouter, Depends, HTTPException, status
 from app.core.security import get_current_user
 from app.core.database import get_supabase_client
-from app.models.quiz import QuizGenerateRequest, QuizResponse
-from app.services.quiz_service import generate_quiz
+from app.models.quiz import QuizGenerateRequest, QuizResponse, QuizHistoryResponse
+from app.services.quiz_service import generate_quiz, get_quiz_history
 from app.models.quiz_submission import QuizStartResponse, QuizSubmissionRequest, QuizSubmissionResponse, QuizNextRequest, QuizNextResponse, QuizPreviousRequest, QuizPreviousResponse, QuizResultResponse, QuizRetakeRequest
 from app.services.quiz_submission import start_quiz_attempt, submit_answer, get_next_question, get_previous_question, get_quiz_results, retake_quiz
 
@@ -127,22 +127,78 @@ async def get_quiz_results_endpoint(
             raise e
         raise HTTPException(status_code=500, detail="Internal Server Error")
 
-@router.post("/quiz/{quiz_id}/retake", response_model=QuizStartResponse)
-async def retake_quiz_endpoint(
-    quiz_id: str,
-    request: QuizRetakeRequest,
+
+
+@router.get("/quizzes", response_model=QuizHistoryResponse)
+
+async def get_quiz_history_endpoint(
+
     user: dict = Depends(get_current_user)
+
 ):
+
     user_id = user.get("sub")
+
     if not user_id:
+
         raise HTTPException(status_code=401, detail="Invalid user token")
-        
+
+
+
     supabase = get_supabase_client()
+
     
+
     try:
-        return await retake_quiz(quiz_id, user_id, supabase, request.attempt_id)
+
+        return await get_quiz_history(user_id, supabase)
+
     except Exception as e:
-        logger.error(f"Error retaking quiz: {e}")
+
+        logger.error(f"Error getting quiz history: {e}")
+
         if isinstance(e, HTTPException):
+
             raise e
+
+        raise HTTPException(status_code=500, detail="Internal Server Error")
+
+
+
+@router.post("/quiz/{quiz_id}/retake", response_model=QuizStartResponse)
+
+async def retake_quiz_endpoint(
+
+    quiz_id: str,
+
+    request: QuizRetakeRequest,
+
+    user: dict = Depends(get_current_user)
+
+):
+
+    user_id = user.get("sub")
+
+    if not user_id:
+
+        raise HTTPException(status_code=401, detail="Invalid user token")
+
+        
+
+    supabase = get_supabase_client()
+
+    
+
+    try:
+
+        return await retake_quiz(quiz_id, user_id, supabase, request.attempt_id)
+
+    except Exception as e:
+
+        logger.error(f"Error retaking quiz: {e}")
+
+        if isinstance(e, HTTPException):
+
+            raise e
+
         raise HTTPException(status_code=500, detail="Internal Server Error")

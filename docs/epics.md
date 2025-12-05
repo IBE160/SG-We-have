@@ -223,12 +223,6 @@ Each epic includes:
         2.  Clicking "Retake same quiz" starts a new quiz with the identical questions.
         3.  Clicking "Generate new quiz" starts a new quiz with different questions from the same source notes.
         *Fulfills: FR014*
-*   **Story 4.6: Micro-learning Content**
-    *   As a student, I want to see a brief explanation after a correct answer, so that I can reinforce my learning.
-    *   **Acceptance Criteria:**
-        1.  When an answer is marked as correct, a "Want to learn more?" option is displayed.
-        2.  This option reveals 1-3 factual sentences related to the correct answer.
-        *Fulfills: FR016*
 
 ---
 

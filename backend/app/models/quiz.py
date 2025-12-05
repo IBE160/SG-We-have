@@ -1,6 +1,7 @@
 from pydantic import BaseModel, Field, field_validator
 from typing import List
 from uuid import UUID
+from datetime import datetime
 
 # --- AI Output Models ---
 class QuestionGenerated(BaseModel):
@@ -43,3 +44,11 @@ class QuizResponse(BaseModel):
     id: str
     title: str
     questions: List[QuestionResponse]
+
+class QuizHistoryItem(BaseModel):
+    id: str
+    title: str
+    created_at: datetime
+    course_id: str | None
+
+QuizHistoryResponse = List[QuizHistoryItem]
