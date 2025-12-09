@@ -324,12 +324,21 @@ export const updateQuiz = async (quizId: string, title: string): Promise<void> =
   }
 };
 
-export const generateQuiz = async (noteIds: string[], quizLength: number): Promise<any> => {
+export const generateQuiz = async (noteIds: string[], quizLength: number, courseId?: string): Promise<any> => {
   const { data: { session } } = await supabase.auth.getSession();
   const token = session?.access_token;
 
   if (!token) {
     throw new ApiError('Not authenticated', 401);
+  }
+
+  const body: { note_ids: string[], quiz_length: number, course_id?: string } = {
+    note_ids: noteIds,
+    quiz_length: quizLength,
+  };
+
+  if (courseId) {
+    body.course_id = courseId;
   }
 
   const response = await fetch(`${API_BASE_URL}/quiz/generate`, {
@@ -338,7 +347,7 @@ export const generateQuiz = async (noteIds: string[], quizLength: number): Promi
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${token}`,
     },
-    body: JSON.stringify({ note_ids: noteIds, quiz_length: quizLength }),
+    body: JSON.stringify(body),
   });
 
   if (!response.ok) {

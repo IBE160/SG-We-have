@@ -1,27 +1,21 @@
 'use client';
 
 import { FormEvent, useState, useEffect } from 'react';
-import { Note, Course } from '@/lib/api';
+import { Note } from '@/lib/api';
 
 interface QuizConfigModalProps {
   isOpen: boolean;
   onClose: () => void;
   notes: Note[];
-  courses: Course[];
   currentCourseId: string;
   onGenerate: (selectedNoteIds: string[], quizLength: number) => void;
 }
 
-export default function QuizConfigModal({ isOpen, onClose, notes, courses, currentCourseId, onGenerate }: QuizConfigModalProps) {
+export default function QuizConfigModal({ isOpen, onClose, notes, currentCourseId, onGenerate }: QuizConfigModalProps) {
   const [selectedNoteIds, setSelectedNoteIds] = useState<string[]>([]);
   const [quizLength, setQuizLength] = useState<number>(10);
-  const [selectedCourseId, setSelectedCourseId] = useState<string>(currentCourseId);
 
-  useEffect(() => {
-    setSelectedCourseId(currentCourseId);
-  }, [currentCourseId]);
-
-  const filteredNotes = notes.filter(note => note.course_id === selectedCourseId);
+  const filteredNotes = notes.filter(note => note.course_id === currentCourseId);
 
   const handleCheckboxChange = (noteId: string) => {
     setSelectedNoteIds(prev => {
@@ -65,29 +59,6 @@ export default function QuizConfigModal({ isOpen, onClose, notes, courses, curre
         </div>
         
         <form onSubmit={handleSubmit} className="flex flex-col flex-1 overflow-hidden">
-           <div className="mb-4">
-             <label htmlFor="course-selection" className="block text-sm font-medium text-gray-700 mb-1">
-               Select Course
-             </label>
-             <div className="relative">
-                <select
-                  id="course-selection"
-                  value={selectedCourseId}
-                  onChange={(e) => setSelectedCourseId(e.target.value)}
-                  className="block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md border appearance-none"
-                >
-                  {courses.map((course) => (
-                    <option key={course.id} value={course.id}>
-                      {course.title}
-                    </option>
-                  ))}
-                </select>
-                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-black z-10">
-                    <svg className="fill-current h-4 w-4" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M5.516 7.548c.436-.446 1.043-.481 1.576 0L10 10.405l2.908-2.857c.533-.481 1.141-.446 1.574 0 .436.445.408 1.197 0 1.642l-3.417 3.356c-.27.267-.631.408-1.002.408s-.732-.141-1.002-.408L5.516 9.19c-.408-.445-.436-1.197 0-1.642z"/></svg>
-                </div>
-              </div>
-           </div>
-
            <div className="flex justify-between items-center mb-2">
               <label className="block text-sm font-medium text-gray-700">Select Notes</label>
               <button 

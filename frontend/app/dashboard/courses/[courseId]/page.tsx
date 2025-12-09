@@ -20,6 +20,8 @@ export default function CourseDetailsPage() {
 
   const [course, setCourse] = useState<Course | null>(null);
   const [notes, setNotes] = useState<Note[]>([]);
+  const [allNotes, setAllNotes] = useState<Note[]>([]);
+  const [courses, setCourses] = useState<Course[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -34,10 +36,9 @@ export default function CourseDetailsPage() {
     setIsLoading(true);
     setError(null);
     try {
-      // Fetch courses to find the current one (since we don't have getCourseById yet)
-      // In a real app, we'd likely fetch these in parallel, but we need the course first to confirm ownership/existence
-      const courses = await getCourses();
-      const foundCourse = courses.find(c => c.id === id);
+      const coursesData = await getCourses();
+      setCourses(coursesData);
+      const foundCourse = coursesData.find(c => c.id === id);
       
       if (!foundCourse) {
         setError('Course not found or access denied.');
@@ -45,9 +46,13 @@ export default function CourseDetailsPage() {
       }
       setCourse(foundCourse);
 
-      // Fetch notes
+      // Fetch notes for the current course
       const notesData = await getNotes(id);
       setNotes(notesData);
+      
+      // Fetch all notes for the quiz modal
+      const allNotesData = await Promise.all(coursesData.map(c => getNotes(c.id)));
+      setAllNotes(allNotesData.flat());
       
     } catch (err) {
       if (err instanceof ApiError) {
@@ -119,9 +124,9 @@ export default function CourseDetailsPage() {
     }
   };
 
-  const handleGenerateQuiz = async (selectedNoteIds: string[], quizLength: number) => {
+  const handleGenerateQuiz = async (selectedNoteIds: string[], quizLength: number, courseId: string) => {
     try {
-      const quiz = await generateQuiz(selectedNoteIds, quizLength);
+      const quiz = await generateQuiz(selectedNoteIds, quizLength, courseId);
       router.push(`/quiz/${quiz.id}`);
     } catch (err) {
       console.error('Failed to generate quiz:', err);
@@ -152,12 +157,12 @@ export default function CourseDetailsPage() {
             </div>
           {course && (
             <div className="flex space-x-4">
-             <Link
-                href="/quiz"
+             <button
+                onClick={() => setIsQuizModalOpen(true)}
                 className="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition-colors"
              >
                Generate Quiz
-             </Link>
+             </button>
              <button
                onClick={() => setIsModalOpen(true)}
                className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors"
@@ -245,8 +250,9 @@ export default function CourseDetailsPage() {
           <QuizConfigModal
             isOpen={isQuizModalOpen}
             onClose={() => setIsQuizModalOpen(false)}
-            notes={notes}
-            onGenerate={handleGenerateQuiz}
+            notes={allNotes}
+            currentCourseId={course.id}
+            onGenerate={(selectedNoteIds, quizLength) => handleGenerateQuiz(selectedNoteIds, quizLength, course.id)}
           />
           
           <DeleteConfirmationModal
