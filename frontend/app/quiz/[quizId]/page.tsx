@@ -145,16 +145,19 @@ export default function QuizPage() {
       setError(null);
       try {
           const data = await retakeQuiz(quizId, quizState.attempt_id);
-          setQuizState(data);
-          setCurrentQuestion(data.first_question);
-          setCurrentQuestionIndex(data.current_question_index);
           
-          // Reset states
+          // Reset states FIRST
           setIsComplete(false);
           setQuizResults(null);
           setSelectedOptionId(null);
           setSubmissionResult(null);
           setIsSubmitting(false);
+
+          // THEN set new data
+          setQuizState(data);
+          setCurrentQuestion(data.first_question);
+          setCurrentQuestionIndex(data.current_question_index);
+          
       } catch (err: any) {
           console.error('Failed to retake quiz:', err);
           setError(err.message || 'Failed to retake quiz');
@@ -245,6 +248,7 @@ export default function QuizPage() {
           
           <div className="md:col-span-1"> {/* QuizQuestionDisplay in center column */}
             <QuizQuestionDisplay 
+              key={`${quizState.attempt_id}-${currentQuestion.id}`}
               question={currentQuestion}
               onAnswerSelect={handleAnswerSelect}
               selectedOptionId={selectedOptionId}
