@@ -45,6 +45,9 @@ class QuizResponse(BaseModel):
     title: str
     questions: List[QuestionResponse]
 
+class QuizUpdateRequest(BaseModel):
+    title: str
+
 class QuizHistoryItem(BaseModel):
     id: str
     title: str

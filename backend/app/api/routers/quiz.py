@@ -2,8 +2,8 @@ import logging
 from fastapi import APIRouter, Depends, HTTPException, status, Response
 from app.core.security import get_current_user
 from app.core.database import get_supabase_client
-from app.models.quiz import QuizGenerateRequest, QuizResponse, QuizHistoryResponse
-from app.services.quiz_service import generate_quiz, get_quiz_history, delete_quiz
+from app.models.quiz import QuizGenerateRequest, QuizResponse, QuizHistoryResponse, QuizUpdateRequest # Import QuizUpdateRequest
+from app.services.quiz_service import generate_quiz, get_quiz_history, delete_quiz, update_quiz # Import update_quiz
 from app.models.quiz_submission import QuizStartResponse, QuizSubmissionRequest, QuizSubmissionResponse, QuizNextRequest, QuizNextResponse, QuizPreviousRequest, QuizPreviousResponse, QuizResultResponse, QuizRetakeRequest
 from app.services.quiz_submission import start_quiz_attempt, submit_answer, get_next_question, get_previous_question, get_quiz_results, retake_quiz
 
@@ -181,6 +181,28 @@ async def retake_quiz_endpoint(
         return await retake_quiz(quiz_id, user_id, supabase, request.attempt_id)
     except Exception as e:
         logger.error(f"Error retaking quiz: {e}")
+        if isinstance(e, HTTPException):
+            raise e
+        raise HTTPException(status_code=500, detail="Internal Server Error")
+
+
+@router.put("/quiz/{quiz_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def update_quiz_endpoint(
+    quiz_id: str,
+    request: QuizUpdateRequest,
+    user: dict = Depends(get_current_user)
+):
+    user_id = user.get("sub")
+    if not user_id:
+        raise HTTPException(status_code=401, detail="Invalid user token")
+
+    supabase = get_supabase_client()
+    
+    try:
+        await update_quiz(quiz_id, request.title, user_id, supabase)
+        return Response(status_code=status.HTTP_204_NO_CONTENT)
+    except Exception as e:
+        logger.error(f"Error updating quiz {quiz_id}: {e}")
         if isinstance(e, HTTPException):
             raise e
         raise HTTPException(status_code=500, detail="Internal Server Error")
