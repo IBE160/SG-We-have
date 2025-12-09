@@ -26,6 +26,7 @@ export default function QuizPage() {
   const [submissionResult, setSubmissionResult] = useState<QuizSubmissionResponse | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isFetchingNext, setIsFetchingNext] = useState(false);
+  const [isChangingQuestion, setIsChangingQuestion] = useState(false);
 
   useEffect(() => {
     if (quizId) {
@@ -69,9 +70,8 @@ export default function QuizPage() {
   const handleNextQuestion = async () => {
     if (!quizState || isFetchingNext) return;
     
-    setSubmissionResult(null);
-    setSelectedOptionId(null);
     setIsFetchingNext(true);
+    setIsChangingQuestion(true);
 
     try {
       const nextData = await fetchNextQuestion(quizId, { attempt_id: quizState.attempt_id });
@@ -108,12 +108,14 @@ export default function QuizPage() {
       alert('Failed to load next question.');
     } finally {
       setIsFetchingNext(false);
+      setIsChangingQuestion(false);
     }
   };
 
   const handlePreviousQuestion = async () => {
     if (!quizState || currentQuestionIndex <= 0) return;
 
+    setIsChangingQuestion(true);
     try {
       const prevData = await fetchPreviousQuestion(quizId, { attempt_id: quizState.attempt_id });
       
@@ -132,6 +134,8 @@ export default function QuizPage() {
     } catch (err) {
       console.error('Failed to fetch previous question:', err);
       alert('Failed to load previous question.');
+    } finally {
+      setIsChangingQuestion(false);
     }
   };
 
@@ -234,20 +238,21 @@ export default function QuizPage() {
           selectedOptionId={selectedOptionId}
           isAnswered={!!submissionResult}
           submissionResult={submissionResult}
+          isLoading={isChangingQuestion}
         />
 
         <div className="mt-8 flex justify-between">
           <button
             className="px-6 py-3 bg-gray-200 text-gray-800 rounded-lg font-medium hover:bg-gray-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             onClick={handlePreviousQuestion}
-            disabled={currentQuestionIndex === 0}
+            disabled={currentQuestionIndex === 0 || isChangingQuestion}
           >
             Previous
           </button>
           <button
             className="px-6 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             onClick={handleNextQuestion}
-            disabled={!submissionResult || isFetchingNext}
+            disabled={!submissionResult || isFetchingNext || isChangingQuestion}
           >
             {currentQuestionIndex + 1 === quizState.total_questions ? 'Finish Quiz' : 'Next Question'}
           </button>
