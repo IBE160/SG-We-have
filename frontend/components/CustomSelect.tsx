@@ -38,7 +38,7 @@ export default function CustomSelect<T extends Option>({
           {label}
         </label>
       )}
-      <Listbox value={value ?? undefined} onChange={onChange} disabled={disabled}>
+      <Listbox value={value} onChange={onChange} disabled={disabled}>
         <div className="relative mt-1">
           <ListboxButton className={clsx(
             "relative w-full cursor-default rounded-md bg-white py-1.5 pl-3 pr-10 text-left border border-border-light shadow-sm focus:outline-none focus:ring-1 focus:ring-accent-blue focus:border-accent-blue sm:text-sm",

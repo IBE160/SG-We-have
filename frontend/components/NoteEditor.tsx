@@ -156,7 +156,7 @@ const NoteEditor = ({ initialContent, onUpdate, onSave, lastSavedAt }: NoteEdito
 
   // Update content if initialContent changes (e.g. loaded from API)
   useEffect(() => {
-    if (editor && initialContent && editor.getHTML() !== initialContent) {
+    if (editor && initialContent !== undefined && initialContent !== null && editor.getHTML() !== initialContent) {
       // Only update if content is different to avoid cursor jumping or loops
       // Note: This comparison is simple and might not cover all cases, but works for initial load
        editor.commands.setContent(initialContent)
