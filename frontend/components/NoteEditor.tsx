@@ -143,7 +143,7 @@ const NoteEditor = ({ initialContent, onUpdate, onSave, lastSavedAt }: NoteEdito
     content: initialContent || '',
     editorProps: {
       attributes: {
-        class: 'prose prose-sm m-5 focus:outline-none max-w-none',
+        class: 'prose prose-sm outline-none max-w-none min-h-[500px]',
       },
     },
     onUpdate: ({ editor }) => {

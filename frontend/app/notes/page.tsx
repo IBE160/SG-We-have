@@ -280,7 +280,7 @@ export default function NotesPage() {
               </div>
 
               {/* Rich Text Editor */}
-              <div className="relative flex-1 bg-white rounded-xl border border-border-light shadow-sm min-h-[500px]">
+              <div className="relative flex-1">
                  <NoteEditor 
                    initialContent={noteContent} 
                    onSave={handleSaveNote}
