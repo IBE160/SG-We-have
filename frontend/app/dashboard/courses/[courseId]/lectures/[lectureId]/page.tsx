@@ -140,6 +140,7 @@ export default function LectureDetailsPage() {
         isOpen={isQuizModalOpen}
         onClose={() => setIsQuizModalOpen(false)}
         notes={allLectures}
+        currentCourseId={courseId || ''}
         onGenerate={handleGenerateQuiz}
       />
     </div>
