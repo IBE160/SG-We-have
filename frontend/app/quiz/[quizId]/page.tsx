@@ -232,8 +232,18 @@ export default function QuizPage() {
           />
         </div>
 
-        <div className="flex flex-col md:flex-row gap-4"> {/* Flex container for side-by-side layout */}
-          <div className="flex-1"> {/* QuizQuestionDisplay takes up remaining space */}
+        <div className="grid grid-cols-1 md:grid-cols-[1fr_2fr_1fr] gap-4 items-start"> {/* Grid container for layout */}
+          <div className="flex justify-start md:justify-end"> {/* Previous button column */}
+            <button
+              className="px-6 py-3 bg-gray-200 text-gray-800 rounded-lg font-medium hover:bg-gray-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed w-full md:w-auto"
+              onClick={handlePreviousQuestion}
+              disabled={currentQuestionIndex === 0 || isChangingQuestion}
+            >
+              Previous
+            </button>
+          </div>
+          
+          <div className="md:col-span-1"> {/* QuizQuestionDisplay in center column */}
             <QuizQuestionDisplay 
               question={currentQuestion}
               onAnswerSelect={handleAnswerSelect}
@@ -244,16 +254,9 @@ export default function QuizPage() {
             />
           </div>
 
-          <div className="md:w-48 flex flex-row md:flex-col justify-between md:justify-start gap-4 mt-4 md:mt-0"> {/* Navigation buttons */}
+          <div className="flex justify-end md:justify-start"> {/* Next button column */}
             <button
-              className="px-6 py-3 bg-gray-200 text-gray-800 rounded-lg font-medium hover:bg-gray-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed w-1/2 md:w-full"
-              onClick={handlePreviousQuestion}
-              disabled={currentQuestionIndex === 0 || isChangingQuestion}
-            >
-              Previous
-            </button>
-            <button
-              className="px-6 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed w-1/2 md:w-full"
+              className="px-6 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed w-full md:w-auto"
               onClick={handleNextQuestion}
               disabled={!submissionResult || isFetchingNext || isChangingQuestion}
             >
