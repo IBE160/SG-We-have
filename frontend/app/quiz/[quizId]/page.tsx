@@ -212,7 +212,7 @@ export default function QuizPage() {
   }
 
   return (
-    <main className="flex min-h-screen flex-col items-center p-4 md:p-24 bg-background-light">
+    <main className="flex min-h-screen flex-col items-center p-4 md:pt-12 bg-background-light">
       <div className="w-full max-w-5xl"> {/* Increased max-width to accommodate side-by-side layout */}
         <div className="mb-6">
           <button 
@@ -232,7 +232,7 @@ export default function QuizPage() {
           />
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-[1fr_2fr_1fr] gap-4 items-start"> {/* Grid container for layout */}
+        <div className="grid grid-cols-1 md:grid-cols-[1fr_2fr_1fr] gap-4 items-center"> {/* Grid container for layout */}
           <div className="flex justify-start md:justify-end"> {/* Previous button column */}
             <button
               className="px-6 py-3 bg-gray-200 text-gray-800 rounded-lg font-medium hover:bg-gray-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed w-full md:w-auto"
