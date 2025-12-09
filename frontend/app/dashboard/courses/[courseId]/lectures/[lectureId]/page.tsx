@@ -1,21 +1,6 @@
-'use client';
-
-import { useState, useEffect } from 'react';
-import Link from 'next/link';
-import { useParams, useRouter } from 'next/navigation';
-import { getLectures, getLectureNotes, updateLectureNotes, generateQuiz, Lecture, Note, ApiError } from '@/lib/api';
-import NoteEditor from '@/components/NoteEditor';
-import QuizConfigModal from '@/components/QuizConfigModal';
-
-export default function LectureDetailsPage() {
-  const params = useParams();
-  const router = useRouter();
-  // Use type assertion or check for array to satisfy TypeScript
-  const courseId = Array.isArray(params.courseId) ? params.courseId[0] : params.courseId;
-  const lectureId = Array.isArray(params.lectureId) ? params.lectureId[0] : params.lectureId;
-
   const [lecture, setLecture] = useState<Lecture | null>(null);
-  const [allLectures, setAllLectures] = useState<Lecture[]>([]);
+  const [allNotes, setAllNotes] = useState<Note[]>([]);
+  const [courses, setCourses] = useState<Course[]>([]);
   const [note, setNote] = useState<Note | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -28,11 +13,14 @@ export default function LectureDetailsPage() {
       setError(null);
 
       try {
-        // 1. Get lecture details (title)
-        // We fetch all lectures for the course and find the specific one
-        const lectures = await getLectures(courseId);
-        setAllLectures(lectures);
-        const foundLecture = lectures.find(l => l.id === lectureId);
+        const coursesData = await getCourses();
+        setCourses(coursesData);
+
+        const allNotesData = await Promise.all(coursesData.map(c => getLectures(c.id)));
+        const flattenedNotes = allNotesData.flat();
+        setAllNotes(flattenedNotes);
+
+        const foundLecture = flattenedNotes.find(l => l.id === lectureId);
 
         if (!foundLecture) {
           setError('Note not found or access denied.');
@@ -40,7 +28,6 @@ export default function LectureDetailsPage() {
         }
         setLecture(foundLecture);
 
-        // 2. Get notes
         const noteData = await getLectureNotes(lectureId);
         setNote(noteData);
 
@@ -139,8 +126,9 @@ export default function LectureDetailsPage() {
       <QuizConfigModal
         isOpen={isQuizModalOpen}
         onClose={() => setIsQuizModalOpen(false)}
-        notes={allLectures}
-        currentCourseId={courseId || ''}
+        notes={allNotes}
+        currentCourseId={courseId}
+
         onGenerate={handleGenerateQuiz}
       />
     </div>
