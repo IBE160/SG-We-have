@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<story-context story-id="3-5">
+    <story-definition>
+        <title>AI Fact-Checking for Accuracy</title>
+        <user-story>
+            As a Student,
+            I want the AI to fact-check questions and answers against external sources,
+            so that I can trust the accuracy of the quiz content.
+        </user-story>
+        <acceptance-criteria>
+            <criterion id="1">The AI integrates with an external knowledge source (Google Search) during the quiz generation process.</criterion>
+            <criterion id="2">The system uses the external source to verify the factual accuracy of generated questions and answers.</criterion>
+            <criterion id="3">Generated questions that cannot be verified or are found to be inaccurate are regenerated or discarded.</criterion>
+            <criterion id="4">The response time remains within acceptable limits (e.g., &lt; 30 seconds for a 10-question quiz) despite the additional verification step.</criterion>
+        </acceptance-criteria>
+        <development-tasks>
+            <task id="1" ac-ref="1">Configuration: Enable and configure the Google Search tool (or equivalent) for the QuizAgent in backend/app/agents/quiz_agent.py.</task>
+            <task id="2" ac-ref="1">Implementation: Update the QuizAgent initialization to include the search tool in the deps or tools list.</task>
+            <task id="3" ac-ref="2,3">Prompt Engineering: Update the system prompt in quiz_agent.py to explicitly instruct the model to use the search tool to verify facts before finalizing the question, especially for specific dates, definitions, or scientific constants.</task>
+            <task id="4" ac-ref="2">Model Update (Optional): Consider adding a verification_status or source_reference field to the QuizQuestion Pydantic model in backend/app/models/quiz.py if strictly required for debugging/UI, though not explicitly asked in AC.</task>
+            <task id="5" ac-ref="N/A">Refactor: Replace print() statements with standard python logging in backend/app/services/quiz_service.py (Legacy 3.4 item).</task>
+            <task id="6" ac-ref="N/A">Refactor: Sanitize 500 error responses in backend/app/services/quiz_service.py to hide raw exception details (Legacy 3.4 item).</task>
+            <task id="7" ac-ref="1,2">Test: Create unit tests in backend/tests/test_quiz_agent.py that mock the search tool response to verify the agent calls the tool when appropriate.</task>
+            <task id="8" ac-ref="3">Test: Verify that the agent handles search tool errors (e.g., timeout, rate limit) gracefully (fallback to internal knowledge with a warning or retry).</task>
+            <task id="9" ac-ref="2">Test: Manual review of generated quizzes to confirm fact-checking effectiveness (e.g., checking against known facts).</task>
+            <task id="10" ac-ref="4">Test: Performance Check: Measure the time impact of adding search/verification and optimize (e.g., parallel calls or targeted verification) if it exceeds the 30s threshold.</task>
+        </development-tasks>
+    </story-definition>
+
+    <documentation>
+        <doc-snippet path="docs/PRD.md" description="Functional Requirements for AI Accuracy">
+            <![CDATA[
+            * FR008: Quiz Quality: AI-generated quizzes shall be relevant, understandable, honest, supportive, straight to the point, and fact-based.
+            * FR009: AI Accuracy: The AI shall fact-check online and use context-relevant online information to ensure questions are accurate and contextually sound.
+            * FR018: AI Robustness: The AI must generate quizzes effectively from free-form notes, minimizing student effort in structuring.
+            ]]>
+        </doc-snippet>
+        <doc-snippet path="docs/sprint-artifacts/tech-spec-epic-3.md" description="Epic 3 Technical Specs for Story 3.5">
+            <![CDATA[
+            **Story 3.5: AI Fact-Checking for Accuracy**
+            1.  During quiz generation, the AI integrates with external knowledge sources to verify factual accuracy.
+            2.  All generated questions and their respective answers are factually correct according to the external sources.
+
+            **Detailed Design - quiz_agent.py:**
+            -   **Responsibilities:** ... Includes logic for fact-checking (FR009).
+            -   **AI Interaction:** `quiz_agent` handles fact-checking (FR009) by potentially making additional calls to external sources or the LLM itself with specific fact-checking prompts.
+
+            **Risks:**
+            -   **Fact-Checking Limitations:** The effectiveness and reliability of the AI's "fact-checking online" capability (FR009) might be limited, potentially introducing inaccuracies or requiring significant prompt engineering.
+            ]]>
+        </doc-snippet>
+        <doc-snippet path="docs/architecture.md" description="AI Agent Implementation Guidelines">
+            <![CDATA[
+            ## 8. AI Agent Implementation Guidelines
+            1.  **Check `architecture.md` first**. If you are unsure where a file goes, look at the Source Tree section.
+            4.  **Pydantic AI**. Use `pydantic-ai` for all LLM interactions. Define clear Pydantic models for outputs.
+            5.  **Prompts in DB**. Do not write long prompt strings in Python files. Create a migration/seed script to insert them into the `system_prompts` table.
+            ]]>
+        </doc-snippet>
+    </documentation>
+
+    <technical-context>
+        <architecture>
+            <summary>
+                The system uses a Service-Agent pattern. `quiz_service.py` orchestrates the flow, while `quiz_agent.py` handles AI interactions using `pydantic-ai`.
+                This story introduces external tool use (Google Search) to the Agent.
+            </summary>
+            <constraints>
+                <constraint>Response time must remain acceptable (&lt;30s for 10 questions).</constraint>
+                <constraint>Must use `pydantic-ai` tool definition patterns.</constraint>
+            </constraints>
+            <patterns>
+                <pattern>Service-Agent Pattern</pattern>
+                <pattern>Pydantic AI Tool Usage</pattern>
+            </patterns>
+        </architecture>
+        <existing-code-references>
+            <file path="backend/app/agents/quiz_agent.py">
+                <description>Existing Agent definition to be modified with tools.</description>
+                <relevant-symbols>QuizAgent, generate_quiz_content, system_prompt</relevant-symbols>
+            </file>
+            <file path="backend/app/services/quiz_service.py">
+                <description>Orchestrator service to be refactored for logging/error handling.</description>
+                <relevant-symbols>generate_quiz</relevant-symbols>
+            </file>
+            <file path="backend/tests/test_quiz_agent.py">
+                <description>Existing tests to be extended.</description>
+            </file>
+        </existing-code-references>
+        <libraries>
+            <library name="pydantic-ai" usage="Agent framework and tool definition" />
+            <library name="google-generativeai" usage="LLM provider (Gemini)" />
+        </libraries>
+    </technical-context>
+
+    <implementation-plan>
+        <step n="1">Refactor `quiz_service.py` to fix legacy issues (logging, error handling).</step>
+        <step n="2">Modify `quiz_agent.py` to add Google Search tool dependency.</step>
+        <step n="3">Update `quiz_agent.py` system prompt to enforce fact-checking.</step>
+        <step n="4">Update `test_quiz_agent.py` with mock tool calls.</step>
+        <step n="5">Verify performance impact.</step>
+    </implementation-plan>
+</story-context>

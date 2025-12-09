@@ -1,0 +1,151 @@
+<story-context id=".bmad/bmm/workflows/4-implementation/story-context/template" v="1.0">
+  <metadata>
+    <epicId>2</epicId>
+    <storyId>1</storyId>
+    <title>Access Note Editor</title>
+    <status>drafted</status>
+    <generatedAt>2025-12-02</generatedAt>
+    <generator>BMAD Story Context Workflow</generator>
+    <sourceStoryPath>docs/sprint-artifacts/epic-2/story-2-1-access-note-editor/2-1-access-note-editor.md</sourceStoryPath>
+  </metadata>
+
+  <story>
+    <asA>student</asA>
+    <iWant>to access a note-taking editor for a specific lecture</iWant>
+    <soThat>I can begin writing my notes.</soThat>
+    <tasks>
+### Frontend Tasks
+- [ ] **Install Editor Dependencies** (AC: 2.1.2)
+  - Install `@tiptap/react`, `@tiptap/starter-kit`, `lucide-react`.
+- [ ] **Implement NoteEditor Component** (AC: 2.1.2)
+  - Create `frontend/components/NoteEditor.tsx`.
+  - Initialize Tiptap `useEditor` with StarterKit.
+  - Render the editor content area.
+- [ ] **Implement Lecture Detail Page** (AC: 2.1.1)
+  - Create `frontend/app/dashboard/courses/[courseId]/lectures/[lectureId]/page.tsx`.
+  - Fetch lecture details (title) and notes content.
+  - Render `NoteEditor` component.
+- [ ] **Integrate Get Notes API** (AC: 2.1.3)
+  - Update `frontend/lib/api.ts` with `getLectureNotes(lectureId)`.
+  - Handle 404 (no notes) gracefully by passing `null` or empty string to editor.
+
+### Backend Tasks
+- [ ] **Implement Notes Router (GET)** (AC: 2.1.3)
+  - Create `backend/app/api/routers/notes.py`.
+  - `GET /api/v1/lectures/{lecture_id}/notes`: Retrieve notes for a lecture.
+  - **Security:** Verify `lecture_id` belongs to a course owned by the current user.
+  - Define Pydantic model for Note response.
+  - Register router in `main.py`.
+- [ ] **Database Schema (Notes)** (AC: 2.1.3)
+  - Ensure `notes` table exists (Reference Tech Spec or Architecture).
+  - If not, create migration/model.
+
+### Testing Tasks
+- [ ] **Backend Integration Tests** (AC: 2.1.3)
+  - Test `GET` notes for owned lecture -> 200 OK or 404 Not Found (if not created yet).
+  - Test `GET` notes for unowned lecture -> 403 Forbidden.
+- [ ] **Frontend Component Test** (AC: 2.1.2)
+  - Verify `NoteEditor` renders without crashing.
+</tasks>
+  </story>
+
+  <acceptanceCriteria>
+### AC 2.1.1: Lecture Detail View
+- [ ] Clicking a lecture from the course list opens a dedicated view/page (e.g., `/dashboard/courses/[courseId]/lectures/[lectureId]`).
+- [ ] The page displays the lecture title and context.
+
+### AC 2.1.2: Editor Visibility
+- [ ] A rich text editor surface is visible on the page.
+- [ ] The editor is ready for text input.
+
+### AC 2.1.3: Load Existing Notes
+- [ ] If notes were previously saved for this lecture, the content is loaded into the editor.
+- [ ] If no notes exist, the editor starts empty (or with placeholder text).
+</acceptanceCriteria>
+
+  <artifacts>
+    <docs>
+      <doc>
+        <path>docs/sprint-artifacts/tech-spec-epic-2.md</path>
+        <title>Epic Technical Specification: Core Note-Taking Experience</title>
+        <section>Detailed Design</section>
+        <snippet>
+**Services and Modules**
+Frontend: EditorComponent - Wraps Tiptap instance, handles toolbar state.
+Backend: NoteService - Handles business logic for upserting notes.
+
+**APIs and Interfaces**
+`GET /api/v1/lectures/{lecture_id}/notes`
+Purpose: Retrieve the notes for a specific lecture.
+Response: 200 OK: `{ "data": { "id": "...", "content": "...", "updated_at": "..." } }`, 404 Not Found (If no notes exist).
+        </snippet>
+      </doc>
+      <doc>
+        <path>docs/architecture.md</path>
+        <title>Scale Adaptive Architecture: AI-Powered Student Helper</title>
+        <section>6. Epic to Architecture Mapping</section>
+        <snippet>
+Epic 2: Note Taking | `Editor` (TipTap/Quill), `NoteView` | `lectures.py`, `notes.py` | `lectures`, `notes`
+        </snippet>
+      </doc>
+      <doc>
+        <path>docs/architecture.md</path>
+        <title>Scale Adaptive Architecture: AI-Powered Student Helper</title>
+        <section>4.1. Data Flow Pattern</section>
+        <snippet>
+Frontend calls FastAPI Backend for ALL data. Frontend MUST include the `Authorization: Bearer <token>` header. Backend validates JWT.
+        </snippet>
+      </doc>
+    </docs>
+    <code>
+      <codeItem>
+        <path>backend/app/api/routers/lectures.py</path>
+        <kind>router</kind>
+        <symbol>verify_course_ownership</symbol>
+        <lines>16-33</lines>
+        <reason>Reusable security logic for ownership verification. Similar logic needed for notes (verify lecture -> course -> user).</reason>
+      </codeItem>
+      <codeItem>
+        <path>frontend/components</path>
+        <kind>component</kind>
+        <symbol>CreateLectureModal.tsx</symbol>
+        <lines>N/A</lines>
+        <reason>Example of frontend component structure and API integration patterns.</reason>
+      </codeItem>
+    </code>
+    <dependencies>
+      <dep key="node">@tiptap/react, @tiptap/starter-kit, lucide-react (To be installed)</dep>
+      <dep key="python">fastapi, pydantic, supabase</dep>
+    </dependencies>
+  </artifacts>
+
+  <constraints>
+    <constraint>Frontend never queries the Database directly.</constraint>
+    <constraint>Backend MUST verify ownership before returning data.</constraint>
+    <constraint>Store notes as HTML string for MVP (per Tech Spec).</constraint>
+    <constraint>Use strict typing in `api.ts` and frontend components.</constraint>
+  </constraints>
+  <interfaces>
+    <interface>
+      <name>GET /api/v1/lectures/{lecture_id}/notes</name>
+      <kind>REST Endpoint</kind>
+      <signature>GET /api/v1/lectures/{lecture_id}/notes</signature>
+      <path>backend/app/api/routers/notes.py</path>
+    </interface>
+    <interface>
+      <name>verify_course_ownership</name>
+      <kind>function</kind>
+      <signature>verify_course_ownership(course_id: str, user_id: str, supabase) -> bool</signature>
+      <path>backend/app/api/routers/lectures.py</path>
+    </interface>
+  </interfaces>
+  <tests>
+    <standards>Backend tests use `pytest` and `TestClient`. Frontend tests are manual for MVP components, ensuring rendering and basic interactions.</standards>
+    <locations>backend/tests</locations>
+    <ideas>
+      <idea>Test GET notes returns 404 for valid lecture with no notes (handled by frontend)</idea>
+      <idea>Test GET notes returns 403 for lecture belonging to another user's course</idea>
+      <idea>Test NoteEditor component mounts correctly with empty content</idea>
+    </ideas>
+  </tests>
+</story-context>

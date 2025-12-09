@@ -8,12 +8,12 @@ export default function AppHeader() {
 
   return (
     <header className="flex items-center justify-between whitespace-nowrap border-b border-solid border-border-light px-10 py-4 bg-white">
-      <div className="flex items-center gap-3">
+      <Link href="/dashboard" className="flex items-center gap-3 cursor-pointer">
         <div className="flex items-center justify-center rounded-lg bg-accent-blue size-10">
           <span className="material-symbols-outlined text-white" style={{fontSize: '24px'}}>school</span>
         </div>
         <h2 className="text-text-primary text-xl font-bold leading-tight">StudyTool</h2>
-      </div>
+      </Link>
       <div className="flex flex-1 justify-end gap-8">
         <nav className="flex items-center gap-9">
           <Link className="text-text-primary text-sm font-medium leading-normal hover:text-accent-blue transition-colors" href="/dashboard">Dashboard</Link>

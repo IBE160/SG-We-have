@@ -143,17 +143,14 @@ const NoteEditor = ({ initialContent, onUpdate, onSave, lastSavedAt }: NoteEdito
     content: initialContent || '',
     editorProps: {
       attributes: {
-        class: 'prose prose-sm m-5 focus:outline-none max-w-none',
+        class: 'prose prose-sm outline-none max-w-none min-h-[500px]',
       },
     },
     onUpdate: ({ editor }) => {
       if (onUpdate) {
         onUpdate(editor.getHTML())
       }
-      // Reset success status on edit so user knows they need to save again
-      if (saveStatus === 'success') {
-        setSaveStatus('idle');
-      }
+      setSaveStatus((prev) => (prev === 'success' || prev === 'error' ? 'idle' : prev))
     },
   })
 

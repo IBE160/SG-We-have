@@ -1,0 +1,153 @@
+<story-context id="3-4-ai-generates-multiple-choice-questions" v="1.0">
+  <metadata>
+    <epicId>3</epicId>
+    <storyId>4</storyId>
+    <title>AI Generates Multiple-Choice Questions</title>
+    <status>ready-for-dev</status>
+    <generatedAt>2025-12-03</generatedAt>
+    <generator>BMAD Story Context Workflow</generator>
+    <sourceStoryPath>docs/sprint-artifacts/epic-3/story-3-4/3-4-ai-generates-multiple-choice-questions.md</sourceStoryPath>
+  </metadata>
+
+  <story>
+    <asA>Student</asA>
+    <iWant>the AI to generate multiple-choice questions based on my lecture notes</iWant>
+    <soThat>I can test my knowledge with relevant and accurately structured questions.</soThat>
+    <tasks>
+### Backend Tasks
+- [ ] **Define Pydantic Models** (AC: 3.4.2, 3.4.4)
+  - Create/Update `backend/app/models/quiz.py`.
+  - Define `Question` model: `question_text` (str), `options` (List[str], len=4), `correct_answer_index` (int), `explanation` (str).
+  - Define `Quiz` model: `title` (str), `questions` (List[Question]).
+- [ ] **Implement Quiz Agent** (AC: 3.4.1, 3.4.5)
+  - Create/Update `backend/app/core/quiz_agent.py`.
+  - Implement class `QuizAgent`.
+  - Method `generate_quiz(notes: str, num_questions: int) -> Quiz`.
+  - Use `pydantic-ai` or direct `google-generativeai` with JSON mode to interact with Gemini 2.5 Flash.
+  - Construct prompt incorporating the provided lecture notes.
+- [ ] **Integrate Service with Agent** (AC: 3.4.5)
+  - Update `backend/app/core/quiz_service.py`.
+  - In `generate_quiz` method, retrieve notes from DB.
+  - Fetch prompt template from `system_prompts` table (or use default if missing).
+  - Call `QuizAgent.generate_quiz`.
+  - Store the resulting `Quiz` object to the database.
+
+### Testing Tasks
+- [ ] **Unit Test: Quiz Agent**
+  - Create `backend/tests/test_quiz_agent.py`.
+  - Mock the LLM response.
+  - Verify `generate_quiz` parses the mocked JSON into the `Quiz` Pydantic model.
+  - Test error handling (malformed JSON, API error).
+- [ ] **Integration Test: Quiz Service**
+  - Create/Update `backend/tests/test_quiz_service.py`.
+  - Mock DB calls for notes.
+  - Mock `QuizAgent` (don't call real AI in service tests).
+  - Verify service orchestration: Get Notes -> Call Agent -> Save Quiz.
+</tasks>
+  </story>
+
+  <acceptanceCriteria>
+### AC 3.4.1: Process Notes
+- [ ] The AI processes the content of the selected lecture notes.
+- [ ] If notes are insufficient/empty, the system returns a meaningful error.
+
+### AC 3.4.2: Multiple-Choice Format
+- [ ] All generated questions are in a multiple-choice format.
+- [ ] The output strictly adheres to the defined JSON/Pydantic schema.
+
+### AC 3.4.3: Relevance
+- [ ] Generated questions are directly derived from the provided notes content (verified via manual review/prompt engineering).
+
+### AC 3.4.4: Correctness & Structure
+- [ ] Each question has exactly 4 options.
+- [ ] Each question has exactly one correct answer index (0-3).
+- [ ] Plausible distractors are included.
+
+### AC 3.4.5: AI Integration
+- [ ] The system uses the Google Gemini 2.5 Flash model.
+- [ ] API keys and secrets are handled securely via environment variables.
+</acceptanceCriteria>
+
+  <artifacts>
+    <docs>
+      <doc>
+        <path>docs/sprint-artifacts/tech-spec-epic-3.md</path>
+        <title>Epic Technical Specification: AI-Powered Quiz Generation</title>
+        <section>Detailed Design</section>
+        <snippet>Backend Service: quiz_service.py. Backend AI Agent: quiz_agent.py (utilizing Pydantic AI). Data Models: Quiz Output Pydantic Model (backend/models/quiz.py).</snippet>
+      </doc>
+      <doc>
+        <path>docs/architecture.md</path>
+        <title>Scale Adaptive Architecture</title>
+        <section>8. AI Agent Implementation Guidelines</section>
+        <snippet>Use Pydantic for strict output validation. Model: Gemini 2.5 Flash. Prompts: Stored in DB.</snippet>
+      </doc>
+    </docs>
+    <code>
+      <item>
+        <path>backend/app/core/quiz_service.py</path>
+        <kind>file</kind>
+        <symbol>QuizService</symbol>
+        <reason>The service that will orchestrate the generation process and call the agent.</reason>
+      </item>
+      <item>
+        <path>backend/app/core/config.py</path>
+        <kind>file</kind>
+        <symbol>Settings</symbol>
+        <reason>Configuration for GEMINI_API_KEY and other secrets.</reason>
+      </item>
+    </code>
+    <dependencies>
+      <ecosystem name="python">
+        <package name="pydantic" version=">=2.12.5" />
+        <package name="google-generativeai" version="(latest)" />
+        <package name="pydantic-ai" version="(if used)" />
+        <package name="supabase" version=">=2.24.0" />
+      </ecosystem>
+    </dependencies>
+  </artifacts>
+
+  <constraints>
+    <constraint>
+      <description>Strictly use Pydantic models for LLM output validation to ensure type safety.</description>
+      <source>Tech Spec (System Architecture Alignment)</source>
+    </constraint>
+    <constraint>
+      <description>Do not hardcode prompts in code; fetch from `system_prompts` table or use a configuration file if DB not ready.</description>
+      <source>Architecture (Prompt Management)</source>
+    </constraint>
+    <constraint>
+      <description>Ensure Gemini API calls have timeouts and error handling.</description>
+      <source>Tech Spec (Reliability)</source>
+    </constraint>
+  </constraints>
+
+  <interfaces>
+    <interface>
+      <name>Quiz (Pydantic)</name>
+      <kind>Data Model</kind>
+      <signature>class Quiz(BaseModel): title: str, questions: List[Question]</signature>
+      <path>backend/app/models/quiz.py</path>
+    </interface>
+    <interface>
+      <name>Question (Pydantic)</name>
+      <kind>Data Model</kind>
+      <signature>class Question(BaseModel): question_text: str, options: List[str], correct_answer_index: int, explanation: str</signature>
+      <path>backend/app/models/quiz.py</path>
+    </interface>
+  </interfaces>
+
+  <tests>
+    <standards>
+      <description>Unit tests must mock external AI calls. Integration tests should verify the flow from Service to Agent.</description>
+    </standards>
+    <locations>
+      <location>backend/tests/</location>
+    </locations>
+    <ideas>
+      <test id="AC 3.4.2">Mock LLM returning valid JSON -> Verify Pydantic model creation.</test>
+      <test id="AC 3.4.2">Mock LLM returning invalid JSON -> Verify error handling.</test>
+      <test id="AC 3.4.5">Verify `generate_quiz` calls `quiz_agent` with correct notes content.</test>
+    </ideas>
+  </tests>
+</story-context>

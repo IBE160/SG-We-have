@@ -1,0 +1,156 @@
+<story-context id="docs/sprint-artifacts/epic-2/story-2-4-auto-timestamp-notes/2-4-auto-timestamp-notes.context.xml" v="1.0">
+  <metadata>
+    <epicId>epic-2</epicId>
+    <storyId>2-4</storyId>
+    <title>Auto-timestamp Notes</title>
+    <status>drafted</status>
+    <generatedAt>2025-12-02</generatedAt>
+    <generator>BMAD Story Context Workflow</generator>
+    <sourceStoryPath>docs/sprint-artifacts/epic-2/story-2-4-auto-timestamp-notes/2-4-auto-timestamp-notes.md</sourceStoryPath>
+  </metadata>
+
+  <story>
+    <asA>student</asA>
+    <iWant>my saved notes to be automatically timestamped</iWant>
+    <soThat>I can easily track when I last updated them and be assured my work is saved.</soThat>
+    <tasks>
+### Frontend Tasks
+- [ ] **Update NoteEditor Component** (AC: 2.4.1)
+  - Modify `frontend/components/NoteEditor.tsx`.
+  - Add `lastSavedAt` (string | null) to `NoteEditorProps`.
+  - Render the timestamp in the toolbar or a footer area.
+  - Use a utility (or `new Date().toLocaleString()`) to format the string nicely.
+- [ ] **Integrate Timestamp in Lecture Page** (AC: 2.4.2, 2.4.3)
+  - Modify `frontend/app/dashboard/courses/[courseId]/lectures/[lectureId]/page.tsx`.
+  - Update the state to track `note` object (which already includes `updated_at`).
+  - Ensure the `GET` request populates the initial `updated_at`.
+  - Ensure the `handleSave` function updates the local state with the `updated_at` returned from the `PUT` response.
+  - Pass the `updated_at` value to the `<NoteEditor />` component.
+
+### Testing Tasks
+- [ ] **Component Unit Test** (AC: 2.4.1, 2.4.2)
+  - Update `frontend/components/__tests__/NoteEditor.test.tsx`.
+  - Test that `lastSavedAt` prop is rendered correctly when provided.
+  - Test that it is not rendered (or shows empty state) when null.
+  - Test that the timestamp updates in the UI immediately after the save action completes (mocking the `onSave` promise resolution).
+- [ ] **Backend/Integration Test (Optional but recommended)** (AC: 2.4.3)
+  - Review `backend/tests/test_notes.py`.
+  - Verify `test_update_note_success` checks that `updated_at` returned is strictly greater than `created_at`.
+  - Ensure the `PUT` response structure matches what the frontend expects for `updated_at`.
+</tasks>
+  </story>
+
+  <acceptanceCriteria>
+### AC 2.4.1: Display Timestamp
+- [ ] The note editor interface displays a "Last updated: [Date/Time]" label.
+- [ ] The timestamp is located near the save controls (or in a status bar) for clear visibility.
+- [ ] The timestamp is formatted in a user-friendly local format (e.g., "Last updated: 12:30 PM" or "Dec 2, 12:30 PM").
+
+### AC 2.4.2: Real-time Update
+- [ ] When the user successfully saves the notes (via the Save button), the timestamp updates immediately to the current time (or the time returned by the server).
+- [ ] If the save fails, the timestamp does NOT update.
+
+### AC 2.4.3: Persistence on Load
+- [ ] When opening a lecture with existing notes, the "Last updated" timestamp reflects the stored `updated_at` value from the database.
+- [ ] If no notes exist (or new notes), the timestamp is hidden or shows "Not saved yet".
+</acceptanceCriteria>
+
+  <artifacts>
+    <docs>
+      <doc path="docs/epics.md" title="Epic Breakdown" section="Epic 2: Core Note-Taking Experience">
+        <snippet>
+*   **Story 2.4: Auto-Timestamp Notes**
+    *   As a student, I want my saved notes to be automatically timestamped, so that I can easily track when I last updated them.
+    *   **Acceptance Criteria:**
+        1.  Upon saving, a timestamp (date and time) is associated with the notes.
+        2.  The timestamp is visible to the user.
+        *Fulfills: FR004*
+        </snippet>
+      </doc>
+      <doc path="docs/sprint-artifacts/tech-spec-epic-2.md" title="Epic Technical Specification" section="Detailed Design">
+        <snippet>
+**AC 2.4: Auto-Timestamp Notes**
+1.  UI displays "Last updated: [Date/Time]" near the save controls.
+2.  This timestamp updates immediately upon a successful save response from the backend.
+        </snippet>
+      </doc>
+      <doc path="docs/architecture.md" title="Scale Adaptive Architecture" section="4.1. Data Flow Pattern">
+        <snippet>
+2.  **Data Access**:
+    *   **Frontend** calls **FastAPI Backend** for ALL data (Notes, Courses, Quizzes).
+    *   **Backend** queries Supabase DB or calls AI.
+    *   **Backend** returns JSON data to Frontend.
+        </snippet>
+      </doc>
+    </docs>
+    <code>
+      <artifact path="backend/app/api/routers/notes.py" kind="file" symbol="update_note" lines="76-81" reason="Backend logic that returns 'updated_at' which is needed for AC 2.4.2">
+        <snippet>
+        if existing_note.data:
+            # Update
+            note_id = existing_note.data[0]['id']
+            data = {
+                "content": note_update.content,
+                "updated_at": current_time
+            }
+            response = supabase.table("notes").update(data).eq("id", note_id).execute()
+        </snippet>
+      </artifact>
+      <artifact path="frontend/components/NoteEditor.tsx" kind="file" symbol="NoteEditor" reason="Component to modify to display the timestamp (AC 2.4.1)">
+        <snippet>
+const NoteEditor = ({ initialContent, onUpdate, onSave }: NoteEditorProps) => {
+  const [isSaving, setIsSaving] = useState(false);
+  // ...
+        </snippet>
+      </artifact>
+      <artifact path="frontend/app/dashboard/courses/[courseId]/lectures/[lectureId]/page.tsx" kind="file" symbol="LectureDetailsPage" reason="Parent component managing state and passing 'updated_at' to Editor (AC 2.4.3)">
+        <snippet>
+  const handleSave = async (content: string) => {
+    if (!lectureId) return;
+    try {
+      await updateLectureNotes(lectureId, content);
+    } catch (err) {
+      console.error('Save failed in page:', err);
+      throw err;
+    }
+  };
+        </snippet>
+      </artifact>
+      <artifact path="frontend/components/__tests__/NoteEditor.test.tsx" kind="test" symbol="NoteEditor Component" reason="Test suite to extend with timestamp rendering checks">
+        <snippet>
+describe('NoteEditor Component', () => {
+  it('renders the toolbar with all formatting buttons', () => {
+    render(&lt;NoteEditor initialContent="" /&gt;)
+        </snippet>
+      </artifact>
+    </code>
+    <dependencies>
+      <dep ecosystem="npm" name="lucide-react" version="^0.555.0" reason="Used for icons, may need Clock icon for timestamp" />
+      <dep ecosystem="npm" name="@tiptap/react" version="^3.11.1" reason="Rich text editor core" />
+    </dependencies>
+  </artifacts>
+
+  <constraints>
+    <constraint source="Dev Notes">The backend is the source of truth for the timestamp. Use the `updated_at` returned from `PUT` / `GET`.</constraint>
+    <constraint source="Dev Notes">Use standard JavaScript `Date` formatting or `Intl.DateTimeFormat` for locale-aware formatting.</constraint>
+  </constraints>
+  <interfaces>
+    <interface name="Note API (PUT)" kind="REST" signature="PUT /api/v1/lectures/{lecture_id}/notes" path="backend/app/api/routers/notes.py">
+      Response: { "id": "...", "content": "...", "updated_at": "ISO8601 String", ... }
+    </interface>
+    <interface name="NoteEditorProps" kind="TypeScript Interface" signature="interface NoteEditorProps { lastSavedAt?: string | null; ... }" path="frontend/components/NoteEditor.tsx">
+      Need to add lastSavedAt prop.
+    </interface>
+  </interfaces>
+  <tests>
+    <standards>Use `jest` and `@testing-library/react` for frontend components. Use `pytest` and `TestClient` for backend.</standards>
+    <locations>
+      <loc>frontend/components/__tests__</loc>
+      <loc>backend/tests</loc>
+    </locations>
+    <ideas>
+      <idea ac="2.4.1">Render NoteEditor with a specific `lastSavedAt` date string and verify it appears in the DOM.</idea>
+      <idea ac="2.4.2">Mock `onSave` to resolve successfully, trigger save, and verify the timestamp updates in the UI (requires NoteEditor state update or parent re-render).</idea>
+    </ideas>
+  </tests>
+</story-context>

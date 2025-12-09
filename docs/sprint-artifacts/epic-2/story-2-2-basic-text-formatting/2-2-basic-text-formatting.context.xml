@@ -1,0 +1,101 @@
+<story-context id="docs/sprint-artifacts/epic-2/story-2-2-basic-text-formatting/2-2-basic-text-formatting.context.xml" v="1.0">
+  <metadata>
+    <epicId>2</epicId>
+    <storyId>2-2</storyId>
+    <title>Basic Text Formatting</title>
+    <status>drafted</status>
+    <generatedAt>2025-12-02</generatedAt>
+    <generator>BMAD Story Context Workflow</generator>
+    <sourceStoryPath>docs/sprint-artifacts/epic-2/story-2-2-basic-text-formatting/2-2-basic-text-formatting.md</sourceStoryPath>
+  </metadata>
+
+  <story>
+    <asA>student</asA>
+    <iWant>to use basic formatting tools (bold, italic, lists, headings) in the note editor</iWant>
+    <soThat>I can structure and highlight important information in my notes</soThat>
+    <tasks>
+      - [ ] **Extend NoteEditor Component** (AC: 2.2.1)
+        - Import necessary Tiptap extensions (if not in StarterKit, though most are).
+        - Create a `EditorToolbar` component or section within `NoteEditor`.
+        - Add buttons for: Bold, Italic, H1, H2, H3, BulletList, OrderedList.
+        - Use `lucide-react` icons for buttons.
+      - [ ] **Implement Toolbar Logic** (AC: 2.2.2)
+        - Connect buttons to Tiptap `editor.chain().focus().toggleX().run()` commands.
+        - Add active state styling for buttons (e.g., Bold button looks pressed when cursor is in bold text).
+      - [ ] **Component Unit Test** (AC: 2.2.2)
+        - Create `frontend/components/__tests__/NoteEditor.test.tsx` (or similar).
+        - Test that toolbar renders.
+        - Test that clicking buttons calls appropriate Tiptap commands (if mocking Tiptap) or updates DOM (if using RTL with Tiptap).
+      - [ ] **Manual Verification** (AC: 2.2.2)
+        - Verify all buttons work.
+        - Verify markdown shortcuts work.
+    </tasks>
+  </story>
+
+  <acceptanceCriteria>
+    ### AC 2.2.1: Formatting Toolbar
+    - [ ] Editor displays a toolbar containing: Bold, Italic, Heading 1, Heading 2, Heading 3, Bullet List, Ordered List.
+    - [ ] Toolbar is accessible and visible above or near the text area.
+
+    ### AC 2.2.2: Apply Formatting
+    - [ ] Clicking toolbar buttons applies the corresponding formatting to selected text or current cursor position.
+    - [ ] Markdown shortcuts (e.g., `#` for H1, `*` for bullets, `**` for bold) function correctly (standard Tiptap behavior).
+    - [ ] Formatting is visually distinct (e.g., Bold text looks bold).
+  </acceptanceCriteria>
+
+  <artifacts>
+    <docs>
+      - path: docs/sprint-artifacts/tech-spec-epic-2.md
+        title: Epic Technical Specification: Core Note-Taking Experience
+        section: Detailed Design
+        snippet: "Note Editor UI: Integration of a Rich Text Editor (RTE) library. Basic formatting toolbar (Bold, Italic, Headings H1-H3, Bullet List, Ordered List)."
+      - path: docs/architecture.md
+        title: Scale Adaptive Architecture
+        section: Decision Summary
+        snippet: "Frontend Framework: Next.js. Styling: Tailwind CSS. Frontend Component Naming: PascalCase."
+    </docs>
+    <code>
+      - path: frontend/components/NoteEditor.tsx
+        kind: component
+        symbol: NoteEditor
+        lines: 1-44
+        reason: "Existing editor component to be extended with a toolbar."
+    </code>
+    <dependencies>
+      - ecosystem: npm
+        packages:
+          - @tiptap/react: ^3.11.1
+          - @tiptap/starter-kit: ^3.11.1
+          - lucide-react: ^0.555.0
+          - tailwindcss: ^4
+    </dependencies>
+  </artifacts>
+
+  <constraints>
+    - **Tiptap Integration:** Use the `useEditor` hook's `editor` instance to drive the toolbar.
+    - **Styling:** Use Tailwind CSS for the toolbar layout (flex, gap, etc.) and button states (hover, active).
+    - **State:** The toolbar active states need to react to editor updates. Use `onUpdate` or `onSelectionUpdate`.
+    - **Project Structure:** Keep `EditorToolbar` inside `NoteEditor.tsx` or as a sibling file `EditorToolbar.tsx` if it grows large.
+  </constraints>
+  
+  <interfaces>
+    - name: Tiptap Editor Instance
+      kind: Library Interface
+      signature: editor.chain().focus().toggleBold().run()
+      path: node_modules/@tiptap/core
+  </interfaces>
+  
+  <tests>
+    <standards>
+      Add automated unit tests for NoteEditor component using React Testing Library (or similar) as advised in previous story learnings. Place tests in `frontend/components/__tests__/`.
+    </standards>
+    <locations>
+      - frontend/components/__tests__/NoteEditor.test.tsx
+    </locations>
+    <ideas>
+      - AC 2.2.1: Verify toolbar exists and contains all required buttons.
+      - AC 2.2.2: Simulate click on Bold button, verify `toggleBold` command is executed (via mock or checking active state).
+      - AC 2.2.2: Verify active state class is applied when selection is bold.
+    </ideas>
+  </tests>
+</story-context>

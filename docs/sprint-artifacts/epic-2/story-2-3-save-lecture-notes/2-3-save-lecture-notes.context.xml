@@ -1,0 +1,138 @@
+<story-context id=".bmad/bmm/workflows/4-implementation/story-context/template" v="1.0">
+  <metadata>
+    <epicId>2</epicId>
+    <storyId>2-3</storyId>
+    <title>Save Lecture Notes</title>
+    <status>done</status>
+    <generatedAt>2025-12-02</generatedAt>
+    <generator>BMAD Story Context Workflow</generator>
+    <sourceStoryPath>docs/sprint-artifacts/epic-2/story-2-3-save-lecture-notes/2-3-save-lecture-notes.md</sourceStoryPath>
+  </metadata>
+
+  <story>
+    <asA>student</asA>
+    <iWant>to save my lecture notes</iWant>
+    <soThat>I can securely store my knowledge and review it later without losing data.</soThat>
+    <tasks>
+      <task>
+        <name>Integrate Save Notes API</name>
+        <description>Update `frontend/lib/api.ts` to include `updateLectureNotes(lectureId, content)`. Ensure it sends a `PUT` request with the note content.</description>
+      </task>
+      <task>
+        <name>Implement Save UI Logic</name>
+        <description>Update `frontend/components/NoteEditor.tsx` to include a "Save" button. Add state for `isSaving`, `lastSaved`, and `error`. Call `updateLectureNotes` when clicked. Update UI based on success/failure state.</description>
+      </task>
+      <task>
+        <name>Implement Notes Router (PUT)</name>
+        <description>Update `backend/app/api/routers/notes.py`. Add `PUT /api/v1/lectures/{lecture_id}/notes` endpoint. Logic: Check if note exists for `lecture_id` -> UPDATE `content` and `updated_at`; Else -> INSERT new note record. Security: Verify `lecture_id` belongs to a course owned by the current user.</description>
+      </task>
+      <task>
+        <name>Backend Integration Tests</name>
+        <description>Test `PUT` to create a new note for an owned lecture. Test `PUT` to update an existing note. Test `PUT` for an unowned lecture (should fail 403).</description>
+      </task>
+      <task>
+        <name>Component Unit Test</name>
+        <description>Create/Update `frontend/components/__tests__/NoteEditor.test.tsx`. Test that "Save" button calls the API. Test that saving state is displayed. Test that error message is displayed on failure.</description>
+      </task>
+      <task>
+        <name>Frontend Manual Verification</name>
+        <description>Verify clicking save persists data (reload page to check). Verify visual states (Saving... -> Saved).</description>
+      </task>
+    </tasks>
+  </story>
+
+  <acceptanceCriteria>
+    <criterion>AC 2.3.1: Save Button and Interaction - A "Save" button is clearly visible in the note editor interface. Clicking the "Save" button triggers the save process. The interface provides immediate visual feedback during the save process (e.g., changing button text to "Saving...", showing a spinner).</criterion>
+    <criterion>AC 2.3.2: Data Persistence - The text content of the editor is successfully sent to the backend and stored in the database. Subsequent reloads of the page display the most recently saved content. Users can save empty notes without error (clearing the notes).</criterion>
+    <criterion>AC 2.3.3: Success and Error Handling - Upon successful save, the interface indicates success (e.g., "Saved", toast notification). If the save fails (e.g., network error), the user is notified with an error message so they know their data is not safe.</criterion>
+  </acceptanceCriteria>
+
+  <artifacts>
+    <docs>
+      <doc>
+        <path>docs/sprint-artifacts/tech-spec-epic-2.md</path>
+        <title>Epic Technical Specification: Core Note-Taking Experience</title>
+        <section>Detailed Design</section>
+        <snippet>Backend: NoteService Handles business logic for upserting (create/update) notes. APIs: PUT /api/v1/lectures/{lecture_id}/notes Purpose: Create or Update the notes for a lecture (Upsert). Request: { "content": "string (HTML/JSON)" }</snippet>
+      </doc>
+      <doc>
+        <path>docs/architecture.md</path>
+        <title>Scale Adaptive Architecture</title>
+        <section>4.1 Data Flow Pattern</section>
+        <snippet>Frontend calls FastAPI Backend for ALL data. Backend Middleware validates the JWT. Backend queries Supabase DB. Constraint: Frontend never queries the Database directly.</snippet>
+      </doc>
+      <doc>
+        <path>docs/epics.md</path>
+        <title>Epic Breakdown</title>
+        <section>Epic 2: Core Note-Taking Experience</section>
+        <snippet>Story 2.3: Save Lecture Notes. AC: User can click a "Save" button. Notes content is persistently stored. System displays a confirmation of successful save.</snippet>
+      </doc>
+    </docs>
+    <code>
+      <artifact>
+        <path>frontend/components/NoteEditor.tsx</path>
+        <kind>component</kind>
+        <symbol>NoteEditor</symbol>
+        <reason>Target component to add Save button and logic.</reason>
+      </artifact>
+      <artifact>
+        <path>frontend/lib/api.ts</path>
+        <kind>client</kind>
+        <symbol>updateLectureNotes</symbol>
+        <reason>File to add the API client method.</reason>
+      </artifact>
+      <artifact>
+        <path>backend/app/api/routers/notes.py</path>
+        <kind>router</kind>
+        <symbol>update_note</symbol>
+        <reason>Target router to add PUT endpoint.</reason>
+      </artifact>
+    </code>
+    <dependencies>
+      <dependency>
+        <key>frontend</key>
+        <package>lucide-react</package>
+        <version>latest</version>
+      </dependency>
+      <dependency>
+        <key>backend</key>
+        <package>fastapi</package>
+        <version>latest</version>
+      </dependency>
+    </dependencies>
+  </artifacts>
+
+  <constraints>
+    <constraint>Upsert Logic: The backend should handle the "create vs update" logic seamlessly.</constraint>
+    <constraint>Data Format: Use HTML string for content payload.</constraint>
+    <constraint>Security: Verify lecture ownership (re-use verify_lecture_ownership helper).</constraint>
+  </constraints>
+
+  <interfaces>
+    <interface>
+      <name>PUT /api/v1/lectures/{lectureId}/notes</name>
+      <kind>REST</kind>
+      <signature>PUT /api/v1/lectures/{lecture_id}/notes Body: { content: string }</signature>
+      <path>backend/app/api/routers/notes.py</path>
+    </interface>
+    <interface>
+      <name>updateLectureNotes</name>
+      <kind>Function</kind>
+      <signature>(lectureId: string, content: string) => Promise&lt;Note&gt;</signature>
+      <path>frontend/lib/api.ts</path>
+    </interface>
+  </interfaces>
+
+  <tests>
+    <standards>Use Jest/React Testing Library for frontend components. Use Pytest for backend API tests.</standards>
+    <locations>
+      <location>frontend/components/__tests__/</location>
+      <location>backend/tests/</location>
+    </locations>
+    <ideas>
+      <idea id="AC 2.3.1">Mock API and verify Save button calls it.</idea>
+      <idea id="AC 2.3.2">Backend test: create note, update note, verify persistence.</idea>
+      <idea id="AC 2.3.3">Mock API failure and verify error message in UI.</idea>
+    </ideas>
+  </tests>
+</story-context>
