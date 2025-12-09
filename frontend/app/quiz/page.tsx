@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { getCourses, getNotes, generateQuiz, Course, Note } from '@/lib/api';
 import AppHeader from '@/components/AppHeader';
+import CustomSelect from '@/components/CustomSelect';
 
 export default function GenerateQuizPage() {
   const [courses, setCourses] = useState<Course[]>([]);
@@ -94,6 +95,14 @@ export default function GenerateQuizPage() {
     }
   };
 
+  const quizLengthOptions = [5, 10, 15, 20, 25, 30].map((length) => ({
+    id: String(length),
+    name: `${length} Questions`
+  }));
+
+  const selectedQuizLengthOption = quizLengthOptions.find(opt => Number(opt.id) === quizLength) || null;
+  const selectedCourseOption = courses.find(c => c.id === selectedCourseId) || null;
+
   return (
     <div className="relative flex min-h-screen w-full flex-col bg-background-light font-display group/design-root overflow-x-hidden">
       {/* Header */}
@@ -102,7 +111,7 @@ export default function GenerateQuizPage() {
       <div className="layout-container flex h-full grow flex-col">
         <div className="flex flex-1 justify-center py-5">
           <div className="layout-content-container flex w-full flex-col max-w-[960px] flex-1">
-            <main className="p-10 flex flex-col gap-12">
+            <main className="p-10 pb-40 flex flex-col gap-12">
               <div className="flex flex-wrap justify-between gap-4">
                 <div className="flex flex-col gap-2">
                   <p className="text-text-primary text-4xl font-black leading-tight tracking-[-0.033em]">Generate Quiz</p>
@@ -120,24 +129,17 @@ export default function GenerateQuizPage() {
                 <section className="flex flex-col gap-4">
                   <h3 className="text-text-primary text-lg font-bold leading-tight tracking-[-0.015em]">1. Select Course</h3>
                   <div className="flex max-w-[480px]">
-                    <label className="flex w-full flex-col relative">
-                      {isLoadingCourses ? (
-                        <div className="h-14 bg-gray-100 rounded-xl animate-pulse"></div>
-                      ) : (
-                        <select 
-                          className="form-select flex w-full min-w-0 flex-1 resize-none appearance-none overflow-hidden rounded-xl border border-border-light bg-white px-4 py-3 text-base font-medium text-text-primary placeholder:text-text-secondary/60 focus:border-accent-blue focus:outline-none focus:ring-2 focus:ring-accent-blue/20 h-14 pr-10"
-                          value={selectedCourseId}
-                          onChange={(e) => setSelectedCourseId(e.target.value)}
-                        >
-                          {courses.map(course => (
-                            <option key={course.id} value={course.id}>{course.name}</option>
-                          ))}
-                        </select>
-                      )}
-                      <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-black z-10">
-                        <svg className="fill-current h-4 w-4" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M5.516 7.548c.436-.446 1.043-.481 1.576 0L10 10.405l2.908-2.857c.533-.481 1.141-.446 1.574 0 .436.445.408 1.197 0 1.642l-3.417 3.356c-.27.267-.631.408-1.002.408s-.732-.141-1.002-.408L5.516 9.19c-.408-.445-.436-1.197 0-1.642z"/></svg>
-                      </div>
-                    </label>
+                    {isLoadingCourses ? (
+                      <div className="h-10 w-full bg-gray-100 rounded-md animate-pulse"></div>
+                    ) : (
+                      <CustomSelect
+                        options={courses}
+                        value={selectedCourseOption}
+                        onChange={(option) => setSelectedCourseId(option.id)}
+                        placeholder="Select a course"
+                        className="w-full"
+                      />
+                    )}
                   </div>
                 </section>
 
@@ -184,20 +186,14 @@ export default function GenerateQuizPage() {
                 <section className="flex flex-col gap-4">
                   <h3 className="text-text-primary text-lg font-bold leading-tight tracking-[-0.015em]">3. Number of Questions</h3>
                   <div className="flex max-w-[480px]">
-                    <label className="flex w-full flex-col relative">
-                      <select 
-                        className="form-select flex w-full min-w-0 flex-1 resize-none appearance-none overflow-hidden rounded-xl border border-border-light bg-white px-4 py-3 text-base font-medium text-text-primary placeholder:text-text-secondary/60 focus:border-accent-blue focus:outline-none focus:ring-2 focus:ring-accent-blue/20 h-14 pr-10"
-                        value={quizLength}
-                        onChange={(e) => setQuizLength(Number(e.target.value))}
-                      >
-                         {[5, 10, 15, 20, 25, 30].map((length) => (
-                           <option key={length} value={length}>{length} Questions</option>
-                         ))}
-                      </select>
-                      <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-black z-10">
-                        <svg className="fill-current h-4 w-4" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M5.516 7.548c.436-.446 1.043-.481 1.576 0L10 10.405l2.908-2.857c.533-.481 1.141-.446 1.574 0 .436.445.408 1.197 0 1.642l-3.417 3.356c-.27.267-.631.408-1.002.408s-.732-.141-1.002-.408L5.516 9.19c-.408-.445-.436-1.197 0-1.642z"/></svg>
-                      </div>
-                    </label>
+                    <CustomSelect
+                        options={quizLengthOptions}
+                        value={selectedQuizLengthOption}
+                        onChange={(option) => setQuizLength(Number(option.id))}
+                        placeholder="Select number of questions"
+                        className="w-full"
+                        dropdownPosition="absolute"
+                    />
                   </div>
                 </section>
 

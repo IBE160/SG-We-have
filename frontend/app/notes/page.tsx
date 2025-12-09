@@ -9,6 +9,7 @@ import EditableTitle from '@/components/EditableTitle';
 import { Trash2 } from 'lucide-react';
 import CreateNoteModal from '@/components/CreateNoteModal';
 import DeleteConfirmationModal from '@/components/DeleteConfirmationModal';
+import CustomSelect from '@/components/CustomSelect';
 
 export default function NotesPage() {
   const [courses, setCourses] = useState<Course[]>([]);
@@ -175,21 +176,14 @@ export default function NotesPage() {
           </Link>
 
           <div className="flex flex-col gap-2">
-            <div className="px-3 pb-2">
-               <label className="text-xs font-semibold text-text-secondary uppercase tracking-wider">Current Course</label>
-               <select 
-                  className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-border-light focus:outline-none focus:ring-accent-blue focus:border-accent-blue sm:text-sm rounded-md bg-background-light"
-                  value={selectedCourse?.id || ''}
-                  onChange={(e) => {
-                    const course = courses.find(c => c.id === e.target.value);
-                    setSelectedCourse(course || null);
-                  }}
-                >
-                  {courses.map(c => (
-                    <option key={c.id} value={c.id}>{c.name}</option>
-                  ))}
-                </select>
-            </div>
+            <CustomSelect
+              label="Current Course"
+              options={courses}
+              value={selectedCourse}
+              onChange={setSelectedCourse}
+              placeholder="Select a course"
+              className="px-3 pb-2"
+            />
 
              <div className="flex flex-col gap-1 mt-2">
                {lectures.map(lecture => (
