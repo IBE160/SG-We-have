@@ -69,7 +69,10 @@ export default function QuizPage() {
   const handleNextQuestion = async () => {
     if (!quizState || isFetchingNext) return;
     
+    setSubmissionResult(null);
+    setSelectedOptionId(null);
     setIsFetchingNext(true);
+
     try {
       const nextData = await fetchNextQuestion(quizId, { attempt_id: quizState.attempt_id });
       
