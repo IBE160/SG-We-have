@@ -213,7 +213,7 @@ export default function QuizPage() {
 
   return (
     <main className="flex min-h-screen flex-col items-center p-4 md:p-24 bg-background-light">
-      <div className="w-full max-w-3xl">
+      <div className="w-full max-w-5xl"> {/* Increased max-width to accommodate side-by-side layout */}
         <div className="mb-6">
           <button 
             onClick={() => router.push('/dashboard')}
@@ -232,30 +232,34 @@ export default function QuizPage() {
           />
         </div>
 
-        <QuizQuestionDisplay 
-          question={currentQuestion}
-          onAnswerSelect={handleAnswerSelect}
-          selectedOptionId={selectedOptionId}
-          isAnswered={!!submissionResult}
-          submissionResult={submissionResult}
-          isLoading={isChangingQuestion}
-        />
+        <div className="flex flex-col md:flex-row gap-4"> {/* Flex container for side-by-side layout */}
+          <div className="flex-1"> {/* QuizQuestionDisplay takes up remaining space */}
+            <QuizQuestionDisplay 
+              question={currentQuestion}
+              onAnswerSelect={handleAnswerSelect}
+              selectedOptionId={selectedOptionId}
+              isAnswered={!!submissionResult}
+              submissionResult={submissionResult}
+              isLoading={isChangingQuestion}
+            />
+          </div>
 
-        <div className="mt-8 flex justify-between">
-          <button
-            className="px-6 py-3 bg-gray-200 text-gray-800 rounded-lg font-medium hover:bg-gray-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            onClick={handlePreviousQuestion}
-            disabled={currentQuestionIndex === 0 || isChangingQuestion}
-          >
-            Previous
-          </button>
-          <button
-            className="px-6 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            onClick={handleNextQuestion}
-            disabled={!submissionResult || isFetchingNext || isChangingQuestion}
-          >
-            {currentQuestionIndex + 1 === quizState.total_questions ? 'Finish Quiz' : 'Next Question'}
-          </button>
+          <div className="md:w-48 flex flex-row md:flex-col justify-between md:justify-start gap-4 mt-4 md:mt-0"> {/* Navigation buttons */}
+            <button
+              className="px-6 py-3 bg-gray-200 text-gray-800 rounded-lg font-medium hover:bg-gray-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed w-1/2 md:w-full"
+              onClick={handlePreviousQuestion}
+              disabled={currentQuestionIndex === 0 || isChangingQuestion}
+            >
+              Previous
+            </button>
+            <button
+              className="px-6 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed w-1/2 md:w-full"
+              onClick={handleNextQuestion}
+              disabled={!submissionResult || isFetchingNext || isChangingQuestion}
+            >
+              {currentQuestionIndex + 1 === quizState.total_questions ? 'Finish Quiz' : 'Next Question'}
+            </button>
+          </div>
         </div>
       </div>
     </main>
