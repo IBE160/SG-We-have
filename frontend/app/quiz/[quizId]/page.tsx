@@ -2,10 +2,19 @@
 
 import React, { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { startQuiz, submitAnswer, fetchNextQuestion, fetchPreviousQuestion, getQuizResults, retakeQuiz, QuizStartResponse, QuizSubmissionResponse, QuestionDisplay, QuizResultResponse } from '../../../lib/services/quiz';
+import { fetchNextQuestion, getQuizResults, retakeQuiz, submitAnswer, QuizStartResponse, QuizSubmissionResponse, QuestionDisplay, QuizResultResponse } from '../../../lib/services/quiz';
 import { QuizQuestionDisplay } from '../../../components/QuizQuestionDisplay';
 import { QuizProgressBar } from '../../../components/QuizProgressBar';
 import { ScoreCard } from '../../../components/ScoreCard';
+
+type AnswersState = {
+  [questionId: string]: {
+    is_correct: boolean;
+    correct_answer_id: string;
+    feedback_text: string;
+    selected_option_id: string;
+  }
+};
 
 export default function QuizPage() {
   const params = useParams();
@@ -16,152 +25,122 @@ export default function QuizPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   
-  // Current Question State
-  const [currentQuestion, setCurrentQuestion] = useState<QuestionDisplay | null>(null);
+  const [questionsCache, setQuestionsCache] = useState<QuestionDisplay[]>([]);
+  const [answers, setAnswers] = useState<AnswersState>({});
+
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [isComplete, setIsComplete] = useState(false);
   const [quizResults, setQuizResults] = useState<QuizResultResponse | null>(null);
 
-  const [selectedOptionId, setSelectedOptionId] = useState<string | null>(null);
-  const [submissionResult, setSubmissionResult] = useState<QuizSubmissionResponse | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isFetchingNext, setIsFetchingNext] = useState(false);
-  const [isChangingQuestion, setIsChangingQuestion] = useState(false);
-  const [hasStarted, setHasStarted] = useState(false);
 
   useEffect(() => {
-    if (quizId && !hasStarted) {
-      console.log(`Starting a new quiz with ID: ${quizId}`);
-      setHasStarted(true);
-      retakeQuiz(quizId)
-        .then((data) => {
-          console.log('Quiz started with data:', data);
+    if (quizId) {
+      const initializeQuiz = async () => {
+        try {
+          const data = await retakeQuiz(quizId);
           setQuizState(data);
-          setCurrentQuestion(data.first_question);
-          setCurrentQuestionIndex(data.current_question_index);
-          console.log(`Initial Question ID: ${data.first_question.id}, Index: ${data.current_question_index}`);
+
+          const allQuestions: QuestionDisplay[] = [data.first_question];
+          let currentAttemptId = data.attempt_id;
+
+          for (let i = 1; i < data.total_questions; i++) {
+            const nextQuestionData = await fetchNextQuestion(quizId, { attempt_id: currentAttemptId });
+            if (nextQuestionData.next_question) {
+              allQuestions.push(nextQuestionData.next_question);
+            }
+          }
+          
+          setQuestionsCache(allQuestions);
+          setCurrentQuestionIndex(0);
           setLoading(false);
-        })
-        .catch((err) => {
-          console.error('Failed to start quiz:', err);
-          setError(err.message || 'Failed to load quiz');
+        } catch (err) {
+          console.error('Failed to initialize quiz:', err);
+          setError('Failed to load quiz. Please try again.');
           setLoading(false);
-        });
+        }
+      };
+      
+      initializeQuiz();
     }
-  }, [quizId, hasStarted]);
+  }, [quizId]);
 
   const handleAnswerSelect = async (optionId: string) => {
-    if (!quizState || !currentQuestion || isSubmitting || submissionResult) return;
+    const currentQuestion = questionsCache[currentQuestionIndex];
+    if (!quizState || !currentQuestion || isSubmitting || answers[currentQuestion.id]) return;
     
-    setSelectedOptionId(optionId);
     setIsSubmitting(true);
-
     try {
       const result = await submitAnswer(quizId, {
         attempt_id: quizState.attempt_id,
         question_id: currentQuestion.id,
         answer_id: optionId
       });
-      setSubmissionResult(result);
+      setAnswers(prev => ({ ...prev, [currentQuestion.id]: { ...result, selected_option_id: optionId } }));
     } catch (err) {
       console.error('Failed to submit answer:', err);
       alert('Failed to submit answer. Please try again.');
-      setSelectedOptionId(null); 
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const handleNextQuestion = async () => {
-    if (!quizState || isFetchingNext) return;
-    
-    setIsFetchingNext(true);
-    setIsChangingQuestion(true);
-
-    try {
-      const nextData = await fetchNextQuestion(quizId, { attempt_id: quizState.attempt_id });
-      
-      if (nextData.is_complete) {
-        setLoading(true);
-        try {
-            const results = await getQuizResults(quizId, quizState.attempt_id);
-            setQuizResults(results);
-            setIsComplete(true);
-        } catch (resErr: any) {
-            console.error('Failed to fetch results:', resErr);
-            setError('Failed to load quiz results. ' + (resErr.message || ''));
-        } finally {
-            setLoading(false);
-        }
-      } else if (nextData.next_question) {
-        console.log(`Fetched Next Question ID: ${nextData.next_question.id}, Index: ${nextData.current_question_index}`);
-        setCurrentQuestion(nextData.next_question);
-        setCurrentQuestionIndex(nextData.current_question_index);
-        
-        if (nextData.existing_answer) {
-            setSubmissionResult(nextData.existing_answer);
-            setSelectedOptionId(nextData.selected_option_id || null);
-        } else {
-            setSelectedOptionId(null);
-            setSubmissionResult(null);
-        }
-      }
-    } catch (err) {
-      console.error('Failed to fetch next question:', err);
-      alert('Failed to load next question.');
-    } finally {
-      setIsFetchingNext(false);
-      setIsChangingQuestion(false);
+  const handleNextQuestion = () => {
+    if (currentQuestionIndex < questionsCache.length - 1) {
+      setCurrentQuestionIndex(prev => prev + 1);
+    } else {
+      const score = Object.values(answers).filter(a => a.is_correct).length;
+      setQuizResults({
+          score: score,
+          total_questions: questionsCache.length,
+          percentage: (score / questionsCache.length) * 100,
+          completed_at: new Date().toISOString(),
+      });
+      setIsComplete(true);
     }
   };
 
-  const handlePreviousQuestion = async () => {
-    if (!quizState || currentQuestionIndex <= 0) return;
-
-    setIsChangingQuestion(true);
-    try {
-      const prevData = await fetchPreviousQuestion(quizId, { attempt_id: quizState.attempt_id });
-      console.log(`Fetched Previous Question ID: ${prevData.previous_question.id}, Index: ${prevData.current_question_index}`);
-      setCurrentQuestion(prevData.previous_question);
-      setCurrentQuestionIndex(prevData.current_question_index);
-      
-      if (prevData.existing_answer) {
-          setSubmissionResult(prevData.existing_answer);
-          setSelectedOptionId(prevData.selected_option_id || null);
-      } else {
-          setSubmissionResult(null);
-          setSelectedOptionId(null);
-      }
-
-    } catch (err) {
-      console.error('Failed to fetch previous question:', err);
-      alert('Failed to load previous question.');
-    } finally {
-      setIsChangingQuestion(false);
+  const handlePreviousQuestion = () => {
+    if (currentQuestionIndex > 0) {
+      setCurrentQuestionIndex(prev => prev - 1);
     }
   };
 
   const handleRetake = async () => {
-      if (!quizState) return;
+      if (!quizId) return;
       setLoading(true);
       setError(null);
-      try {
-          const data = await retakeQuiz(quizId, quizState.attempt_id);
+      setAnswers({});
+      setCurrentQuestionIndex(0);
+      setIsComplete(false);
+      setQuizResults(null);
+
+      const initializeQuiz = async () => {
+        try {
+          const data = await retakeQuiz(quizId);
           setQuizState(data);
-          setCurrentQuestion(data.first_question);
-          setCurrentQuestionIndex(data.current_question_index);
+
+          const allQuestions: QuestionDisplay[] = [data.first_question];
+           let currentAttemptId = data.attempt_id;
           
-          setIsComplete(false);
-          setQuizResults(null);
-          setSelectedOptionId(null);
-          setSubmissionResult(null);
-          setIsSubmitting(false);
-      } catch (err: any) {
-          console.error('Failed to retake quiz:', err);
-          setError(err.message || 'Failed to retake quiz');
-      } finally {
+          for (let i = 1; i < data.total_questions; i++) {
+            const nextQuestionData = await fetchNextQuestion(quizId, { attempt_id: currentAttemptId });
+            if (nextQuestionData.next_question) {
+              allQuestions.push(nextQuestionData.next_question);
+            }
+          }
+          
+          setQuestionsCache(allQuestions);
+          setCurrentQuestionIndex(0);
           setLoading(false);
-      }
+        } catch (err) {
+          console.error('Failed to initialize quiz:', err);
+          setError('Failed to load quiz. Please try again.');
+          setLoading(false);
+        }
+      };
+      
+      initializeQuiz();
   };
 
   const handleNewQuiz = () => {
@@ -207,6 +186,10 @@ export default function QuizPage() {
       );
   }
 
+  const currentQuestion = questionsCache[currentQuestionIndex];
+  const submissionResult = answers[currentQuestion?.id];
+  const selectedOptionId = submissionResult?.selected_option_id;
+
   if (!quizState || !currentQuestion) {
     return null;
   }
@@ -228,7 +211,7 @@ export default function QuizPage() {
           <h1 className="text-2xl font-bold mb-4">{quizState.quiz_title}</h1>
           <QuizProgressBar 
             currentQuestionIndex={currentQuestionIndex} 
-            totalQuestions={quizState.total_questions} 
+            totalQuestions={questionsCache.length} 
           />
         </div>
 
@@ -239,23 +222,23 @@ export default function QuizPage() {
           selectedOptionId={selectedOptionId}
           isAnswered={!!submissionResult}
           submissionResult={submissionResult}
-          isLoading={isChangingQuestion}
+          isLoading={isSubmitting}
         />
 
         <div className="mt-8 flex justify-center items-center gap-4">
           <button
             className="px-6 py-3 bg-gray-200 text-gray-800 rounded-lg font-medium hover:bg-gray-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             onClick={handlePreviousQuestion}
-            disabled={currentQuestionIndex === 0 || isChangingQuestion}
+            disabled={currentQuestionIndex === 0}
           >
             Previous
           </button>
           <button
             className="px-6 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             onClick={handleNextQuestion}
-            disabled={!submissionResult || isFetchingNext || isChangingQuestion}
+            disabled={!submissionResult}
           >
-            {currentQuestionIndex + 1 === quizState.total_questions ? 'Finish Quiz' : 'Next Question'}
+            {currentQuestionIndex + 1 === questionsCache.length ? 'Finish Quiz' : 'Next Question'}
           </button>
         </div>
       </div>
