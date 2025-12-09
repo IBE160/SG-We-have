@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
+import { useAuth } from '../../../components/SupabaseClientProvider';
 import { fetchNextQuestion, getQuizResults, retakeQuiz, submitAnswer, QuizStartResponse, QuizSubmissionResponse, QuestionDisplay, QuizResultResponse } from '../../../lib/services/quiz';
 import { QuizQuestionDisplay } from '../../../components/QuizQuestionDisplay';
 import { QuizProgressBar } from '../../../components/QuizProgressBar';
@@ -20,6 +21,7 @@ export default function QuizPage() {
   const params = useParams();
   const router = useRouter();
   const quizId = params?.quizId as string;
+  const { isLoading: isAuthLoading } = useAuth();
 
   const [quizState, setQuizState] = useState<QuizStartResponse | null>(null);
   const [loading, setLoading] = useState(true);
@@ -35,7 +37,7 @@ export default function QuizPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
-    if (quizId) {
+    if (quizId && !isAuthLoading) {
       const initializeQuiz = async () => {
         try {
           const data = await retakeQuiz(quizId);
@@ -63,7 +65,7 @@ export default function QuizPage() {
       
       initializeQuiz();
     }
-  }, [quizId]);
+  }, [quizId, isAuthLoading]);
 
   const handleAnswerSelect = async (optionId: string) => {
     const currentQuestion = questionsCache[currentQuestionIndex];
@@ -151,7 +153,7 @@ export default function QuizPage() {
       router.push('/dashboard');
   };
 
-  if (loading) {
+  if (loading || isAuthLoading) {
     return (
       <div className="flex min-h-screen items-center justify-center">
         <p>Loading...</p>
