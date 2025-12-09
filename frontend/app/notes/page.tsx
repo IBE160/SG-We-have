@@ -18,6 +18,7 @@ export default function NotesPage() {
   const [noteContent, setNoteContent] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [lastSaved, setLastSaved] = useState<string | null>(null);
+  const [isDirty, setIsDirty] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [noteToDelete, setNoteToDelete] = useState<string | null>(null);
@@ -72,9 +73,11 @@ export default function NotesPage() {
         const note = await getLectureNotes(selectedLecture.id);
         setNoteContent(note ? note.content : '');
         setLastSaved(note ? note.updated_at : null);
+        setIsDirty(false);
       } catch (err) {
         console.error('Failed to fetch notes', err);
         setNoteContent(''); // Default to empty if no note exists or error
+        setIsDirty(false);
       }
     };
     fetchNotes();
@@ -149,10 +152,15 @@ export default function NotesPage() {
     try {
       const updatedNote = await updateLectureNotes(selectedLecture.id, content);
       setLastSaved(updatedNote.updated_at);
+      setIsDirty(false);
     } catch (err) {
       console.error('Failed to save note', err);
       throw err;
     }
+  };
+
+  const handleNoteUpdate = (content: string) => {
+      setIsDirty(true);
   };
 
   return (
@@ -239,7 +247,7 @@ export default function NotesPage() {
           {selectedLecture ? (
             <>
               {/* Header Section */}
-              <div className="flex items-center justify-between border-b border-border-light pb-4 mb-6">
+              <div className="flex items-center gap-4 justify-between border-b border-border-light pb-4 mb-6">
                 <div className="w-full">
                   <input 
                     className="w-full border-none bg-transparent p-0 text-4xl font-black text-text-primary placeholder:text-text-secondary/50 focus:outline-none focus:ring-0" 
@@ -252,12 +260,20 @@ export default function NotesPage() {
                 </div>
                 {/* ToolBar Status */}
                 <div className="flex items-center gap-2 shrink-0">
-                  {lastSaved && (
+                  {lastSaved && !isDirty && (
                     <div className="flex items-center gap-2 rounded-full bg-white border border-border-light px-3 py-1 shadow-sm">
                       <span className="material-symbols-outlined text-sm text-accent-green">
                         check_circle
                       </span>
                       <span className="text-xs font-medium text-text-secondary">Saved</span>
+                    </div>
+                  )}
+                  {isDirty && (
+                    <div className="flex items-center gap-2 rounded-full bg-white border border-border-light px-3 py-1 shadow-sm">
+                      <span className="material-symbols-outlined text-sm text-amber-500">
+                        pending
+                      </span>
+                      <span className="text-xs font-medium text-text-secondary">Unsaved changes</span>
                     </div>
                   )}
                 </div>
@@ -268,6 +284,7 @@ export default function NotesPage() {
                  <NoteEditor 
                    initialContent={noteContent} 
                    onSave={handleSaveNote}
+                   onUpdate={handleNoteUpdate}
                    lastSavedAt={lastSaved}
                  />
               </div>

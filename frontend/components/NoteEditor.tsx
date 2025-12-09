@@ -150,10 +150,7 @@ const NoteEditor = ({ initialContent, onUpdate, onSave, lastSavedAt }: NoteEdito
       if (onUpdate) {
         onUpdate(editor.getHTML())
       }
-      // Reset success status on edit so user knows they need to save again
-      if (saveStatus === 'success') {
-        setSaveStatus('idle');
-      }
+      setSaveStatus((prev) => (prev === 'success' || prev === 'error' ? 'idle' : prev))
     },
   })
 
