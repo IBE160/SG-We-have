@@ -9,12 +9,13 @@ interface QuizConfigModalProps {
   onClose: () => void;
   notes: Note[];
   currentCourseId: string;
-  onGenerate: (selectedNoteIds: string[], quizLength: number) => void;
+  onGenerate: (selectedNoteIds: string[], quizLength: number) => Promise<void> | void;
 }
 
 export default function QuizConfigModal({ isOpen, onClose, notes, currentCourseId, onGenerate }: QuizConfigModalProps) {
   const [selectedNoteIds, setSelectedNoteIds] = useState<string[]>([]);
   const [quizLength, setQuizLength] = useState<number>(10);
+  const [isGenerating, setIsGenerating] = useState(false);
 
   const filteredNotes = notes.filter(note => note.course_id === currentCourseId);
 
@@ -36,13 +37,21 @@ export default function QuizConfigModal({ isOpen, onClose, notes, currentCourseI
     }
   };
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     if (selectedNoteIds.length === 0) return;
     
-    console.log("Quiz generation initiated with notes:", selectedNoteIds, "Length:", quizLength);
-    onGenerate(selectedNoteIds, quizLength);
-    onClose();
+    setIsGenerating(true);
+    try {
+        console.log("Quiz generation initiated with notes:", selectedNoteIds, "Length:", quizLength);
+        await onGenerate(selectedNoteIds, quizLength);
+        onClose();
+    } catch (error) {
+        console.error("Quiz generation failed:", error);
+        // Optionally handle error display here
+    } finally {
+        setIsGenerating(false);
+    }
   };
 
   if (!isOpen) return null;
@@ -59,7 +68,7 @@ export default function QuizConfigModal({ isOpen, onClose, notes, currentCourseI
       <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-2xl mx-auto flex flex-col max-h-[90vh]">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-semibold">Configure Quiz</h2>
-          <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
+          <button onClick={onClose} className="text-gray-500 hover:text-gray-700" disabled={isGenerating}>
             <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
             </svg>
@@ -73,7 +82,7 @@ export default function QuizConfigModal({ isOpen, onClose, notes, currentCourseI
                 type="button" 
                 onClick={handleSelectAll}
                 className="text-sm text-blue-600 hover:text-blue-800"
-                disabled={filteredNotes.length === 0}
+                disabled={filteredNotes.length === 0 || isGenerating}
               >
                 {selectedNoteIds.length === filteredNotes.length && filteredNotes.length > 0 ? 'Deselect All' : 'Select All'}
               </button>
@@ -94,6 +103,7 @@ export default function QuizConfigModal({ isOpen, onClose, notes, currentCourseI
                          className="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300 rounded"
                          checked={selectedNoteIds.includes(note.id)}
                          onChange={() => handleCheckboxChange(note.id)}
+                         disabled={isGenerating}
                        />
                      </div>
                      <div className="ml-3 text-sm">
@@ -114,6 +124,7 @@ export default function QuizConfigModal({ isOpen, onClose, notes, currentCourseI
                 value={selectedQuizLengthOption}
                 onChange={(option) => setQuizLength(Number(option.id))}
                 placeholder="Select number of questions"
+                disabled={isGenerating}
              />
            </div>
 
@@ -121,16 +132,17 @@ export default function QuizConfigModal({ isOpen, onClose, notes, currentCourseI
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300"
+              className="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed"
+              disabled={isGenerating}
             >
               Cancel
             </button>
             <button
               type="submit"
-              disabled={selectedNoteIds.length === 0}
-              className={`px-4 py-2 text-white rounded-md ${selectedNoteIds.length === 0 ? 'bg-blue-300 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'}`}
+              disabled={selectedNoteIds.length === 0 || isGenerating}
+              className={`px-4 py-2 text-white rounded-md ${selectedNoteIds.length === 0 || isGenerating ? 'bg-blue-300 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'}`}
             >
-              Generate Quiz
+              {isGenerating ? 'Generating...' : 'Generate Quiz'}
             </button>
           </div>
         </form>
