@@ -8,6 +8,7 @@ import { Trash2 } from 'lucide-react';
 import DeleteConfirmationModal from '@/components/DeleteConfirmationModal';
 import AppHeader from '@/components/AppHeader';
 import EditableTitle from '@/components/EditableTitle';
+import CustomSelect from '@/components/CustomSelect';
 
 export default function QuizHistoryPage() {
   const { user } = useAuth();
@@ -84,6 +85,14 @@ export default function QuizHistoryPage() {
     ? quizzes 
     : quizzes.filter(q => q.course_id === selectedCourseId);
 
+  // Prepare options for CustomSelect
+  const courseOptions = [
+    { id: 'all', name: 'All Courses' },
+    ...courses
+  ];
+
+  const selectedCourseOption = courseOptions.find(c => c.id === selectedCourseId) || courseOptions[0];
+
   return (
     <div className="relative flex h-auto min-h-screen w-full flex-col bg-background-light font-display text-text-primary">
       {/* AppHeader */}
@@ -92,10 +101,6 @@ export default function QuizHistoryPage() {
       {/* Main Content */}
       <main className="flex-1 p-10">
         <div className="mx-auto max-w-5xl">
-          <Link href="/dashboard" className="text-accent-blue hover:underline mb-4 inline-block">
-            &larr; Back to Dashboard
-          </Link>
-
           {/* PageHeading */}
           <div className="flex flex-wrap justify-between gap-3 pb-8 items-end">
             <div className="flex min-w-72 flex-col gap-2">
@@ -104,29 +109,26 @@ export default function QuizHistoryPage() {
             </div>
             
             <div className="w-full md:w-64">
-                <label htmlFor="course-filter" className="block text-sm font-medium text-text-secondary mb-1">Filter by Course</label>
-                <select
-                    id="course-filter"
-                    value={selectedCourseId}
-                    onChange={(e) => setSelectedCourseId(e.target.value)}
-                    className="block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-accent-blue focus:border-accent-blue sm:text-sm rounded-md border bg-white"
-                >
-                    <option value="all">All Courses</option>
-                    {courses.map(course => (
-                        <option key={course.id} value={course.id}>{course.name}</option>
-                    ))}
-                </select>
+                <CustomSelect
+                    label="Filter by Course"
+                    options={courseOptions}
+                    value={selectedCourseOption}
+                    onChange={(option) => setSelectedCourseId(option.id)}
+                    placeholder="Select a course"
+                    className="w-full"
+                    dropdownPosition="absolute"
+                />
             </div>
           </div>
 
           {isLoading ? (
             <div className="text-center py-10 text-text-secondary">Loading quiz history...</div>
           ) : error ? (
-            <div className="mb-8 p-4 bg-red-100 text-red-700 rounded-md border border-red-200">
+            <div className="mb-8 p-4 bg-red-500/10 text-red-500 rounded-md border border-red-500/20">
               {error}
             </div>
           ) : filteredQuizzes.length === 0 ? (
-            <div className="border-2 border-dashed border-border-light rounded-lg h-48 flex items-center justify-center bg-white/50">
+            <div className="border border-border-light rounded-lg h-48 flex items-center justify-center bg-card shadow-soft">
               <div className="text-center">
                 <p className="text-text-secondary mb-2">No quiz history found.</p>
                 <Link href="/quiz" className="text-accent-blue hover:underline font-medium">
@@ -137,11 +139,11 @@ export default function QuizHistoryPage() {
           ) : (
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {filteredQuizzes.map((quiz) => (
-                <div key={quiz.id} className="bg-white border border-border-light rounded-xl p-6 shadow-soft hover:shadow-soft-hover transition-all h-full flex flex-col group relative">
+                <div key={quiz.id} className="bg-card border border-border-light rounded-xl p-6 shadow-soft hover:shadow-soft-hover transition-all h-full flex flex-col group relative">
                   <Link href={`/quiz/${quiz.id}`} className="flex flex-col h-full">
                     <div className="flex items-start justify-between mb-4">
                       <div className="flex items-center gap-3 flex-1 min-w-0">
-                        <div className="flex items-center justify-center rounded-lg bg-primary/10 size-10 text-primary shrink-0">
+                        <div className="flex items-center justify-center rounded-lg bg-accent-blue/10 size-10 text-accent-blue shrink-0">
                           <span className="material-symbols-outlined">quiz</span>
                         </div>
                         <div className="flex-1 min-w-0" onClick={(e) => e.preventDefault()}>
@@ -168,7 +170,7 @@ export default function QuizHistoryPage() {
                       e.stopPropagation();
                       handleDeleteQuiz(quiz.id);
                     }}
-                    className="absolute bottom-4 right-4 text-gray-400 hover:text-red-600 p-1 rounded-md hover:bg-red-50 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity"
+                    className="absolute bottom-4 right-4 text-text-secondary hover:text-red-500 p-1.5 rounded-md hover:bg-red-500/10 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity"
                     title="Delete Quiz"
                   >
                     <Trash2 size={20} />

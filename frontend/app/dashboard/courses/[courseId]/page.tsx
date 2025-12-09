@@ -134,38 +134,36 @@ export default function CourseDetailsPage() {
     }
   };
 
-  if (!id) return <div className="p-10 text-center">Invalid Course ID</div>;
+  if (!id) return <div className="p-10 text-center text-text-primary">Invalid Course ID</div>;
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen bg-background-light text-text-primary font-display">
        <AppHeader />
-       <div className="bg-white shadow mb-6">
+       <div className="bg-card border-b border-border-light shadow-sm mb-6">
         <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 flex justify-between items-center">
             <div className="flex items-center gap-4">
-                <Link href="/dashboard" className="text-blue-600 hover:text-blue-800">
-                    &larr; Back to Dashboard
-                </Link>
                 {course ? (
                     <EditableTitle 
                         initialTitle={course.name} 
                         onSave={handleUpdateCourse} 
-                        className="text-3xl font-bold text-gray-900"
+                        className="text-3xl font-bold text-text-primary"
+                        inputClassName="text-3xl font-bold"
                     />
                 ) : (
-                    <h1 className="text-3xl font-bold text-gray-900">Loading...</h1>
+                    <h1 className="text-3xl font-bold text-text-primary">Loading...</h1>
                 )}
             </div>
           {course && (
             <div className="flex space-x-4">
              <button
                 onClick={() => setIsQuizModalOpen(true)}
-                className="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition-colors"
+                className="bg-accent-purple text-white px-4 py-2 rounded-md hover:bg-accent-purple/90 transition-colors shadow-sm font-medium"
              >
                Generate Quiz
              </button>
              <button
                onClick={() => setIsModalOpen(true)}
-               className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors"
+               className="bg-accent-blue text-white px-4 py-2 rounded-md hover:bg-accent-blue/90 transition-colors shadow-sm font-medium"
              >
                Add notes
              </button>
@@ -174,48 +172,52 @@ export default function CourseDetailsPage() {
         </div>
       </div>
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-10">
         {successMessage && (
-            <div className="mb-4 p-4 bg-green-100 text-green-700 rounded-md">
+            <div className="mb-4 p-4 bg-accent-green/10 text-accent-green border border-accent-green/20 rounded-md">
               {successMessage}
             </div>
         )}
         
         {error && (
-          <div className="mb-4 p-4 bg-red-100 text-red-700 rounded-md">
+          <div className="mb-4 p-4 bg-red-500/10 text-red-500 border border-red-500/20 rounded-md">
             {error}
           </div>
         )}
 
         {isLoading ? (
-           <div className="text-center py-10">Loading details...</div>
+           <div className="text-center py-10 text-text-secondary">Loading details...</div>
         ) : !course ? (
-            <div className="text-center py-10">Course not found.</div>
+            <div className="text-center py-10 text-text-secondary">Course not found.</div>
         ) : (
-          <div className="bg-white shadow overflow-hidden sm:rounded-md">
+          <div className="bg-card shadow-soft rounded-xl overflow-hidden border border-border-light">
             {notes.length === 0 ? (
-               <div className="p-6 text-center text-gray-500">
-                 No notes yet. Click "Add notes" to get started.
+               <div className="p-10 text-center text-text-secondary flex flex-col items-center gap-2">
+                 <span className="material-symbols-outlined text-4xl text-text-secondary/50">note_stack</span>
+                 <p>No notes yet. Click "Add notes" to get started.</p>
                </div>
             ) : (
-              <ul className="divide-y divide-gray-200">
+              <ul className="divide-y divide-border-light">
                 {notes.map((note) => (
                   <li key={note.id}>
                     <div 
                         onClick={() => router.push(`/dashboard/courses/${id}/notes/${note.id}`)}
-                        className="block px-4 py-4 sm:px-6 hover:bg-gray-50 cursor-pointer"
+                        className="block px-4 py-4 sm:px-6 hover:bg-sidebar-hover cursor-pointer transition-colors"
                     >
                         <div className="flex items-center justify-between">
-                            <div className="flex items-center flex-grow">
-                                <EditableTitle
-                                    initialTitle={note.title}
-                                    onSave={async (newTitle) => handleUpdateNoteTitle(note.id, newTitle)}
-                                    className="text-lg font-medium text-blue-600 truncate"
-                                    inputClassName="text-lg"
-                                />
+                            <div className="flex items-center flex-grow min-w-0">
+                                <span className="material-symbols-outlined text-text-secondary mr-3 shrink-0">description</span>
+                                <div className="min-w-0 flex-1">
+                                  <EditableTitle
+                                      initialTitle={note.title}
+                                      onSave={async (newTitle) => handleUpdateNoteTitle(note.id, newTitle)}
+                                      className="text-lg font-medium text-text-primary truncate block"
+                                      inputClassName="text-lg w-full"
+                                  />
+                                </div>
                             </div>
-                            <div className="ml-2 flex-shrink-0 flex items-center gap-4">
-                                <p className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
+                            <div className="ml-4 flex-shrink-0 flex items-center gap-4">
+                                <p className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-sidebar-hover text-text-secondary border border-border-light">
                                     {new Date(note.created_at).toLocaleDateString()}
                                 </p>
                                 <button
@@ -223,7 +225,7 @@ export default function CourseDetailsPage() {
                                         e.stopPropagation();
                                         handleDeleteNote(note.id);
                                     }}
-                                    className="text-gray-400 hover:text-red-600 transition-colors p-1 rounded-md hover:bg-red-50"
+                                    className="text-text-secondary hover:text-red-500 transition-colors p-1.5 rounded-md hover:bg-red-500/10"
                                     title="Delete Note"
                                 >
                                     <Trash2 size={18} />

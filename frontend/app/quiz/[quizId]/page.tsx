@@ -155,19 +155,19 @@ export default function QuizPage() {
 
   if (loading || isAuthLoading) {
     return (
-      <div className="flex min-h-screen items-center justify-center">
-        <p>Loading...</p>
+      <div className="flex min-h-screen items-center justify-center bg-background-light">
+        <p className="text-text-secondary">Loading...</p>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="flex min-h-screen items-center justify-center flex-col">
+      <div className="flex min-h-screen items-center justify-center flex-col bg-background-light">
         <p className="text-red-500 mb-4">{error}</p>
         <button 
           onClick={() => router.back()}
-          className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+          className="px-4 py-2 bg-accent-blue text-white rounded hover:bg-accent-blue/90"
         >
           Go Back
         </button>
@@ -197,12 +197,12 @@ export default function QuizPage() {
   }
 
   return (
-    <main className="flex min-h-screen flex-col items-center p-4 md:pt-12 bg-background-light">
+    <main className="flex min-h-screen flex-col items-center p-4 md:pt-12 bg-background-light text-text-primary">
       <div className="w-full max-w-7xl">
         <div className="mb-6">
           <button 
             onClick={() => router.push('/dashboard')}
-            className="text-gray-500 hover:text-gray-700 transition-colors flex items-center gap-2 text-lg font-medium"
+            className="text-text-secondary hover:text-text-primary transition-colors flex items-center gap-2 text-lg font-medium"
           >
             <span className="material-symbols-outlined" style={{fontSize: '24px'}}>arrow_back</span>
             Exit Quiz
@@ -210,7 +210,7 @@ export default function QuizPage() {
         </div>
 
         <div className="mb-8">
-          <h1 className="text-2xl font-bold mb-4">{quizState.quiz_title}</h1>
+          <h1 className="text-2xl font-bold mb-4 text-text-primary">{quizState.quiz_title}</h1>
           <QuizProgressBar 
             currentQuestionIndex={currentQuestionIndex} 
             totalQuestions={questionsCache.length} 
@@ -229,14 +229,14 @@ export default function QuizPage() {
 
         <div className="mt-8 flex justify-center items-center gap-4">
           <button
-            className="px-6 py-3 bg-gray-200 text-gray-800 rounded-lg font-medium hover:bg-gray-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-6 py-3 bg-card border border-border-light text-text-primary rounded-lg font-medium hover:bg-sidebar-hover transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
             onClick={handlePreviousQuestion}
             disabled={currentQuestionIndex === 0}
           >
             Previous
           </button>
           <button
-            className="px-6 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-6 py-3 bg-accent-blue text-white rounded-lg font-medium hover:bg-accent-blue/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-md"
             onClick={handleNextQuestion}
             disabled={!submissionResult}
           >

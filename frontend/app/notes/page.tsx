@@ -167,7 +167,7 @@ export default function NotesPage() {
   return (
     <div className="flex h-screen w-full text-text-primary bg-background-light font-display">
       {/* SideNavBar */}
-      <aside className="flex h-full w-72 flex-col justify-between border-r border-border-light bg-white p-4">
+      <aside className="flex h-full w-72 flex-col justify-between border-r border-border-light bg-sidebar p-4">
         <div className="flex flex-col gap-6 overflow-y-auto">
           {/* Back to Dashboard Link styled consistently */}
           <Link href="/dashboard" className="flex items-center gap-3 px-3 py-2 text-text-secondary hover:text-text-primary transition-colors">
@@ -190,7 +190,7 @@ export default function NotesPage() {
                  <div 
                    key={lecture.id}
                    onClick={() => setSelectedLecture(lecture)}
-                   className={`flex items-center justify-between px-3 py-2.5 rounded-lg w-full text-left transition-colors cursor-pointer ${selectedLecture?.id === lecture.id ? 'bg-accent-blue/10 text-accent-blue font-medium' : 'text-text-secondary hover:bg-background-light hover:text-text-primary'}`}
+                   className={`flex items-center justify-between px-3 py-2.5 rounded-lg w-full text-left transition-colors cursor-pointer ${selectedLecture?.id === lecture.id ? 'bg-accent-blue/10 text-accent-blue font-medium' : 'text-text-secondary hover:bg-sidebar-hover hover:text-text-primary'}`}
                  >
                    <div className="flex items-center gap-3 overflow-hidden flex-grow">
                         <span className="material-symbols-outlined text-[20px] shrink-0">{selectedLecture?.id === lecture.id ? 'draft' : 'article'}</span>
@@ -208,7 +208,7 @@ export default function NotesPage() {
                             e.stopPropagation();
                             handleDeleteNote(lecture.id);
                         }}
-                        className="text-gray-400 hover:text-red-600 p-1 rounded-md hover:bg-red-50 shrink-0 ml-2"
+                        className="text-text-secondary hover:text-red-500 p-1 rounded-md hover:bg-red-500/10 shrink-0 ml-2"
                         title="Delete Note"
                     >
                         <Trash2 size={16} />
@@ -255,7 +255,7 @@ export default function NotesPage() {
                 {/* ToolBar Status */}
                 <div className="flex items-center gap-2 shrink-0">
                   {lastSaved && !isDirty && (
-                    <div className="flex items-center gap-2 rounded-full bg-white border border-border-light px-3 py-1 shadow-sm">
+                    <div className="flex items-center gap-2 rounded-full bg-card border border-border-light px-3 py-1 shadow-sm">
                       <span className="material-symbols-outlined text-sm text-accent-green">
                         check_circle
                       </span>
@@ -263,7 +263,7 @@ export default function NotesPage() {
                     </div>
                   )}
                   {isDirty && (
-                    <div className="flex items-center gap-2 rounded-full bg-white border border-border-light px-3 py-1 shadow-sm">
+                    <div className="flex items-center gap-2 rounded-full bg-card border border-border-light px-3 py-1 shadow-sm">
                       <span className="material-symbols-outlined text-sm text-amber-500">
                         pending
                       </span>
@@ -285,7 +285,7 @@ export default function NotesPage() {
             </>
           ) : (
              <div className="flex flex-col items-center justify-center h-full text-text-secondary">
-               <div className="bg-white p-6 rounded-full shadow-soft mb-4">
+               <div className="bg-card p-6 rounded-full shadow-soft mb-4">
                  <span className="material-symbols-outlined text-4xl text-accent-blue">library_books</span>
                </div>
                <h2 className="text-xl font-bold text-text-primary mb-2">No Note Selected</h2>

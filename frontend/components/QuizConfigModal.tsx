@@ -64,11 +64,11 @@ export default function QuizConfigModal({ isOpen, onClose, notes, currentCourseI
   const selectedQuizLengthOption = quizLengthOptions.find(opt => Number(opt.id) === quizLength) || null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-      <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-2xl mx-auto flex flex-col max-h-[90vh]">
+    <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-50 backdrop-blur-sm">
+      <div className="bg-modal rounded-xl p-6 w-full max-w-2xl mx-auto flex flex-col max-h-[90vh] shadow-soft border border-border-light">
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-semibold">Configure Quiz</h2>
-          <button onClick={onClose} className="text-gray-500 hover:text-gray-700" disabled={isGenerating}>
+          <h2 className="text-xl font-semibold text-text-primary">Configure Quiz</h2>
+          <button onClick={onClose} className="text-text-secondary hover:text-text-primary" disabled={isGenerating}>
             <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
             </svg>
@@ -77,37 +77,37 @@ export default function QuizConfigModal({ isOpen, onClose, notes, currentCourseI
         
         <form onSubmit={handleSubmit} className="flex flex-col flex-1 overflow-hidden">
            <div className="flex justify-between items-center mb-2">
-              <label className="block text-sm font-medium text-gray-700">Select Notes</label>
+              <label className="block text-sm font-medium text-text-secondary">Select Notes</label>
               <button 
                 type="button" 
                 onClick={handleSelectAll}
-                className="text-sm text-blue-600 hover:text-blue-800"
+                className="text-sm text-accent-blue hover:text-accent-blue/80 font-medium"
                 disabled={filteredNotes.length === 0 || isGenerating}
               >
                 {selectedNoteIds.length === filteredNotes.length && filteredNotes.length > 0 ? 'Deselect All' : 'Select All'}
               </button>
            </div>
 
-           <div className="flex-1 overflow-y-auto border border-gray-200 rounded-md mb-4 p-2">
+           <div className="flex-1 overflow-y-auto border border-border-light rounded-md mb-4 p-2 bg-card">
              {filteredNotes.length === 0 ? (
-                <p className="text-center text-gray-500 py-4">No notes available for this course.</p>
+                <p className="text-center text-text-secondary py-4">No notes available for this course.</p>
              ) : (
                <div className="space-y-2">
                  {filteredNotes.map(note => (
-                   <div key={note.id} className="flex items-start p-2 rounded hover:bg-gray-50">
+                   <div key={note.id} className="flex items-start p-2 rounded hover:bg-sidebar-hover transition-colors">
                      <div className="flex items-center h-5">
                        <input
                          id={`note-${note.id}`}
                          name={`note-${note.id}`}
                          type="checkbox"
-                         className="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300 rounded"
+                         className="focus:ring-accent-blue h-4 w-4 text-accent-blue border-border-light rounded bg-card"
                          checked={selectedNoteIds.includes(note.id)}
                          onChange={() => handleCheckboxChange(note.id)}
                          disabled={isGenerating}
                        />
                      </div>
                      <div className="ml-3 text-sm">
-                       <label htmlFor={`note-${note.id}`} className="font-medium text-gray-700 cursor-pointer">
+                       <label htmlFor={`note-${note.id}`} className="font-medium text-text-primary cursor-pointer select-none">
                          {note.title}
                        </label>
                      </div>
@@ -128,11 +128,11 @@ export default function QuizConfigModal({ isOpen, onClose, notes, currentCourseI
              />
            </div>
 
-          <div className="flex justify-end space-x-2 pt-4 border-t border-gray-100 mt-auto">
+          <div className="flex justify-end space-x-2 pt-4 border-t border-border-light mt-auto">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-4 py-2 text-text-secondary hover:bg-sidebar-hover hover:text-text-primary rounded-md transition-colors"
               disabled={isGenerating}
             >
               Cancel
@@ -140,7 +140,7 @@ export default function QuizConfigModal({ isOpen, onClose, notes, currentCourseI
             <button
               type="submit"
               disabled={selectedNoteIds.length === 0 || isGenerating}
-              className={`px-4 py-2 text-white rounded-md ${selectedNoteIds.length === 0 || isGenerating ? 'bg-blue-300 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'}`}
+              className={`px-4 py-2 text-white rounded-md shadow-md transition-colors font-medium ${selectedNoteIds.length === 0 || isGenerating ? 'bg-accent-blue/50 cursor-not-allowed' : 'bg-accent-blue hover:bg-accent-blue/90'}`}
             >
               {isGenerating ? 'Generating...' : 'Generate Quiz'}
             </button>

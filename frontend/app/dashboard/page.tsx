@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import CreateCourseModal from '@/components/CreateCourseModal';
 import DeleteConfirmationModal from '@/components/DeleteConfirmationModal';
+import SettingsModal from '@/components/SettingsModal';
 import { getCourses, updateCourse, deleteCourse, Course, ApiError } from '@/lib/api';
 import { useAuth } from '@/components/SupabaseClientProvider';
 import EditableTitle from '@/components/EditableTitle';
@@ -19,6 +20,7 @@ export default function DashboardPage() {
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [courseToDelete, setCourseToDelete] = useState<string | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const { user, signOut } = useAuth();
   const router = useRouter();
 
@@ -85,13 +87,13 @@ export default function DashboardPage() {
       }
   };
 
-  const sidebarItemClass = "flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-text-secondary transition-colors hover:bg-background-light hover:text-text-primary text-left";
-  const activeSidebarItemClass = "flex w-full items-center gap-3 rounded-lg bg-background-light px-3 py-2.5 text-text-primary transition-colors";
+  const sidebarItemClass = "flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-text-secondary transition-colors hover:bg-sidebar-hover hover:text-text-primary text-left";
+  const activeSidebarItemClass = "flex w-full items-center gap-3 rounded-lg bg-sidebar-hover px-3 py-2.5 text-text-primary transition-colors";
 
   return (
     <div className="relative flex h-auto min-h-screen w-full flex-row bg-background-light font-display text-text-primary">
       {/* SideNavBar */}
-      <aside className="flex h-screen w-64 flex-col border-r border-border-light bg-white p-4 sticky top-0">
+      <aside className="flex h-screen w-64 flex-col border-r border-border-light bg-sidebar p-4 sticky top-0">
         <div className="flex h-full flex-col justify-between">
           <div className="flex flex-col gap-8">
             <div className="flex items-center gap-3 px-3">
@@ -124,10 +126,13 @@ export default function DashboardPage() {
             </nav>
           </div>
           <div className="flex flex-col gap-2">
-            <div className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-text-secondary transition-colors hover:bg-background-light hover:text-text-primary cursor-pointer">
+            <button 
+              onClick={() => setIsSettingsOpen(true)}
+              className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-text-secondary transition-colors hover:bg-sidebar-hover hover:text-text-primary text-left cursor-pointer"
+            >
               <span className="material-symbols-outlined" style={{fontSize: '24px'}}>settings</span>
               <p className="text-sm font-medium">Settings</p>
-            </div>
+            </button>
             <div className="flex items-center gap-4 rounded-lg p-2">
               <div className="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10 bg-gray-200 flex items-center justify-center text-gray-500 font-bold">
                   {user?.email?.[0].toUpperCase()}
@@ -172,7 +177,7 @@ export default function DashboardPage() {
             </div>
             
             {/* Card 1: Create New Course */}
-            <div className="relative flex flex-col justify-between gap-6 rounded-xl border border-border-light bg-white/70 p-6 shadow-soft backdrop-blur-md transition-shadow hover:shadow-soft-hover">
+            <div className="relative flex flex-col justify-between gap-6 rounded-xl border border-border-light bg-card p-6 shadow-soft backdrop-blur-md transition-shadow hover:shadow-soft-hover">
               <div className="flex flex-col gap-3">
                 <div className="flex size-12 items-center justify-center rounded-lg bg-accent-blue/10">
                   <span className="material-symbols-outlined text-accent-blue" style={{fontSize: '28px'}}>add_circle</span>
@@ -184,7 +189,7 @@ export default function DashboardPage() {
             </div>
 
             {/* Card 2: Continue Last Note (Static for now) */}
-            <div className="relative flex flex-col justify-between gap-6 rounded-xl border border-border-light bg-white/70 p-6 shadow-soft backdrop-blur-md transition-shadow hover:shadow-soft-hover">
+            <div className="relative flex flex-col justify-between gap-6 rounded-xl border border-border-light bg-card p-6 shadow-soft backdrop-blur-md transition-shadow hover:shadow-soft-hover">
               <div className="flex flex-col gap-3">
                 <div className="flex size-12 items-center justify-center rounded-lg bg-accent-purple/10">
                   <span className="material-symbols-outlined text-accent-purple" style={{fontSize: '28px'}}>history_edu</span>
@@ -196,7 +201,7 @@ export default function DashboardPage() {
             </div>
 
             {/* Card 3: Create a Quiz */}
-            <div className="relative flex flex-col justify-between gap-6 rounded-xl border border-border-light bg-white/70 p-6 shadow-soft backdrop-blur-md transition-shadow hover:shadow-soft-hover">
+            <div className="relative flex flex-col justify-between gap-6 rounded-xl border border-border-light bg-card p-6 shadow-soft backdrop-blur-md transition-shadow hover:shadow-soft-hover">
               <div className="flex flex-col gap-3">
                 <div className="flex size-12 items-center justify-center rounded-lg bg-accent-green/10">
                   <span className="material-symbols-outlined text-accent-green" style={{fontSize: '28px'}}>quiz</span>
@@ -215,7 +220,7 @@ export default function DashboardPage() {
               {isLoading ? (
                  <div className="text-center py-10 text-text-secondary">Loading courses...</div>
               ) : courses.length === 0 ? (
-                <div className="border-2 border-dashed border-border-light rounded-lg h-48 flex items-center justify-center bg-white/50">
+                <div className="border-2 border-dashed border-border-light rounded-lg h-48 flex items-center justify-center bg-card">
                    <div className="text-center">
                       <p className="text-text-secondary mb-2">No courses found.</p>
                       <button onClick={() => setIsModalOpen(true)} className="text-accent-blue hover:underline font-medium">Create your first course</button>
@@ -227,7 +232,7 @@ export default function DashboardPage() {
                     <div 
                         key={course.id} 
                         onClick={() => router.push(`/dashboard/courses/${course.id}`)}
-                        className="bg-white border border-border-light rounded-xl p-6 shadow-soft hover:shadow-soft-hover transition-all h-full flex flex-col cursor-pointer group"
+                        className="bg-card border border-border-light rounded-xl p-6 shadow-soft hover:shadow-soft-hover transition-all h-full flex flex-col cursor-pointer group"
                     >
                         <div className="flex items-start justify-between mb-4">
                            <div className="flex items-center gap-3 flex-1 min-w-0">
@@ -282,6 +287,11 @@ export default function DashboardPage() {
         title="Delete Course"
         message="Are you sure you want to delete this course? All notes related to this course will be deleted too."
         isLoading={isDeleting}
+      />
+
+      <SettingsModal
+        isOpen={isSettingsOpen}
+        onClose={() => setIsSettingsOpen(false)}
       />
     </div>
   );

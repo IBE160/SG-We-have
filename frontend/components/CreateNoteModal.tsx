@@ -44,19 +44,19 @@ export default function CreateNoteModal({ isOpen, onClose, courseId, onNoteCreat
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg p-6 w-full max-w-md">
-        <h2 className="text-xl font-bold mb-4">Add New Note</h2>
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 backdrop-blur-sm">
+      <div className="bg-modal rounded-xl p-6 w-full max-w-md shadow-soft border border-border-light">
+        <h2 className="text-xl font-bold mb-4 text-text-primary">Add New Note</h2>
         
         {error && (
-          <div className="mb-4 p-3 bg-red-100 text-red-700 rounded-md text-sm">
+          <div className="mb-4 p-3 bg-red-500/10 text-red-500 border border-red-500/20 rounded-md text-sm">
             {error}
           </div>
         )}
 
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
-            <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="title" className="block text-sm font-medium text-text-secondary mb-1">
               Note Title
             </label>
             <input
@@ -64,7 +64,7 @@ export default function CreateNoteModal({ isOpen, onClose, courseId, onNoteCreat
               id="title"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-border-light rounded-md focus:outline-none focus:ring-2 focus:ring-accent-blue bg-card text-text-primary"
               placeholder="e.g., Introduction to Neural Networks"
               autoFocus
             />
@@ -74,14 +74,14 @@ export default function CreateNoteModal({ isOpen, onClose, courseId, onNoteCreat
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-md"
+              className="px-4 py-2 text-text-secondary hover:bg-sidebar-hover hover:text-text-primary rounded-md transition-colors"
               disabled={isLoading}
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50"
+              className="px-4 py-2 bg-accent-blue text-white rounded-md hover:bg-accent-blue/90 disabled:opacity-50 transition-colors font-semibold shadow-md"
               disabled={isLoading}
             >
               {isLoading ? 'Adding...' : 'Add Note'}

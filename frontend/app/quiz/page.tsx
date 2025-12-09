@@ -120,7 +120,7 @@ export default function GenerateQuizPage() {
               </div>
 
               {error && (
-                <div className="p-4 bg-red-100 text-red-700 rounded-md border border-red-200">
+                <div className="p-4 bg-red-500/10 text-red-500 rounded-md border border-red-500/20">
                   {error}
                 </div>
               )}
@@ -130,7 +130,7 @@ export default function GenerateQuizPage() {
                   <h3 className="text-text-primary text-lg font-bold leading-tight tracking-[-0.015em]">1. Select Course</h3>
                   <div className="flex max-w-[480px]">
                     {isLoadingCourses ? (
-                      <div className="h-10 w-full bg-gray-100 rounded-md animate-pulse"></div>
+                      <div className="h-10 w-full bg-sidebar-hover rounded-md animate-pulse"></div>
                     ) : (
                       <CustomSelect
                         options={courses}
@@ -147,30 +147,30 @@ export default function GenerateQuizPage() {
                   <div className="flex items-center justify-between">
                     <h3 className="text-text-primary text-lg font-bold leading-tight tracking-[-0.015em]">2. Choose notes to include</h3>
                     <div className="flex gap-4">
-                      <button onClick={handleDeselectAll} className="text-sm font-medium text-text-secondary hover:text-accent-blue">Deselect All</button>
-                      <button onClick={handleSelectAll} className="text-sm font-medium text-accent-blue hover:text-accent-blue/80">Select All</button>
+                      <button onClick={handleDeselectAll} className="text-sm font-medium text-text-secondary hover:text-accent-blue transition-colors">Deselect All</button>
+                      <button onClick={handleSelectAll} className="text-sm font-medium text-accent-blue hover:text-accent-blue/80 transition-colors">Select All</button>
                     </div>
                   </div>
                   
-                  <div className="flex flex-col gap-2 rounded-xl border border-border-light bg-white p-2 max-h-[400px] overflow-y-auto">
+                  <div className="flex flex-col gap-2 rounded-xl border border-border-light bg-card p-2 max-h-[400px] overflow-y-auto shadow-soft">
                     {isLoadingNotes ? (
-                      <div className="p-4 text-center text-gray-500">Loading notes...</div>
+                      <div className="p-4 text-center text-text-secondary">Loading notes...</div>
                     ) : notes.length === 0 ? (
-                      <div className="p-4 text-center text-gray-500">No notes found for this course.</div>
+                      <div className="p-4 text-center text-text-secondary">No notes found for this course.</div>
                     ) : (
                       notes.map(note => {
                         const hasContent = !!note.content;
                         return (
-                          <label key={note.id} className="flex cursor-pointer items-center justify-between gap-4 rounded-lg p-4 transition-colors hover:bg-accent-blue/10 has-[:checked]:bg-accent-blue/10">
+                          <label key={note.id} className="flex cursor-pointer items-center justify-between gap-4 rounded-lg p-4 transition-colors hover:bg-sidebar-hover has-[:checked]:bg-accent-blue/10">
                             <div className="flex items-center gap-4">
                               <input 
                                 type="checkbox"
-                                className="h-5 w-5 rounded border-gray-300 text-accent-blue focus:ring-accent-blue/50"
+                                className="h-5 w-5 rounded border-border-light text-accent-blue focus:ring-accent-blue/50 bg-card"
                                 checked={selectedNoteIds.includes(note.id)}
                                 onChange={() => handleToggleNote(note.id)}
                                 disabled={!hasContent}
                               />
-                              <p className={`font-medium text-text-primary ${!hasContent ? 'text-gray-400' : ''}`}>{note.title}</p>
+                              <p className={`font-medium ${!hasContent ? 'text-text-secondary' : 'text-text-primary'}`}>{note.title}</p>
                             </div>
                             <p className="text-sm text-text-secondary">
                               {new Date(note.created_at).toLocaleDateString()}
@@ -201,7 +201,7 @@ export default function GenerateQuizPage() {
                   <button 
                     onClick={handleGenerateQuiz}
                     disabled={isGenerating || selectedNoteIds.length === 0}
-                    className={`flex w-full max-w-sm cursor-pointer items-center justify-center gap-2 overflow-hidden rounded-xl bg-accent-blue px-6 py-4 text-base font-bold text-white transition-opacity hover:opacity-90 ${isGenerating || selectedNoteIds.length === 0 ? 'opacity-50 cursor-not-allowed' : ''}`}
+                    className={`flex w-full max-w-sm cursor-pointer items-center justify-center gap-2 overflow-hidden rounded-xl bg-accent-blue px-6 py-4 text-base font-bold text-white transition-opacity hover:opacity-90 shadow-md ${isGenerating || selectedNoteIds.length === 0 ? 'opacity-50 cursor-not-allowed shadow-none' : ''}`}
                   >
                     {isGenerating ? 'Generating Quiz...' : 'Generate Quiz'}
                   </button>

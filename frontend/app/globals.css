@@ -1,42 +1,105 @@
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
 
+:root {
+  /* Light Theme (Default) */
+  --background-light: #f7f7f6;
+  --background-dark: #1d1a15;
+  
+  --primary: #D0BB95;
+  --accent-blue: #007AFF;
+  --accent-green: #30D158;
+  --accent-purple: #AF52DE;
+  
+  --text-primary: #1D1D1F;
+  --text-secondary: #6E6E73;
+  --text-inverse: #FFFFFF;
+  
+  --border-light: #E5E5EA;
+  
+  --card-background: #FFFFFF;
+  --card-background-hover: #FFFFFF; /* Or a slight tint */
+  
+  --sidebar-background: #FFFFFF;
+  --sidebar-hover: #f7f7f6;
+  
+  --modal-background: #FFFFFF;
+  
+  --shadow-soft: 0 4px 12px 0 rgba(0, 0, 0, 0.05);
+  --shadow-soft-hover: 0 8px 20px 0 rgba(0, 0, 0, 0.07);
+}
+
+:root.dark {
+  /* Dark Theme Overrides */
+  --background-light: #121212; /* Main app background */
+  --background-dark: #000000;
+  
+  --primary: #D0BB95; /* Keep primary or adjust */
+  --accent-blue: #0A84FF; /* Slightly lighter for dark mode */
+  --accent-green: #32D74B;
+  --accent-purple: #BF5AF2;
+  
+  --text-primary: #F5F5F7;
+  --text-secondary: #86868B;
+  --text-inverse: #000000;
+  
+  --border-light: #38383A;
+  
+  --card-background: #1C1C1E;
+  --card-background-hover: #2C2C2E;
+  
+  --sidebar-background: #1C1C1E;
+  --sidebar-hover: #2C2C2E;
+  
+  --modal-background: #1C1C1E;
+  
+  --shadow-soft: 0 4px 12px 0 rgba(0, 0, 0, 0.5);
+  --shadow-soft-hover: 0 8px 20px 0 rgba(0, 0, 0, 0.7);
+}
+
 @theme {
-  --color-primary: #D0BB95;
-  --color-background-light: #f7f7f6;
-  --color-background-dark: #1d1a15;
-  --color-accent-blue: #007AFF;
-  --color-accent-green: #30D158;
-  --color-accent-purple: #AF52DE;
-  --color-text-primary: #1D1D1F;
-  --color-text-secondary: #6E6E73;
-  --color-border-light: #E5E5EA;
+  --color-primary: var(--primary);
+  --color-background-light: var(--background-light);
+  --color-background-dark: var(--background-dark);
+  --color-accent-blue: var(--accent-blue);
+  --color-accent-green: var(--accent-green);
+  --color-accent-purple: var(--accent-purple);
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-inverse: var(--text-inverse);
+  --color-border-light: var(--border-light);
+  
+  /* New semantic colors */
+  --color-card: var(--card-background);
+  --color-card-hover: var(--card-background-hover);
+  --color-sidebar: var(--sidebar-background);
+  --color-sidebar-hover: var(--sidebar-hover);
+  --color-modal: var(--modal-background);
 
   --font-display: "Inter", sans-serif;
 
-  --shadow-soft: 0 4px 12px 0 rgba(0, 0, 0, 0.05);
-  --shadow-soft-hover: 0 8px 20px 0 rgba(0, 0, 0, 0.07);
+  --shadow-soft: var(--shadow-soft);
+  --shadow-soft-hover: var(--shadow-soft-hover);
   
   --radius-DEFAULT: 0.25rem;
   --radius-lg: 0.5rem;
   --radius-xl: 0.75rem;
 }
 
-:root {
-  --background: var(--color-background-light);
-  --foreground: var(--color-text-primary);
-}
-
 body {
-  background: var(--background);
-  color: var(--foreground);
+  background: var(--background-light);
+  color: var(--text-primary);
   font-family: var(--font-display);
 }
 
 /* Custom Prose Overrides for Tiptap Editor */
 .prose {
-  --tw-prose-bullets: #000000; /* Black bullets */
-  --tw-prose-counters: #000000; /* Black numbers */
+  --tw-prose-bullets: var(--text-primary);
+  --tw-prose-counters: var(--text-primary);
+  --tw-prose-body: var(--text-primary);
+  --tw-prose-headings: var(--text-primary);
+  --tw-prose-links: var(--accent-blue);
+  --tw-prose-bold: var(--text-primary);
 }
 
 .material-symbols-outlined {

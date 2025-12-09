@@ -63,14 +63,14 @@ export default function EditableTitle({ initialTitle, onSave, className = '', in
           onChange={(e) => setTitle(e.target.value)}
           onKeyDown={handleKeyDown}
           onClick={(e) => e.stopPropagation()}
-          className={`border rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500 ${inputClassName || className}`}
+          className={`border border-border-light bg-card text-text-primary rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-accent-blue ${inputClassName || className}`}
           disabled={isLoading}
           autoFocus
         />
-        <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleSave(); }} disabled={isLoading} className="p-1 text-green-600 hover:bg-green-50 rounded">
+        <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleSave(); }} disabled={isLoading} className="p-1 text-accent-green hover:bg-accent-green/10 rounded">
           <Check size={20} />
         </button>
-        <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleCancel(); }} disabled={isLoading} className="p-1 text-red-600 hover:bg-red-50 rounded">
+        <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleCancel(); }} disabled={isLoading} className="p-1 text-red-500 hover:bg-red-500/10 rounded">
           <X size={20} />
         </button>
       </div>
@@ -86,7 +86,7 @@ export default function EditableTitle({ initialTitle, onSave, className = '', in
           e.stopPropagation();
           setIsEditing(true);
         }} 
-        className="p-1 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded transition-colors"
+        className="p-1 text-text-secondary hover:text-accent-blue hover:bg-accent-blue/10 rounded transition-colors"
         title="Edit Title"
       >
         <Pencil size={18} />

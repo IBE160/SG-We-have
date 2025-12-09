@@ -17,7 +17,7 @@ export function QuizProgressBar({ currentQuestionIndex, totalQuestions }: QuizPr
         <span>Question {current} of {totalQuestions}</span>
         <span>{Math.round(percentage)}%</span>
       </div>
-      <div className="w-full bg-gray-200 rounded-full h-2.5">
+      <div className="w-full bg-border-light rounded-full h-2.5">
         <div 
           className="bg-accent-blue h-2.5 rounded-full transition-all duration-500 ease-out" 
           style={{ width: `${percentage}%` }}

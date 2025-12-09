@@ -41,15 +41,15 @@ export default function CustomSelect<T extends Option>({
       <Listbox value={value} onChange={onChange} disabled={disabled}>
         <div className="relative mt-1">
           <ListboxButton className={clsx(
-            "relative w-full cursor-default rounded-md bg-white py-1.5 pl-3 pr-10 text-left border border-border-light shadow-sm focus:outline-none focus:ring-1 focus:ring-accent-blue focus:border-accent-blue sm:text-sm",
-            disabled && "opacity-50 cursor-not-allowed bg-gray-50"
+            "relative w-full cursor-default rounded-md bg-card py-1.5 pl-3 pr-10 text-left border border-border-light shadow-sm focus:outline-none focus:ring-1 focus:ring-accent-blue focus:border-accent-blue sm:text-sm text-text-primary",
+            disabled && "opacity-50 cursor-not-allowed bg-sidebar-hover"
           )}>
-            <span className={clsx("block truncate", !value && "text-gray-400")}>
+            <span className={clsx("block truncate", !value && "text-text-secondary")}>
               {value ? value.name : placeholder}
             </span>
             <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
               <ChevronDown
-                className="h-4 w-4 text-gray-400"
+                className="h-4 w-4 text-text-secondary"
                 aria-hidden="true"
               />
             </span>
@@ -58,12 +58,12 @@ export default function CustomSelect<T extends Option>({
             anchor={dropdownPosition === 'anchor' ? { to: 'bottom start', gap: 4 } : undefined}
             transition
             className={clsx(
-              "z-50 max-h-60 overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm transition duration-100 ease-in data-[leave]:data-[closed]:opacity-0 border border-border-light",
+              "z-50 max-h-60 overflow-auto rounded-md bg-card py-1 text-base shadow-soft ring-1 ring-border-light focus:outline-none sm:text-sm transition duration-100 ease-in data-[leave]:data-[closed]:opacity-0 border border-border-light",
               dropdownPosition === 'anchor' ? "w-[var(--button-width)]" : "absolute top-full left-0 mt-1 w-full"
             )}
           >
             {options.length === 0 ? (
-                <div className="relative cursor-default select-none py-2 px-4 text-gray-500 italic">
+                <div className="relative cursor-default select-none py-2 px-4 text-text-secondary italic">
                     No options available
                 </div>
             ) : (

@@ -66,15 +66,15 @@ export default function NoteDetailsPage() {
   };
 
   if (isLoading) {
-      return <div className="p-10 text-center">Loading...</div>;
+      return <div className="p-10 text-center text-text-secondary">Loading...</div>;
   }
 
   if (error) {
       return (
-        <div className="p-10 text-center text-red-600">
+        <div className="p-10 text-center text-red-500">
             {error}
             <div className="mt-4">
-                <Link href={`/dashboard/courses/${courseId}`} className="text-blue-600 underline">
+                <Link href={`/dashboard/courses/${courseId}`} className="text-accent-blue hover:underline">
                     Back to Course
                 </Link>
             </div>
@@ -83,30 +83,32 @@ export default function NoteDetailsPage() {
   }
 
   if (!note) {
-      return <div className="p-10 text-center">Note not found.</div>;
+      return <div className="p-10 text-center text-text-secondary">Note not found.</div>;
   }
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen bg-background-light text-text-primary font-display">
        <AppHeader />
-       <div className="bg-white shadow mb-6">
+       <div className="bg-card border-b border-border-light shadow-sm mb-6">
         <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 flex justify-between items-center">
             <div className="flex items-center gap-4">
-                <Link href={`/dashboard/courses/${courseId}`} className="text-blue-600 hover:text-blue-800">
-                    &larr; Back to Course
+                <Link href={`/dashboard/courses/${courseId}`} className="text-accent-blue hover:text-accent-blue/80 flex items-center gap-1">
+                    <span className="material-symbols-outlined text-lg">arrow_back</span>
+                    <span>Back to Course</span>
                 </Link>
                 <EditableTitle
                     initialTitle={note.title}
                     onSave={handleUpdateTitle}
-                    className="text-3xl font-bold text-gray-900"
+                    className="text-3xl font-bold text-text-primary"
+                    inputClassName="text-3xl font-bold"
                 />
             </div>
         </div>
       </div>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="bg-white shadow sm:rounded-md p-6">
-            <h2 className="text-lg font-medium text-gray-900 mb-4">Content</h2>
+        <div className="bg-card shadow-soft sm:rounded-md p-6 border border-border-light">
+            <h2 className="text-lg font-medium text-text-primary mb-4">Content</h2>
             <NoteEditor 
                 initialContent={note?.content || null} 
                 onSave={handleSave} 

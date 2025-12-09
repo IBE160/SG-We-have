@@ -33,7 +33,7 @@ const ToolbarButton = ({
     disabled={disabled}
     className={clsx(
       'p-2 rounded transition-colors',
-      isActive ? 'bg-gray-200 text-black' : 'text-gray-500 hover:bg-gray-100',
+      isActive ? 'bg-border-light text-text-primary' : 'text-text-secondary hover:bg-sidebar-hover',
       disabled && 'opacity-50 cursor-not-allowed',
       className
     )}
@@ -48,7 +48,7 @@ const EditorToolbar = ({ editor, onSave, isSaving, lastSavedAt }: { editor: Edit
   if (!editor) return null
 
   return (
-    <div className="sticky top-0 z-10 border-b p-2 flex gap-1 items-center flex-wrap bg-gray-50 rounded-t-md">
+    <div className="sticky top-0 z-10 border-b border-border-light p-2 flex gap-1 items-center flex-wrap bg-background-light rounded-t-md">
       <ToolbarButton
         onClick={() => editor.chain().focus().toggleBold().run()}
         isActive={editor.isActive('bold')}
@@ -64,7 +64,7 @@ const EditorToolbar = ({ editor, onSave, isSaving, lastSavedAt }: { editor: Edit
         <Italic className="w-4 h-4" />
       </ToolbarButton>
       
-      <div className="w-px h-6 bg-gray-300 mx-1" />
+      <div className="w-px h-6 bg-border-light mx-1" />
 
       <ToolbarButton
         onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
@@ -88,7 +88,7 @@ const EditorToolbar = ({ editor, onSave, isSaving, lastSavedAt }: { editor: Edit
         <Heading3 className="w-4 h-4" />
       </ToolbarButton>
 
-      <div className="w-px h-6 bg-gray-300 mx-1" />
+      <div className="w-px h-6 bg-border-light mx-1" />
 
       <ToolbarButton
         onClick={() => editor.chain().focus().toggleBulletList().run()}
@@ -107,7 +107,7 @@ const EditorToolbar = ({ editor, onSave, isSaving, lastSavedAt }: { editor: Edit
 
       <div className="ml-auto flex items-center gap-3">
         {lastSavedAt && (
-            <span className="text-xs text-gray-500">
+            <span className="text-xs text-text-secondary">
                 Last updated: {new Date(lastSavedAt).toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' })}
             </span>
         )}
@@ -117,7 +117,7 @@ const EditorToolbar = ({ editor, onSave, isSaving, lastSavedAt }: { editor: Edit
                 disabled={isSaving}
                 className={clsx(
                     'p-2 rounded transition-colors flex items-center gap-1',
-                    isSaving ? 'text-gray-400 cursor-wait' : 'text-blue-600 hover:bg-blue-50'
+                    isSaving ? 'text-text-secondary cursor-wait' : 'text-accent-blue hover:bg-accent-blue/10'
                 )}
                 type="button"
                 title="Save Notes"
@@ -143,7 +143,7 @@ const NoteEditor = ({ initialContent, onUpdate, onSave, lastSavedAt }: NoteEdito
     content: initialContent || '',
     editorProps: {
       attributes: {
-        class: 'prose prose-sm outline-none max-w-none min-h-[500px]',
+        class: 'prose prose-sm outline-none max-w-none min-h-[500px] text-text-primary',
       },
     },
     onUpdate: ({ editor }) => {
@@ -188,17 +188,17 @@ const NoteEditor = ({ initialContent, onUpdate, onSave, lastSavedAt }: NoteEdito
   }
 
   return (
-    <div className="border rounded-md bg-white shadow-sm flex flex-col">
+    <div className="border border-border-light rounded-md bg-card shadow-soft flex flex-col">
       <EditorToolbar editor={editor} onSave={onSave ? handleSave : undefined} isSaving={isSaving} lastSavedAt={lastSavedAt} />
       
       {saveStatus === 'success' && (
-         <div className="bg-green-50 text-green-700 px-4 py-1 text-xs text-center border-b border-green-100">
+         <div className="bg-accent-green/10 text-accent-green px-4 py-1 text-xs text-center border-b border-accent-green/20">
              Notes saved successfully!
          </div>
       )}
       
       {saveStatus === 'error' && (
-         <div className="bg-red-50 text-red-700 px-4 py-1 text-xs text-center border-b border-red-100">
+         <div className="bg-red-500/10 text-red-500 px-4 py-1 text-xs text-center border-b border-red-500/20">
              Failed to save notes. Please try again.
          </div>
       )}

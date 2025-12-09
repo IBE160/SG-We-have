@@ -31,20 +31,20 @@ export const QuizQuestionDisplay: React.FC<QuizQuestionDisplayProps> = ({
     if (isAnswered) {
       if (isCorrect) {
         // Correct answer (Green)
-        classes += "border-green-500 bg-green-50";
+        classes += "border-accent-green bg-accent-green/10";
       } else if (isSelected && !submissionResult?.is_correct) {
         // Wrong selection (Red)
-        classes += "border-red-500 bg-red-50";
+        classes += "border-red-500 bg-red-500/10";
       } else {
         // Other options
-        classes += "border-gray-200 opacity-50";
+        classes += "border-border-light opacity-50";
       }
     } else {
       // Interactive state
       if (isSelected) {
-        classes += "border-blue-500 bg-blue-50";
+        classes += "border-accent-blue bg-accent-blue/10";
       } else {
-        classes += "border-gray-200 hover:bg-gray-50";
+        classes += "border-border-light hover:bg-sidebar-hover";
       }
     }
     
@@ -52,10 +52,10 @@ export const QuizQuestionDisplay: React.FC<QuizQuestionDisplayProps> = ({
   };
 
   return (
-    <div className="w-full max-w-2xl mx-auto p-6 bg-white rounded-lg shadow-md relative">
+    <div className="w-full max-w-2xl mx-auto p-6 bg-card rounded-lg shadow-soft relative border border-border-light">
       {isLoading && (
-        <div className="absolute inset-0 bg-white bg-opacity-75 flex justify-center items-center z-10">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        <div className="absolute inset-0 bg-card/75 flex justify-center items-center z-10 backdrop-blur-sm rounded-lg">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-accent-blue"></div>
         </div>
       )}
       <h2 className="text-xl font-semibold mb-6 text-text-primary">
@@ -72,9 +72,9 @@ export const QuizQuestionDisplay: React.FC<QuizQuestionDisplayProps> = ({
           >
             <div className="flex items-center">
               <span className={`w-8 h-8 flex items-center justify-center rounded-full text-sm font-medium mr-3
-                ${isAnswered && submissionResult?.correct_answer_id === option.id ? 'bg-green-200 text-green-800' : 
-                  isAnswered && selectedOptionId === option.id && !submissionResult?.is_correct ? 'bg-red-200 text-red-800' :
-                  'bg-gray-100 text-text-primary'
+                ${isAnswered && submissionResult?.correct_answer_id === option.id ? 'bg-accent-green text-white' : 
+                  isAnswered && selectedOptionId === option.id && !submissionResult?.is_correct ? 'bg-red-500 text-white' :
+                  'bg-sidebar-hover text-text-primary'
                 }
               `}>
                 {String.fromCharCode(65 + option.option_index)}
@@ -88,11 +88,11 @@ export const QuizQuestionDisplay: React.FC<QuizQuestionDisplayProps> = ({
       </div>
 
       {isAnswered && submissionResult && (
-        <div className={`mt-6 p-4 rounded-md ${submissionResult.is_correct ? 'bg-green-50 text-green-800' : 'bg-red-50 text-red-800'}`}>
+        <div className={`mt-6 p-4 rounded-md border ${submissionResult.is_correct ? 'bg-accent-green/10 border-accent-green/20 text-accent-green' : 'bg-red-500/10 border-red-500/20 text-red-500'}`}>
           <p className="font-medium mb-1">
             {submissionResult.is_correct ? 'Correct!' : 'Incorrect'}
           </p>
-          <p>{submissionResult.feedback_text}</p>
+          <p className="text-text-primary">{submissionResult.feedback_text}</p>
         </div>
       )}
     </div>

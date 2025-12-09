@@ -13,20 +13,20 @@ export const ScoreCard: React.FC<ScoreCardProps> = ({ results, onRetake, onNewQu
   const { score, total_questions, percentage } = results;
 
   // Color coding for score
-  let scoreColor = 'text-green-600';
-  if (percentage < 50) scoreColor = 'text-red-600';
-  else if (percentage < 80) scoreColor = 'text-yellow-600';
+  let scoreColor = 'text-green-600 dark:text-green-400';
+  if (percentage < 50) scoreColor = 'text-red-600 dark:text-red-400';
+  else if (percentage < 80) scoreColor = 'text-yellow-600 dark:text-yellow-400';
 
   return (
-    <div className="bg-white rounded-xl shadow-soft border border-border-light p-8 max-w-lg w-full mx-auto text-center">
+    <div className="bg-card rounded-xl shadow-soft border border-border-light p-8 max-w-lg w-full mx-auto text-center">
       <div className="mb-6 flex justify-center">
-        <CheckCircle className="w-16 h-16 text-green-500" />
+        <CheckCircle className="w-16 h-16 text-accent-green" />
       </div>
       
       <h2 className="text-2xl font-bold mb-2 text-text-primary">Quiz Completed!</h2>
       <p className="text-text-secondary mb-8">Here is how you performed</p>
 
-      <div className="mb-8 p-6 bg-gray-50 rounded-lg">
+      <div className="mb-8 p-6 bg-sidebar-hover rounded-lg border border-border-light">
         <div className={`text-5xl font-extrabold mb-2 ${scoreColor}`}>
           {percentage}%
         </div>
@@ -38,7 +38,7 @@ export const ScoreCard: React.FC<ScoreCardProps> = ({ results, onRetake, onNewQu
       <div className="flex flex-col gap-3">
         <button
           onClick={onNewQuiz}
-          className="w-full py-3 px-4 bg-white border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition-colors flex items-center justify-center gap-2"
+          className="w-full py-3 px-4 bg-card border border-border-light text-text-primary font-medium rounded-lg hover:bg-sidebar-hover transition-colors flex items-center justify-center gap-2"
         >
           <BookOpen size={18} />
           Generate New Quiz
@@ -46,7 +46,7 @@ export const ScoreCard: React.FC<ScoreCardProps> = ({ results, onRetake, onNewQu
 
         <button
           onClick={onRetake}
-          className="w-full py-3 px-4 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center gap-2 shadow-sm"
+          className="w-full py-3 px-4 bg-accent-blue text-white font-medium rounded-lg hover:bg-accent-blue/90 transition-colors flex items-center justify-center gap-2 shadow-md"
         >
           <RefreshCw size={18} />
           Retake Same Quiz
@@ -54,7 +54,7 @@ export const ScoreCard: React.FC<ScoreCardProps> = ({ results, onRetake, onNewQu
 
         <button
           onClick={onBackToCourses}
-          className="w-full py-3 px-4 text-blue-600 font-medium hover:text-blue-800 transition-colors flex items-center justify-center gap-2"
+          className="w-full py-3 px-4 text-accent-blue font-medium hover:text-accent-blue/80 transition-colors flex items-center justify-center gap-2"
         >
           Back to Courses
           <ArrowRight size={18} />

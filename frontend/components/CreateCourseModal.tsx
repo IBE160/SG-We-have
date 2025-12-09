@@ -46,18 +46,18 @@ export default function CreateCourseModal({ isOpen, onClose, onCourseCreated }: 
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-      <div className="bg-white rounded-lg shadow-lg w-full max-w-md p-6">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+      <div className="bg-modal rounded-lg shadow-lg w-full max-w-md p-6 border border-border-light">
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-bold">Create New Course</h2>
-          <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
+          <h2 className="text-xl font-bold text-text-primary">Create New Course</h2>
+          <button onClick={onClose} className="text-text-secondary hover:text-text-primary">
             <X size={24} />
           </button>
         </div>
         
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
-            <label htmlFor="courseName" className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="courseName" className="block text-sm font-medium text-text-secondary mb-1">
               Course Name
             </label>
             <input
@@ -65,7 +65,7 @@ export default function CreateCourseModal({ isOpen, onClose, onCourseCreated }: 
               id="courseName"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full border border-border-light rounded-md px-3 py-2 bg-background-light text-text-primary focus:outline-none focus:ring-2 focus:ring-accent-blue placeholder:text-text-secondary/50"
               placeholder="e.g. Distributed Systems"
               disabled={isLoading}
             />
@@ -76,14 +76,14 @@ export default function CreateCourseModal({ isOpen, onClose, onCourseCreated }: 
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-md"
+              className="px-4 py-2 text-text-secondary hover:bg-background-light rounded-md transition-colors"
               disabled={isLoading}
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50"
+              className="px-4 py-2 bg-accent-blue text-white rounded-md hover:opacity-90 disabled:opacity-50 transition-opacity"
               disabled={isLoading}
             >
               {isLoading ? 'Creating...' : 'Create Course'}
