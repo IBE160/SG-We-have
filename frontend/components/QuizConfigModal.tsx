@@ -1,18 +1,21 @@
 'use client';
 
-import { FormEvent, useState } from 'react';
+import { FormEvent, useState, useEffect } from 'react';
 import { Note } from '@/lib/api';
 
 interface QuizConfigModalProps {
   isOpen: boolean;
   onClose: () => void;
   notes: Note[];
+  currentCourseId: string;
   onGenerate: (selectedNoteIds: string[], quizLength: number) => void;
 }
 
-export default function QuizConfigModal({ isOpen, onClose, notes, onGenerate }: QuizConfigModalProps) {
+export default function QuizConfigModal({ isOpen, onClose, notes, currentCourseId, onGenerate }: QuizConfigModalProps) {
   const [selectedNoteIds, setSelectedNoteIds] = useState<string[]>([]);
   const [quizLength, setQuizLength] = useState<number>(10);
+
+  const filteredNotes = notes.filter(note => note.course_id === currentCourseId);
 
   const handleCheckboxChange = (noteId: string) => {
     setSelectedNoteIds(prev => {
@@ -25,12 +28,10 @@ export default function QuizConfigModal({ isOpen, onClose, notes, onGenerate }: 
   };
 
   const handleSelectAll = () => {
-    if (selectedNoteIds.length === notes.length) {
-      // Deselect all
+    if (selectedNoteIds.length === filteredNotes.length) {
       setSelectedNoteIds([]);
     } else {
-      // Select all
-      setSelectedNoteIds(notes.map(n => n.id));
+      setSelectedNoteIds(filteredNotes.map(n => n.id));
     }
   };
 
@@ -64,18 +65,18 @@ export default function QuizConfigModal({ isOpen, onClose, notes, onGenerate }: 
                 type="button" 
                 onClick={handleSelectAll}
                 className="text-sm text-blue-600 hover:text-blue-800"
-                disabled={notes.length === 0}
+                disabled={filteredNotes.length === 0}
               >
-                {selectedNoteIds.length === notes.length && notes.length > 0 ? 'Deselect All' : 'Select All'}
+                {selectedNoteIds.length === filteredNotes.length && filteredNotes.length > 0 ? 'Deselect All' : 'Select All'}
               </button>
            </div>
 
            <div className="flex-1 overflow-y-auto border border-gray-200 rounded-md mb-4 p-2">
-             {notes.length === 0 ? (
-                <p className="text-center text-gray-500 py-4">No notes available.</p>
+             {filteredNotes.length === 0 ? (
+                <p className="text-center text-gray-500 py-4">No notes available for this course.</p>
              ) : (
                <div className="space-y-2">
-                 {notes.map(note => (
+                 {filteredNotes.map(note => (
                    <div key={note.id} className="flex items-start p-2 rounded hover:bg-gray-50">
                      <div className="flex items-center h-5">
                        <input
@@ -102,18 +103,23 @@ export default function QuizConfigModal({ isOpen, onClose, notes, onGenerate }: 
              <label htmlFor="quiz-length" className="block text-sm font-medium text-gray-700 mb-1">
                Number of Questions
              </label>
-             <select
-               id="quiz-length"
-               value={quizLength}
-               onChange={(e) => setQuizLength(Number(e.target.value))}
-               className="block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md border"
-             >
-               {[5, 10, 15, 20, 25, 30].map((length) => (
-                 <option key={length} value={length}>
-                   {length} Questions
-                 </option>
-               ))}
-             </select>
+             <div className="relative">
+                <select
+                  id="quiz-length"
+                  value={quizLength}
+                  onChange={(e) => setQuizLength(Number(e.target.value))}
+                  className="block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md border appearance-none"
+                >
+                  {[5, 10, 15, 20, 25, 30].map((length) => (
+                    <option key={length} value={length}>
+                      {length} Questions
+                    </option>
+                  ))}
+                </select>
+                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-black z-10">
+                    <svg className="fill-current h-4 w-4" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M5.516 7.548c.436-.446 1.043-.481 1.576 0L10 10.405l2.908-2.857c.533-.481 1.141-.446 1.574 0 .436.445.408 1.197 0 1.642l-3.417 3.356c-.27.267-.631.408-1.002.408s-.732-.141-1.002-.408L5.516 9.19c-.408-.445-.436-1.197 0-1.642z"/></svg>
+                </div>
+              </div>
            </div>
 
           <div className="flex justify-end space-x-2 pt-4 border-t border-gray-100 mt-auto">

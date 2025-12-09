@@ -120,12 +120,12 @@ export default function GenerateQuizPage() {
                 <section className="flex flex-col gap-4">
                   <h3 className="text-text-primary text-lg font-bold leading-tight tracking-[-0.015em]">1. Select Course</h3>
                   <div className="flex max-w-[480px]">
-                    <label className="flex w-full flex-col">
+                    <label className="flex w-full flex-col relative">
                       {isLoadingCourses ? (
                         <div className="h-14 bg-gray-100 rounded-xl animate-pulse"></div>
                       ) : (
                         <select 
-                          className="form-select flex w-full min-w-0 flex-1 resize-none appearance-none overflow-hidden rounded-xl border border-border-light bg-white px-4 py-3 text-base font-medium text-text-primary placeholder:text-text-secondary/60 focus:border-accent-blue focus:outline-none focus:ring-2 focus:ring-accent-blue/20 h-14"
+                          className="form-select flex w-full min-w-0 flex-1 resize-none appearance-none overflow-hidden rounded-xl border border-border-light bg-white px-4 py-3 text-base font-medium text-text-primary placeholder:text-text-secondary/60 focus:border-accent-blue focus:outline-none focus:ring-2 focus:ring-accent-blue/20 h-14 pr-10"
                           value={selectedCourseId}
                           onChange={(e) => setSelectedCourseId(e.target.value)}
                         >
@@ -134,6 +134,9 @@ export default function GenerateQuizPage() {
                           ))}
                         </select>
                       )}
+                      <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-black z-10">
+                        <svg className="fill-current h-4 w-4" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M5.516 7.548c.436-.446 1.043-.481 1.576 0L10 10.405l2.908-2.857c.533-.481 1.141-.446 1.574 0 .436.445.408 1.197 0 1.642l-3.417 3.356c-.27.267-.631.408-1.002.408s-.732-.141-1.002-.408L5.516 9.19c-.408-.445-.436-1.197 0-1.642z"/></svg>
+                      </div>
                     </label>
                   </div>
                 </section>
@@ -181,9 +184,9 @@ export default function GenerateQuizPage() {
                 <section className="flex flex-col gap-4">
                   <h3 className="text-text-primary text-lg font-bold leading-tight tracking-[-0.015em]">3. Number of Questions</h3>
                   <div className="flex max-w-[480px]">
-                    <label className="flex w-full flex-col">
+                    <label className="flex w-full flex-col relative">
                       <select 
-                        className="form-select flex w-full min-w-0 flex-1 resize-none appearance-none overflow-hidden rounded-xl border border-border-light bg-white px-4 py-3 text-base font-medium text-text-primary placeholder:text-text-secondary/60 focus:border-accent-blue focus:outline-none focus:ring-2 focus:ring-accent-blue/20 h-14"
+                        className="form-select flex w-full min-w-0 flex-1 resize-none appearance-none overflow-hidden rounded-xl border border-border-light bg-white px-4 py-3 text-base font-medium text-text-primary placeholder:text-text-secondary/60 focus:border-accent-blue focus:outline-none focus:ring-2 focus:ring-accent-blue/20 h-14 pr-10"
                         value={quizLength}
                         onChange={(e) => setQuizLength(Number(e.target.value))}
                       >
@@ -191,6 +194,9 @@ export default function GenerateQuizPage() {
                            <option key={length} value={length}>{length} Questions</option>
                          ))}
                       </select>
+                      <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-black z-10">
+                        <svg className="fill-current h-4 w-4" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M5.516 7.548c.436-.446 1.043-.481 1.576 0L10 10.405l2.908-2.857c.533-.481 1.141-.446 1.574 0 .436.445.408 1.197 0 1.642l-3.417 3.356c-.27.267-.631.408-1.002.408s-.732-.141-1.002-.408L5.516 9.19c-.408-.445-.436-1.197 0-1.642z"/></svg>
+                      </div>
                     </label>
                   </div>
                 </section>

@@ -25,6 +25,7 @@ export default function QuizPage() {
   const [selectedOptionId, setSelectedOptionId] = useState<string | null>(null);
   const [submissionResult, setSubmissionResult] = useState<QuizSubmissionResponse | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isFetchingNext, setIsFetchingNext] = useState(false);
 
   useEffect(() => {
     if (quizId) {
@@ -66,8 +67,9 @@ export default function QuizPage() {
   };
 
   const handleNextQuestion = async () => {
-    if (!quizState) return;
+    if (!quizState || isFetchingNext) return;
     
+    setIsFetchingNext(true);
     try {
       const nextData = await fetchNextQuestion(quizId, { attempt_id: quizState.attempt_id });
       
@@ -101,6 +103,8 @@ export default function QuizPage() {
     } catch (err) {
       console.error('Failed to fetch next question:', err);
       alert('Failed to load next question.');
+    } finally {
+      setIsFetchingNext(false);
     }
   };
 
@@ -240,7 +244,7 @@ export default function QuizPage() {
           <button
             className="px-6 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             onClick={handleNextQuestion}
-            disabled={!submissionResult}
+            disabled={!submissionResult || isFetchingNext}
           >
             {currentQuestionIndex + 1 === quizState.total_questions ? 'Finish Quiz' : 'Next Question'}
           </button>
