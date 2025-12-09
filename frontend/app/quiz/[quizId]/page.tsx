@@ -26,6 +26,7 @@ export default function QuizPage() {
   const [submissionResult, setSubmissionResult] = useState<QuizSubmissionResponse | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isFetchingNext, setIsFetchingNext] = useState(false);
+  const [isChangingQuestion, setIsChangingQuestion] = useState(false);
 
   useEffect(() => {
     if (quizId) {
@@ -70,6 +71,8 @@ export default function QuizPage() {
     if (!quizState || isFetchingNext) return;
     
     setIsFetchingNext(true);
+    setIsChangingQuestion(true);
+
     try {
       const nextData = await fetchNextQuestion(quizId, { attempt_id: quizState.attempt_id });
       
@@ -105,12 +108,14 @@ export default function QuizPage() {
       alert('Failed to load next question.');
     } finally {
       setIsFetchingNext(false);
+      setIsChangingQuestion(false);
     }
   };
 
   const handlePreviousQuestion = async () => {
     if (!quizState || currentQuestionIndex <= 0) return;
 
+    setIsChangingQuestion(true);
     try {
       const prevData = await fetchPreviousQuestion(quizId, { attempt_id: quizState.attempt_id });
       
@@ -129,6 +134,8 @@ export default function QuizPage() {
     } catch (err) {
       console.error('Failed to fetch previous question:', err);
       alert('Failed to load previous question.');
+    } finally {
+      setIsChangingQuestion(false);
     }
   };
 
@@ -205,8 +212,8 @@ export default function QuizPage() {
   }
 
   return (
-    <main className="flex min-h-screen flex-col items-center p-4 md:p-24 bg-background-light">
-      <div className="w-full max-w-3xl">
+    <main className="flex min-h-screen flex-col items-center p-4 md:pt-12 bg-background-light">
+      <div className="w-full max-w-5xl"> {/* Increased max-width to accommodate side-by-side layout */}
         <div className="mb-6">
           <button 
             onClick={() => router.push('/dashboard')}
@@ -225,29 +232,37 @@ export default function QuizPage() {
           />
         </div>
 
-        <QuizQuestionDisplay 
-          question={currentQuestion}
-          onAnswerSelect={handleAnswerSelect}
-          selectedOptionId={selectedOptionId}
-          isAnswered={!!submissionResult}
-          submissionResult={submissionResult}
-        />
+        <div className="grid grid-cols-1 md:grid-cols-[1fr_2fr_1fr] gap-4 items-center"> {/* Grid container for layout */}
+          <div className="flex justify-start md:justify-end"> {/* Previous button column */}
+            <button
+              className="px-6 py-3 bg-gray-200 text-gray-800 rounded-lg font-medium hover:bg-gray-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed w-full md:w-auto"
+              onClick={handlePreviousQuestion}
+              disabled={currentQuestionIndex === 0 || isChangingQuestion}
+            >
+              Previous
+            </button>
+          </div>
+          
+          <div className="md:col-span-1"> {/* QuizQuestionDisplay in center column */}
+            <QuizQuestionDisplay 
+              question={currentQuestion}
+              onAnswerSelect={handleAnswerSelect}
+              selectedOptionId={selectedOptionId}
+              isAnswered={!!submissionResult}
+              submissionResult={submissionResult}
+              isLoading={isChangingQuestion}
+            />
+          </div>
 
-        <div className="mt-8 flex justify-between">
-          <button
-            className="px-6 py-3 bg-gray-200 text-gray-800 rounded-lg font-medium hover:bg-gray-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            onClick={handlePreviousQuestion}
-            disabled={currentQuestionIndex === 0}
-          >
-            Previous
-          </button>
-          <button
-            className="px-6 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            onClick={handleNextQuestion}
-            disabled={!submissionResult || isFetchingNext}
-          >
-            {currentQuestionIndex + 1 === quizState.total_questions ? 'Finish Quiz' : 'Next Question'}
-          </button>
+          <div className="flex justify-end md:justify-start"> {/* Next button column */}
+            <button
+              className="px-6 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed w-full md:w-auto"
+              onClick={handleNextQuestion}
+              disabled={!submissionResult || isFetchingNext || isChangingQuestion}
+            >
+              {currentQuestionIndex + 1 === quizState.total_questions ? 'Finish Quiz' : 'Next Question'}
+            </button>
+          </div>
         </div>
       </div>
     </main>

@@ -9,6 +9,7 @@ interface QuizQuestionDisplayProps {
   selectedOptionId?: string | null;
   isAnswered?: boolean;
   submissionResult?: QuizSubmissionResponse | null;
+  isLoading?: boolean;
 }
 
 export const QuizQuestionDisplay: React.FC<QuizQuestionDisplayProps> = ({ 
@@ -16,7 +17,8 @@ export const QuizQuestionDisplay: React.FC<QuizQuestionDisplayProps> = ({
   onAnswerSelect,
   selectedOptionId,
   isAnswered = false,
-  submissionResult
+  submissionResult,
+  isLoading = false
 }) => {
   
   const getOptionClassName = (optionId: string) => {
@@ -50,7 +52,12 @@ export const QuizQuestionDisplay: React.FC<QuizQuestionDisplayProps> = ({
   };
 
   return (
-    <div className="w-full max-w-2xl mx-auto p-6 bg-white rounded-lg shadow-md">
+    <div className="w-full max-w-2xl mx-auto p-6 bg-white rounded-lg shadow-md relative">
+      {isLoading && (
+        <div className="absolute inset-0 bg-white bg-opacity-75 flex justify-center items-center z-10">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        </div>
+      )}
       <h2 className="text-xl font-semibold mb-6 text-text-primary">
         {question.question_text}
       </h2>
